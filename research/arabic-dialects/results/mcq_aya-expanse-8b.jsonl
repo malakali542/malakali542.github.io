@@ -1,0 +1,800 @@
+{"model": "aya-expanse:8b", "idx": "7-807", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 5.31}
+{"model": "aya-expanse:8b", "idx": "7-807", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) من حجارة\n", "secs": 1.05}
+{"model": "aya-expanse:8b", "idx": "7-807", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) حجر", "secs": 1.0}
+{"model": "aya-expanse:8b", "idx": "7-807", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) الحجر\n\n", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "9-957", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.91}
+{"model": "aya-expanse:8b", "idx": "9-957", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "9-957", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) صحرا ج", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "9-957", "variant": "lev", "answer": "D", "pred": "C", "correct": false, "raw": "C) الأمازون\n", "secs": 1.29}
+{"model": "aya-expanse:8b", "idx": "8-240", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.96}
+{"model": "aya-expanse:8b", "idx": "8-240", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) للطاقة\n\n", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "8-240", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) طاقة\n\n", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "8-240", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) الطاقة\n\nالن", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "7-1132", "variant": "eng", "answer": "A", "pred": "C", "correct": false, "raw": "C\n\nA compass is", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "7-1132", "variant": "msa", "answer": "A", "pred": "C", "correct": false, "raw": "C) بوصلة\n", "secs": 1.33}
+{"model": "aya-expanse:8b", "idx": "7-1132", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C) بوصلة\n", "secs": 1.33}
+{"model": "aya-expanse:8b", "idx": "7-1132", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C) البوصلة\n", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "7-884", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.97}
+{"model": "aya-expanse:8b", "idx": "7-884", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.94}
+{"model": "aya-expanse:8b", "idx": "7-884", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) صدا بيخبط", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "7-884", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "470", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "470", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "470", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "470", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "8-165", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "8-165", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.4}
+{"model": "aya-expanse:8b", "idx": "8-165", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "8-165", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "9-464", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-464", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) هطول الأمطار", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "9-464", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "9-464", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) نزول المطر", "secs": 1.16}
+{"model": "aya-expanse:8b", "idx": "8-45", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "8-45", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) 3 صباح", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "8-45", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "8-45", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) 3 الصبح", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "8-260", "variant": "eng", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 0.88}
+{"model": "aya-expanse:8b", "idx": "8-260", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "8-260", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "8-260", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "9-24", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "9-24", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) يقلد أ", "secs": 1.5}
+{"model": "aya-expanse:8b", "idx": "9-24", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "9-24", "variant": "lev", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "1023", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.61}
+{"model": "aya-expanse:8b", "idx": "1023", "variant": "msa", "answer": "D", "pred": "A", "correct": false, "raw": "A", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "1023", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "1023", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) الكهربا\n", "secs": 1.29}
+{"model": "aya-expanse:8b", "idx": "9-1046", "variant": "eng", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 0.92}
+{"model": "aya-expanse:8b", "idx": "9-1046", "variant": "msa", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.91}
+{"model": "aya-expanse:8b", "idx": "9-1046", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D) الأوعية الد", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "9-1046", "variant": "lev", "answer": "A", "pred": "B", "correct": false, "raw": "B) رموش الع", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "8-304", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "8-304", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A\n\nالأشخاص الذين", "secs": 1.44}
+{"model": "aya-expanse:8b", "idx": "8-304", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "8-304", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "7-1186", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "7-1186", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) يغلي الماء", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "7-1186", "variant": "egy", "answer": "C", "pred": "A", "correct": false, "raw": "A) ميه دافية", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "7-1186", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "7-71", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "7-71", "variant": "msa", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "7-71", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C) خدش صغير في", "secs": 1.07}
+{"model": "aya-expanse:8b", "idx": "7-71", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C) خدوش صغيرة ب", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "8-59", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "8-59", "variant": "msa", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "8-59", "variant": "egy", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "8-59", "variant": "lev", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "7-1096", "variant": "eng", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "7-1096", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "7-1096", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) منك\n\n", "secs": 1.06}
+{"model": "aya-expanse:8b", "idx": "7-1096", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) السنونو\n", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "8-321", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "8-321", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.02}
+{"model": "aya-expanse:8b", "idx": "8-321", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) مقاومة\n\n", "secs": 1.07}
+{"model": "aya-expanse:8b", "idx": "8-321", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "1787", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "1787", "variant": "msa", "answer": "B", "pred": "A", "correct": false, "raw": "A) أن تصبح م", "secs": 1.05}
+{"model": "aya-expanse:8b", "idx": "1787", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) مية الخور", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "1787", "variant": "lev", "answer": "B", "pred": "A", "correct": false, "raw": "A) تصير مية", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "9-298", "variant": "eng", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-298", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) الغازولين", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "9-298", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B\n\n(الهوا", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "9-298", "variant": "lev", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-621", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-621", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "9-621", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "9-621", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "1271", "variant": "eng", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.99}
+{"model": "aya-expanse:8b", "idx": "1271", "variant": "msa", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "1271", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "1271", "variant": "lev", "answer": "B", "pred": "D", "correct": false, "raw": "D) ديسمبر", "secs": 0.94}
+{"model": "aya-expanse:8b", "idx": "9-573", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "9-573", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "9-573", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) مفعول الد", "secs": 1.39}
+{"model": "aya-expanse:8b", "idx": "9-573", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "998", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "998", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "998", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "998", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "785", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "785", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.07}
+{"model": "aya-expanse:8b", "idx": "785", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "785", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.07}
+{"model": "aya-expanse:8b", "idx": "170", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C\n\nCats and catfish", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "170", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) القط وسمك", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "170", "variant": "egy", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "170", "variant": "lev", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "3", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.54}
+{"model": "aya-expanse:8b", "idx": "3", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.76}
+{"model": "aya-expanse:8b", "idx": "3", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.75}
+{"model": "aya-expanse:8b", "idx": "3", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.52}
+{"model": "aya-expanse:8b", "idx": "429", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.99}
+{"model": "aya-expanse:8b", "idx": "429", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) 100", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "429", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D) 300", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "429", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) 100", "secs": 1.36}
+{"model": "aya-expanse:8b", "idx": "8-125", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "8-125", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "8-125", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "8-125", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) بيطلب الح", "secs": 1.37}
+{"model": "aya-expanse:8b", "idx": "889", "variant": "eng", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "889", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "889", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) الشامبانزي", "secs": 1.06}
+{"model": "aya-expanse:8b", "idx": "889", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "9-866", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-866", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "9-866", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) ليه ظل كبير", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "9-866", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "9-281", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A) the body of the", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "9-281", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) جسم الوعاء", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "9-281", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) جسم الوعاء", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "9-281", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) جسم الوعاء", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "9-284", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "9-284", "variant": "msa", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.89}
+{"model": "aya-expanse:8b", "idx": "9-284", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.95}
+{"model": "aya-expanse:8b", "idx": "9-284", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) بتحرق", "secs": 1.44}
+{"model": "aya-expanse:8b", "idx": "9-776", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.93}
+{"model": "aya-expanse:8b", "idx": "9-776", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) منشار الحديد\n", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "9-776", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "9-776", "variant": "lev", "answer": "A", "pred": "D", "correct": false, "raw": "D) منشار الخشب", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "7-50", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "7-50", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) يجهد موارد النظام", "secs": 1.48}
+{"model": "aya-expanse:8b", "idx": "7-50", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) إرهاق", "secs": 1.45}
+{"model": "aya-expanse:8b", "idx": "7-50", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "7-1140", "variant": "eng", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "7-1140", "variant": "msa", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "7-1140", "variant": "egy", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "7-1140", "variant": "lev", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-893", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-893", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) تدفق الإلكتر", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "9-893", "variant": "egy", "answer": "D", "pred": "A", "correct": false, "raw": "A) إشعاع", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "9-893", "variant": "lev", "answer": "D", "pred": "A", "correct": false, "raw": "A) الإشعاع", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-1128", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "7-1128", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) مدى استقرار", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "7-1128", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) مدى استقرار", "secs": 1.39}
+{"model": "aya-expanse:8b", "idx": "7-1128", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "8-466", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "8-466", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) سجلات الأنس", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "8-466", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "8-466", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "8-79", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "8-79", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) تتمدد\n", "secs": 1.43}
+{"model": "aya-expanse:8b", "idx": "8-79", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B) ذوبان\n", "secs": 1.47}
+{"model": "aya-expanse:8b", "idx": "8-79", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) بتمدد\n", "secs": 1.46}
+{"model": "aya-expanse:8b", "idx": "9-645", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "9-645", "variant": "msa", "answer": "A", "pred": "B", "correct": false, "raw": "B) أنه نباتي", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "9-645", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) ده حيوان مف", "secs": 1.07}
+{"model": "aya-expanse:8b", "idx": "9-645", "variant": "lev", "answer": "A", "pred": "B", "correct": false, "raw": "B) هو نباتي", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "1129", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "1129", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.75}
+{"model": "aya-expanse:8b", "idx": "1129", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.75}
+{"model": "aya-expanse:8b", "idx": "1129", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.76}
+{"model": "aya-expanse:8b", "idx": "7-1053", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "7-1053", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) الصحارى تح", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "7-1053", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "7-1053", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) الصحاري بتحصل", "secs": 1.29}
+{"model": "aya-expanse:8b", "idx": "9-57", "variant": "eng", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "9-57", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "9-57", "variant": "egy", "answer": "B", "pred": "D", "correct": false, "raw": "D) مفتوح", "secs": 0.96}
+{"model": "aya-expanse:8b", "idx": "9-57", "variant": "lev", "answer": "B", "pred": "D", "correct": false, "raw": "D) مفتوح\n\n", "secs": 1.07}
+{"model": "aya-expanse:8b", "idx": "8-93", "variant": "eng", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "8-93", "variant": "msa", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "8-93", "variant": "egy", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "8-93", "variant": "lev", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "1160", "variant": "eng", "answer": "A", "pred": "D", "correct": false, "raw": "D) Phoenix\n\n(", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "1160", "variant": "msa", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "1160", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "1160", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-937", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.56}
+{"model": "aya-expanse:8b", "idx": "9-937", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-937", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-937", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) السائل\n\n", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "8-142", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "8-142", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "8-142", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "8-142", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) بيسافر ع", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "1170", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "1170", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "1170", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "1170", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.55}
+{"model": "aya-expanse:8b", "idx": "1554", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "1554", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.02}
+{"model": "aya-expanse:8b", "idx": "1554", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.01}
+{"model": "aya-expanse:8b", "idx": "1554", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.76}
+{"model": "aya-expanse:8b", "idx": "9-735", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B) building a new subdivision", "secs": 1.02}
+{"model": "aya-expanse:8b", "idx": "9-735", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) بناء تقسيم جديد", "secs": 1.06}
+{"model": "aya-expanse:8b", "idx": "9-735", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) بناء قسم جديد\n", "secs": 1.29}
+{"model": "aya-expanse:8b", "idx": "9-735", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "1780", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.52}
+{"model": "aya-expanse:8b", "idx": "1780", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.74}
+{"model": "aya-expanse:8b", "idx": "1780", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "1780", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.75}
+{"model": "aya-expanse:8b", "idx": "7-93", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.74}
+{"model": "aya-expanse:8b", "idx": "7-93", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.75}
+{"model": "aya-expanse:8b", "idx": "7-93", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) فيروس الروتا", "secs": 1.02}
+{"model": "aya-expanse:8b", "idx": "7-93", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "9-124", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.76}
+{"model": "aya-expanse:8b", "idx": "9-124", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) تقلبات مستوى المياه", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "9-124", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) تقلبات مستوى الم", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "9-124", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) تقلبات بمست", "secs": 1.4}
+{"model": "aya-expanse:8b", "idx": "9-794", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "9-794", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-794", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "9-794", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "636", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "636", "variant": "msa", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "636", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B) شباشب\n", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "636", "variant": "lev", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "8-183", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.4}
+{"model": "aya-expanse:8b", "idx": "8-183", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) الأشعة فوق البن", "secs": 1.71}
+{"model": "aya-expanse:8b", "idx": "8-183", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) الأشعة فوق بن", "secs": 1.65}
+{"model": "aya-expanse:8b", "idx": "8-183", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) الأشعة فوق البن", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "266", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.53}
+{"model": "aya-expanse:8b", "idx": "266", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) القرنية\n\n", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "266", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) القرنية\n\n", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "266", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) القرنية\n\n", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "1672", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "1672", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "1672", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "1672", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.05}
+{"model": "aya-expanse:8b", "idx": "7-179", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "7-179", "variant": "msa", "answer": "B", "pred": "D", "correct": false, "raw": "D) عدده الذري", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "7-179", "variant": "egy", "answer": "B", "pred": "D", "correct": false, "raw": "D) الكربون ", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "7-179", "variant": "lev", "answer": "B", "pred": "D", "correct": false, "raw": "D) عددو الذري", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "8-92", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "8-92", "variant": "msa", "answer": "B", "pred": "A", "correct": false, "raw": "A) كوب من الماء", "secs": 1.47}
+{"model": "aya-expanse:8b", "idx": "8-92", "variant": "egy", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "8-92", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "8-107", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "8-107", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.33}
+{"model": "aya-expanse:8b", "idx": "8-107", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "8-107", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.36}
+{"model": "aya-expanse:8b", "idx": "9-440", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-440", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-440", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-440", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "605", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "605", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "605", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "605", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "8-253", "variant": "eng", "answer": "C", "pred": "D", "correct": false, "raw": "D (none of these)", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "8-253", "variant": "msa", "answer": "C", "pred": "D", "correct": false, "raw": "D) ولا واحدة من الخ", "secs": 1.36}
+{"model": "aya-expanse:8b", "idx": "8-253", "variant": "egy", "answer": "C", "pred": "D", "correct": false, "raw": "D) ولا حاجة من", "secs": 1.37}
+{"model": "aya-expanse:8b", "idx": "8-253", "variant": "lev", "answer": "C", "pred": "D", "correct": false, "raw": "D) ولا واحد من ه", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "1126", "variant": "eng", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "1126", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "1126", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "1126", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.03}
+{"model": "aya-expanse:8b", "idx": "7-1138", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "7-1138", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) إضافة الملح\n", "secs": 1.05}
+{"model": "aya-expanse:8b", "idx": "7-1138", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D) ضيف مية", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "7-1138", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "7-671", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C) the UFO is approaching", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "7-671", "variant": "msa", "answer": "C", "pred": "B", "correct": false, "raw": "B) يقترب\n", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "7-671", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) الجسم الغريب قرب", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "7-671", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) الجسم الغريب عم", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "9-674", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "9-674", "variant": "msa", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "9-674", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B) جوه ابوبة", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "9-674", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "378", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "378", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "378", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) الانفجارات", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "378", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) الاصطدام", "secs": 1.48}
+{"model": "aya-expanse:8b", "idx": "8-409", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.59}
+{"model": "aya-expanse:8b", "idx": "8-409", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "8-409", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) ميت\n\n", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "8-409", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) ميت\n\n", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "1179", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "1179", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.06}
+{"model": "aya-expanse:8b", "idx": "1179", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "1179", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "9-1026", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "9-1026", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "9-1026", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) بتضعف\n", "secs": 1.41}
+{"model": "aya-expanse:8b", "idx": "9-1026", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) يضعف", "secs": 1.47}
+{"model": "aya-expanse:8b", "idx": "9-1102", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "9-1102", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "9-1102", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-1102", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "1948", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "1948", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "1948", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "1948", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.64}
+{"model": "aya-expanse:8b", "idx": "473", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "473", "variant": "msa", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "473", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "473", "variant": "lev", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "7-284", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "7-284", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-284", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-284", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-372", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.89}
+{"model": "aya-expanse:8b", "idx": "7-372", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.16}
+{"model": "aya-expanse:8b", "idx": "7-372", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "7-372", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "9-576", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "9-576", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) المعادن", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "9-576", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "9-576", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.88}
+{"model": "aya-expanse:8b", "idx": "280", "variant": "eng", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.87}
+{"model": "aya-expanse:8b", "idx": "280", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.89}
+{"model": "aya-expanse:8b", "idx": "280", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) مقبض الب", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "280", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C) مقبض الب", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "9-727", "variant": "eng", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.88}
+{"model": "aya-expanse:8b", "idx": "9-727", "variant": "msa", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.86}
+{"model": "aya-expanse:8b", "idx": "9-727", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "9-727", "variant": "lev", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "7-386", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "7-386", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) مادة جديدة\n", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "7-386", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) كهربا\n", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "7-386", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "1954", "variant": "eng", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "1954", "variant": "msa", "answer": "A", "pred": "D", "correct": false, "raw": "D) قاسٍ مثل", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "1954", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D) جامد زي عم", "secs": 1.41}
+{"model": "aya-expanse:8b", "idx": "1954", "variant": "lev", "answer": "A", "pred": "B", "correct": false, "raw": "B) بيتمتع بم", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "48", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "48", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) التحجر\n\n", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "48", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) اتحجر\n", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "48", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) التحجر\n\n", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "9-757", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.84}
+{"model": "aya-expanse:8b", "idx": "9-757", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) في بيضة\n", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "9-757", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "9-757", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) بالبيض\n\n", "secs": 1.37}
+{"model": "aya-expanse:8b", "idx": "163", "variant": "eng", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "163", "variant": "msa", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "163", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "163", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 0.78}
+{"model": "aya-expanse:8b", "idx": "9-89", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "9-89", "variant": "msa", "answer": "A", "pred": "D", "correct": false, "raw": "D) زيادة نموها", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "9-89", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) اضرار سلام", "secs": 1.41}
+{"model": "aya-expanse:8b", "idx": "9-89", "variant": "lev", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "9-597", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "9-597", "variant": "msa", "answer": "B", "pred": "D", "correct": false, "raw": "D) تعرية\n\n", "secs": 1.08}
+{"model": "aya-expanse:8b", "idx": "9-597", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) تجاويف\n", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "9-597", "variant": "lev", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "1774", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.1}
+{"model": "aya-expanse:8b", "idx": "1774", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "1774", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) قطة بتاكل", "secs": 1.59}
+{"model": "aya-expanse:8b", "idx": "1774", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "9-743", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "9-743", "variant": "msa", "answer": "A", "pred": "C", "correct": false, "raw": "C) نظام الصرف الص", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "9-743", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.85}
+{"model": "aya-expanse:8b", "idx": "9-743", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C) بنظام الصرف", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "8-445", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "8-445", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.44}
+{"model": "aya-expanse:8b", "idx": "8-445", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.44}
+{"model": "aya-expanse:8b", "idx": "8-445", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.72}
+{"model": "aya-expanse:8b", "idx": "1112", "variant": "eng", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.58}
+{"model": "aya-expanse:8b", "idx": "1112", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "1112", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "1112", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "676", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.79}
+{"model": "aya-expanse:8b", "idx": "676", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) في المناطق القطبية", "secs": 1.09}
+{"model": "aya-expanse:8b", "idx": "676", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "676", "variant": "lev", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "268", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.82}
+{"model": "aya-expanse:8b", "idx": "268", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "268", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) ممكن يسبب", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "268", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "9-528", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.54}
+{"model": "aya-expanse:8b", "idx": "9-528", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.71}
+{"model": "aya-expanse:8b", "idx": "9-528", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) القلب\n\n(", "secs": 2.4}
+{"model": "aya-expanse:8b", "idx": "9-528", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) القلب", "secs": 2.35}
+{"model": "aya-expanse:8b", "idx": "9-1163", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.65}
+{"model": "aya-expanse:8b", "idx": "9-1163", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) الأيونات", "secs": 2.18}
+{"model": "aya-expanse:8b", "idx": "9-1163", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) بالأيونات\n", "secs": 2.41}
+{"model": "aya-expanse:8b", "idx": "9-1163", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) الأيونات", "secs": 2.42}
+{"model": "aya-expanse:8b", "idx": "1139", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.85}
+{"model": "aya-expanse:8b", "idx": "1139", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.55}
+{"model": "aya-expanse:8b", "idx": "1139", "variant": "egy", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "1139", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.47}
+{"model": "aya-expanse:8b", "idx": "202", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.46}
+{"model": "aya-expanse:8b", "idx": "202", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) الاخطبو", "secs": 2.08}
+{"model": "aya-expanse:8b", "idx": "202", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) اخطبوط", "secs": 2.46}
+{"model": "aya-expanse:8b", "idx": "202", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) الأخطبوط", "secs": 2.52}
+{"model": "aya-expanse:8b", "idx": "7-710", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.55}
+{"model": "aya-expanse:8b", "idx": "7-710", "variant": "msa", "answer": "B", "pred": "A", "correct": false, "raw": "A) يأتي من الشيخ", "secs": 1.98}
+{"model": "aya-expanse:8b", "idx": "7-710", "variant": "egy", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 1.37}
+{"model": "aya-expanse:8b", "idx": "7-710", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) جاية من حياة", "secs": 1.92}
+{"model": "aya-expanse:8b", "idx": "8-493", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "8-493", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.39}
+{"model": "aya-expanse:8b", "idx": "8-493", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "8-493", "variant": "lev", "answer": "D", "pred": "A", "correct": false, "raw": "A", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "9-993", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "9-993", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) الأشجار\n\n", "secs": 1.75}
+{"model": "aya-expanse:8b", "idx": "9-993", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "9-993", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) الشجر\n\n", "secs": 2.03}
+{"model": "aya-expanse:8b", "idx": "9-51", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.45}
+{"model": "aya-expanse:8b", "idx": "9-51", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) غرفة معز", "secs": 2.44}
+{"model": "aya-expanse:8b", "idx": "9-51", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "9-51", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) غرفة معز", "secs": 2.24}
+{"model": "aya-expanse:8b", "idx": "9-1087", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "9-1087", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "9-1087", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) ناقص\n", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "9-1087", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) ينقص\n\n", "secs": 1.85}
+{"model": "aya-expanse:8b", "idx": "9-895", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "9-895", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) كان الموسم جاف", "secs": 2.24}
+{"model": "aya-expanse:8b", "idx": "9-895", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) الجو كان ناشف", "secs": 2.23}
+{"model": "aya-expanse:8b", "idx": "9-895", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) كان الموسم ناشف", "secs": 2.23}
+{"model": "aya-expanse:8b", "idx": "78", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "78", "variant": "msa", "answer": "B", "pred": "A", "correct": false, "raw": "A) الزهور", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "78", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.33}
+{"model": "aya-expanse:8b", "idx": "78", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "9-463", "variant": "eng", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "9-463", "variant": "msa", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "9-463", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.36}
+{"model": "aya-expanse:8b", "idx": "9-463", "variant": "lev", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "226", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "226", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D\n\nالخلاط", "secs": 1.87}
+{"model": "aya-expanse:8b", "idx": "226", "variant": "egy", "answer": "D", "pred": "C", "correct": false, "raw": "C\n\n(شوا", "secs": 1.97}
+{"model": "aya-expanse:8b", "idx": "226", "variant": "lev", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.44}
+{"model": "aya-expanse:8b", "idx": "591", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "591", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) طيعة وم", "secs": 1.88}
+{"model": "aya-expanse:8b", "idx": "591", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) مرن ومغ", "secs": 1.92}
+{"model": "aya-expanse:8b", "idx": "591", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) طيعة وم", "secs": 2.48}
+{"model": "aya-expanse:8b", "idx": "359", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "359", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) بيج فات", "secs": 1.85}
+{"model": "aya-expanse:8b", "idx": "359", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.33}
+{"model": "aya-expanse:8b", "idx": "359", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.28}
+{"model": "aya-expanse:8b", "idx": "1660", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "1660", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.69}
+{"model": "aya-expanse:8b", "idx": "1660", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "1660", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 2.06}
+{"model": "aya-expanse:8b", "idx": "57", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.4}
+{"model": "aya-expanse:8b", "idx": "57", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "57", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "57", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "1890", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "1890", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) تعديل المظهر", "secs": 2.2}
+{"model": "aya-expanse:8b", "idx": "1890", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 1.75}
+{"model": "aya-expanse:8b", "idx": "1890", "variant": "lev", "answer": "A", "pred": "B", "correct": false, "raw": "B) بيخبي ول", "secs": 2.21}
+{"model": "aya-expanse:8b", "idx": "9-110", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.8}
+{"model": "aya-expanse:8b", "idx": "9-110", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "9-110", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "9-110", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.19}
+{"model": "aya-expanse:8b", "idx": "9-692", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "9-692", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "9-692", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "9-692", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.19}
+{"model": "aya-expanse:8b", "idx": "9-437", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "9-437", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B\n\nالتغيرات", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "9-437", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) بصوت عال", "secs": 1.87}
+{"model": "aya-expanse:8b", "idx": "9-437", "variant": "lev", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "508", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "508", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) رحلة سبا", "secs": 1.77}
+{"model": "aya-expanse:8b", "idx": "508", "variant": "egy", "answer": "D", "pred": "C", "correct": false, "raw": "C) رحلة شغل\n", "secs": 1.87}
+{"model": "aya-expanse:8b", "idx": "508", "variant": "lev", "answer": "D", "pred": "C", "correct": false, "raw": "C) رحلة شغل\n", "secs": 1.9}
+{"model": "aya-expanse:8b", "idx": "9-482", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "9-482", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "9-482", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B) هيبقى مب", "secs": 1.76}
+{"model": "aya-expanse:8b", "idx": "9-482", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "178", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "178", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "178", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.28}
+{"model": "aya-expanse:8b", "idx": "178", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.29}
+{"model": "aya-expanse:8b", "idx": "9-411", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "9-411", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) سيتقلص", "secs": 2.0}
+{"model": "aya-expanse:8b", "idx": "9-411", "variant": "egy", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.52}
+{"model": "aya-expanse:8b", "idx": "9-411", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.45}
+{"model": "aya-expanse:8b", "idx": "1180", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D) the hard shell\n", "secs": 2.06}
+{"model": "aya-expanse:8b", "idx": "1180", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) القشرة الصل", "secs": 2.16}
+{"model": "aya-expanse:8b", "idx": "1180", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B) تخصيب\n", "secs": 2.11}
+{"model": "aya-expanse:8b", "idx": "1180", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) القشرة الصل", "secs": 2.06}
+{"model": "aya-expanse:8b", "idx": "898", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "898", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.39}
+{"model": "aya-expanse:8b", "idx": "898", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.37}
+{"model": "aya-expanse:8b", "idx": "898", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.36}
+{"model": "aya-expanse:8b", "idx": "9-894", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "9-894", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.29}
+{"model": "aya-expanse:8b", "idx": "9-894", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "9-894", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "9-618", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "9-618", "variant": "msa", "answer": "A", "pred": "D", "correct": false, "raw": "D) التراب\n\n", "secs": 1.76}
+{"model": "aya-expanse:8b", "idx": "9-618", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "9-618", "variant": "lev", "answer": "A", "pred": "D", "correct": false, "raw": "D) التراب\n\n", "secs": 1.81}
+{"model": "aya-expanse:8b", "idx": "9-197", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "9-197", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "9-197", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) مية\n\n", "secs": 1.91}
+{"model": "aya-expanse:8b", "idx": "9-197", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.46}
+{"model": "aya-expanse:8b", "idx": "7-334", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.82}
+{"model": "aya-expanse:8b", "idx": "7-334", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) يمكن توقع صف", "secs": 2.28}
+{"model": "aya-expanse:8b", "idx": "7-334", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) ممكن نتوقع", "secs": 2.29}
+{"model": "aya-expanse:8b", "idx": "7-334", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) ممكن نتوقع", "secs": 2.3}
+{"model": "aya-expanse:8b", "idx": "9-554", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "9-554", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) أن والدتهم تع", "secs": 2.62}
+{"model": "aya-expanse:8b", "idx": "9-554", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 2.26}
+{"model": "aya-expanse:8b", "idx": "9-554", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) عم تعلمهن", "secs": 3.07}
+{"model": "aya-expanse:8b", "idx": "767", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.63}
+{"model": "aya-expanse:8b", "idx": "767", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) خلية الملف", "secs": 138.59}
+{"model": "aya-expanse:8b", "idx": "767", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A) خلية ملف", "secs": 2.35}
+{"model": "aya-expanse:8b", "idx": "767", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) خلية الملف", "secs": 2.14}
+{"model": "aya-expanse:8b", "idx": "342", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "342", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) الذرة التقليدية", "secs": 1.89}
+{"model": "aya-expanse:8b", "idx": "342", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) ذرة تقليدية", "secs": 2.64}
+{"model": "aya-expanse:8b", "idx": "342", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) الذرة التقليدية", "secs": 5.76}
+{"model": "aya-expanse:8b", "idx": "1047", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 3.12}
+{"model": "aya-expanse:8b", "idx": "1047", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 8.33}
+{"model": "aya-expanse:8b", "idx": "1047", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 15.64}
+{"model": "aya-expanse:8b", "idx": "1047", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 3.17}
+{"model": "aya-expanse:8b", "idx": "7-1108", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 940.07}
+{"model": "aya-expanse:8b", "idx": "7-1108", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "7-1108", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "7-1108", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 9.68}
+{"model": "aya-expanse:8b", "idx": "7-903", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.53}
+{"model": "aya-expanse:8b", "idx": "7-903", "variant": "msa", "answer": "B", "pred": "A", "correct": false, "raw": "A) الكائنات الد", "secs": 1.65}
+{"model": "aya-expanse:8b", "idx": "7-903", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) الكائنات الح", "secs": 3.76}
+{"model": "aya-expanse:8b", "idx": "7-903", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) الحجارة المكس", "secs": 5.19}
+{"model": "aya-expanse:8b", "idx": "8-62", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 3.25}
+{"model": "aya-expanse:8b", "idx": "8-62", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 4.04}
+{"model": "aya-expanse:8b", "idx": "8-62", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 3.76}
+{"model": "aya-expanse:8b", "idx": "8-62", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 3.34}
+{"model": "aya-expanse:8b", "idx": "9-187", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 1.72}
+{"model": "aya-expanse:8b", "idx": "9-187", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 4.64}
+{"model": "aya-expanse:8b", "idx": "9-187", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 2.61}
+{"model": "aya-expanse:8b", "idx": "9-187", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 2.28}
+{"model": "aya-expanse:8b", "idx": "7-683", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D) it looks bigger\n", "secs": 3.77}
+{"model": "aya-expanse:8b", "idx": "7-683", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) يبدو أكبر\n", "secs": 4.19}
+{"model": "aya-expanse:8b", "idx": "7-683", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 4.97}
+{"model": "aya-expanse:8b", "idx": "7-683", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) بيبين أكبر", "secs": 1.95}
+{"model": "aya-expanse:8b", "idx": "381", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 2.6}
+{"model": "aya-expanse:8b", "idx": "381", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) عن طريق البذ", "secs": 3.0}
+{"model": "aya-expanse:8b", "idx": "381", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 2.44}
+{"model": "aya-expanse:8b", "idx": "381", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) بالبذور", "secs": 4.36}
+{"model": "aya-expanse:8b", "idx": "841", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 2.95}
+{"model": "aya-expanse:8b", "idx": "841", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 2.53}
+{"model": "aya-expanse:8b", "idx": "841", "variant": "egy", "answer": "C", "pred": "D", "correct": false, "raw": "D) نيون\n\n", "secs": 3.49}
+{"model": "aya-expanse:8b", "idx": "841", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 2.79}
+{"model": "aya-expanse:8b", "idx": "1161", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 2.35}
+{"model": "aya-expanse:8b", "idx": "1161", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 2.28}
+{"model": "aya-expanse:8b", "idx": "1161", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) تغيير شكل القمر", "secs": 3.41}
+{"model": "aya-expanse:8b", "idx": "1161", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) بتغير الكريقة", "secs": 3.92}
+{"model": "aya-expanse:8b", "idx": "9-655", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 2.78}
+{"model": "aya-expanse:8b", "idx": "9-655", "variant": "msa", "answer": "A", "pred": "B", "correct": false, "raw": "B) شخص ما سيح", "secs": 3.81}
+{"model": "aya-expanse:8b", "idx": "9-655", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 640.35}
+{"model": "aya-expanse:8b", "idx": "9-655", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.66}
+{"model": "aya-expanse:8b", "idx": "28", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "28", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) مباشرة\n\nالق", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "28", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) مباشر\n\n", "secs": 3959.47}
+{"model": "aya-expanse:8b", "idx": "28", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) مباشرة\n\nالق", "secs": 2.01}
+{"model": "aya-expanse:8b", "idx": "530", "variant": "eng", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.81}
+{"model": "aya-expanse:8b", "idx": "530", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.83}
+{"model": "aya-expanse:8b", "idx": "530", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) الهواء\n\n", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "530", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "8-53", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.58}
+{"model": "aya-expanse:8b", "idx": "8-53", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) الكيلومترات", "secs": 3.5}
+{"model": "aya-expanse:8b", "idx": "8-53", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 3.16}
+{"model": "aya-expanse:8b", "idx": "8-53", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.49}
+{"model": "aya-expanse:8b", "idx": "9-454", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.39}
+{"model": "aya-expanse:8b", "idx": "9-454", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.83}
+{"model": "aya-expanse:8b", "idx": "9-454", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) عصفور الح", "secs": 2.52}
+{"model": "aya-expanse:8b", "idx": "9-454", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 2.0}
+{"model": "aya-expanse:8b", "idx": "7-732", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "7-732", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) إنتاج الطاقة", "secs": 1.97}
+{"model": "aya-expanse:8b", "idx": "7-732", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.6}
+{"model": "aya-expanse:8b", "idx": "7-732", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) إنتاج الطاقة", "secs": 2.02}
+{"model": "aya-expanse:8b", "idx": "7-891", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.43}
+{"model": "aya-expanse:8b", "idx": "7-891", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) استخدامها مرات أكثر", "secs": 1.92}
+{"model": "aya-expanse:8b", "idx": "7-891", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.42}
+{"model": "aya-expanse:8b", "idx": "7-891", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) مستخدمة مرات", "secs": 2.08}
+{"model": "aya-expanse:8b", "idx": "8-57", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.53}
+{"model": "aya-expanse:8b", "idx": "8-57", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) يتم الوصول إلى الطاقة", "secs": 2.52}
+{"model": "aya-expanse:8b", "idx": "8-57", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) بنوصل للطاقة", "secs": 2.5}
+{"model": "aya-expanse:8b", "idx": "8-57", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) منحصل عال", "secs": 2.62}
+{"model": "aya-expanse:8b", "idx": "630", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.6}
+{"model": "aya-expanse:8b", "idx": "630", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "630", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.59}
+{"model": "aya-expanse:8b", "idx": "630", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.43}
+{"model": "aya-expanse:8b", "idx": "9-418", "variant": "eng", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "9-418", "variant": "msa", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.72}
+{"model": "aya-expanse:8b", "idx": "9-418", "variant": "egy", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.69}
+{"model": "aya-expanse:8b", "idx": "9-418", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "9-1034", "variant": "eng", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "9-1034", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "9-1034", "variant": "egy", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 1.33}
+{"model": "aya-expanse:8b", "idx": "9-1034", "variant": "lev", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 1.87}
+{"model": "aya-expanse:8b", "idx": "1545", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "1545", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "1545", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "1545", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-519", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-519", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) أشكال الحياة الصغيرة", "secs": 2.22}
+{"model": "aya-expanse:8b", "idx": "7-519", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B) أشكال الحياة الصغيرة", "secs": 2.34}
+{"model": "aya-expanse:8b", "idx": "7-519", "variant": "lev", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 1.83}
+{"model": "aya-expanse:8b", "idx": "7-157", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "7-157", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.71}
+{"model": "aya-expanse:8b", "idx": "7-157", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "7-157", "variant": "lev", "answer": "D", "pred": "B", "correct": false, "raw": "B) كميات صغيرة من", "secs": 2.23}
+{"model": "aya-expanse:8b", "idx": "9-257", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C) blend in\n\n", "secs": 1.85}
+{"model": "aya-expanse:8b", "idx": "9-257", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) ليختلط", "secs": 1.94}
+{"model": "aya-expanse:8b", "idx": "9-257", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B) عشوائى", "secs": 2.01}
+{"model": "aya-expanse:8b", "idx": "9-257", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A) ليبين خيالي", "secs": 2.0}
+{"model": "aya-expanse:8b", "idx": "9-916", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.44}
+{"model": "aya-expanse:8b", "idx": "9-916", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.87}
+{"model": "aya-expanse:8b", "idx": "9-916", "variant": "egy", "answer": "B", "pred": "D", "correct": false, "raw": "D) تبديد\n\n", "secs": 2.32}
+{"model": "aya-expanse:8b", "idx": "9-916", "variant": "lev", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 1.82}
+{"model": "aya-expanse:8b", "idx": "9-858", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.28}
+{"model": "aya-expanse:8b", "idx": "9-858", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C\n\nعندما تم", "secs": 1.86}
+{"model": "aya-expanse:8b", "idx": "9-858", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.4}
+{"model": "aya-expanse:8b", "idx": "9-858", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "1038", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.28}
+{"model": "aya-expanse:8b", "idx": "1038", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) ثانية\n\n", "secs": 1.82}
+{"model": "aya-expanse:8b", "idx": "1038", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) ثانيا", "secs": 1.77}
+{"model": "aya-expanse:8b", "idx": "1038", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "1074", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.9}
+{"model": "aya-expanse:8b", "idx": "1074", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) المعدن", "secs": 1.81}
+{"model": "aya-expanse:8b", "idx": "1074", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.36}
+{"model": "aya-expanse:8b", "idx": "1074", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) المعدن", "secs": 1.69}
+{"model": "aya-expanse:8b", "idx": "9-206", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "9-206", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) محرك السيارة", "secs": 1.73}
+{"model": "aya-expanse:8b", "idx": "9-206", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) موتور عربية\n", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "9-206", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) محرك السيارة", "secs": 1.82}
+{"model": "aya-expanse:8b", "idx": "7-364", "variant": "eng", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 1.28}
+{"model": "aya-expanse:8b", "idx": "7-364", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) إلى تردد", "secs": 2.17}
+{"model": "aya-expanse:8b", "idx": "7-364", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B) بتتهز لما", "secs": 2.17}
+{"model": "aya-expanse:8b", "idx": "7-364", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) بيتردد صد", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "568", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "568", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) إنه ميت\n", "secs": 1.71}
+{"model": "aya-expanse:8b", "idx": "568", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "568", "variant": "lev", "answer": "A", "pred": "B", "correct": false, "raw": "B) للمي\n\n", "secs": 1.75}
+{"model": "aya-expanse:8b", "idx": "9-317", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "9-317", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) الكهرباء\n\n", "secs": 1.72}
+{"model": "aya-expanse:8b", "idx": "9-317", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C\n\nالرياح", "secs": 1.78}
+{"model": "aya-expanse:8b", "idx": "9-317", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) الكهربا\n", "secs": 1.8}
+{"model": "aya-expanse:8b", "idx": "7-461", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "7-461", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) الخبز المح", "secs": 2.16}
+{"model": "aya-expanse:8b", "idx": "7-461", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "7-461", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "397", "variant": "eng", "answer": "D", "pred": "A", "correct": false, "raw": "A", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "397", "variant": "msa", "answer": "D", "pred": "A", "correct": false, "raw": "A", "secs": 1.64}
+{"model": "aya-expanse:8b", "idx": "397", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "397", "variant": "lev", "answer": "D", "pred": "A", "correct": false, "raw": "A) بتصير مست", "secs": 2.05}
+{"model": "aya-expanse:8b", "idx": "769", "variant": "eng", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "769", "variant": "msa", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "769", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) معدة\n\n", "secs": 1.78}
+{"model": "aya-expanse:8b", "idx": "769", "variant": "lev", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.38}
+{"model": "aya-expanse:8b", "idx": "7-787", "variant": "eng", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 1.35}
+{"model": "aya-expanse:8b", "idx": "7-787", "variant": "msa", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "7-787", "variant": "egy", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.34}
+{"model": "aya-expanse:8b", "idx": "7-787", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.32}
+{"model": "aya-expanse:8b", "idx": "9-416", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "9-416", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "9-416", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "9-416", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "8-97", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "8-97", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) إلى تشغيل ت", "secs": 2.13}
+{"model": "aya-expanse:8b", "idx": "8-97", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) مد السلك في", "secs": 2.17}
+{"model": "aya-expanse:8b", "idx": "8-97", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) تشغيل تيار", "secs": 2.16}
+{"model": "aya-expanse:8b", "idx": "644", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C\n\nWhile both incandescent", "secs": 1.71}
+{"model": "aya-expanse:8b", "idx": "644", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) أكثر حرارة\n", "secs": 1.75}
+{"model": "aya-expanse:8b", "idx": "644", "variant": "egy", "answer": "C", "pred": "A", "correct": false, "raw": "A) النور الابي", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "644", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A) الضو الأبيض\n\n", "secs": 1.8}
+{"model": "aya-expanse:8b", "idx": "1345", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "1345", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "1345", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) توفير الرواي", "secs": 1.66}
+{"model": "aya-expanse:8b", "idx": "1345", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "8-464", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "8-464", "variant": "msa", "answer": "C", "pred": "B", "correct": false, "raw": "B) محطة توليد الكهرب", "secs": 1.67}
+{"model": "aya-expanse:8b", "idx": "8-464", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) وصلات كهر", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "8-464", "variant": "lev", "answer": "C", "pred": "B", "correct": false, "raw": "B) محطة توليد الك", "secs": 1.8}
+{"model": "aya-expanse:8b", "idx": "9-566", "variant": "eng", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "9-566", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "9-566", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "9-566", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "9-44", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "9-44", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) الذيل الأبيض\n", "secs": 1.68}
+{"model": "aya-expanse:8b", "idx": "9-44", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) ديل ابيض", "secs": 1.81}
+{"model": "aya-expanse:8b", "idx": "9-44", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.3}
+{"model": "aya-expanse:8b", "idx": "1387", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.67}
+{"model": "aya-expanse:8b", "idx": "1387", "variant": "msa", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.65}
+{"model": "aya-expanse:8b", "idx": "1387", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.66}
+{"model": "aya-expanse:8b", "idx": "1387", "variant": "lev", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "7-244", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "7-244", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) ينكمش\n", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "7-244", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B) غير اللون", "secs": 1.78}
+{"model": "aya-expanse:8b", "idx": "7-244", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) يتقلص\n", "secs": 1.84}
+{"model": "aya-expanse:8b", "idx": "9-163", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.28}
+{"model": "aya-expanse:8b", "idx": "9-163", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) خليج البنغال", "secs": 1.75}
+{"model": "aya-expanse:8b", "idx": "9-163", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) خليج البنغال", "secs": 1.79}
+{"model": "aya-expanse:8b", "idx": "9-163", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "9-73", "variant": "eng", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "9-73", "variant": "msa", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "9-73", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D) كندا\n\nفي", "secs": 1.61}
+{"model": "aya-expanse:8b", "idx": "9-73", "variant": "lev", "answer": "A", "pred": "D", "correct": false, "raw": "D", "secs": 1.19}
+{"model": "aya-expanse:8b", "idx": "229", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "229", "variant": "msa", "answer": "D", "pred": "B", "correct": false, "raw": "B) المذنبات", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "229", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) أشعة شمس", "secs": 1.71}
+{"model": "aya-expanse:8b", "idx": "229", "variant": "lev", "answer": "D", "pred": "B", "correct": false, "raw": "B) المذنبات", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "1204", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "1204", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.64}
+{"model": "aya-expanse:8b", "idx": "1204", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.56}
+{"model": "aya-expanse:8b", "idx": "1204", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.54}
+{"model": "aya-expanse:8b", "idx": "9-1090", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.06}
+{"model": "aya-expanse:8b", "idx": "9-1090", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D) الأكسجين", "secs": 1.5}
+{"model": "aya-expanse:8b", "idx": "9-1090", "variant": "egy", "answer": "D", "pred": "D", "correct": true, "raw": "D) أو\n\nال", "secs": 1.62}
+{"model": "aya-expanse:8b", "idx": "9-1090", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D) الأكسجين", "secs": 1.7}
+{"model": "aya-expanse:8b", "idx": "7-875", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.21}
+{"model": "aya-expanse:8b", "idx": "7-875", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) شديدة الحرارة", "secs": 1.68}
+{"model": "aya-expanse:8b", "idx": "7-875", "variant": "egy", "answer": "A", "pred": "D", "correct": false, "raw": "D) بارد\n\n", "secs": 1.73}
+{"model": "aya-expanse:8b", "idx": "7-875", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) حارة كتير", "secs": 1.76}
+{"model": "aya-expanse:8b", "idx": "9-1164", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.23}
+{"model": "aya-expanse:8b", "idx": "9-1164", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "9-1164", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "9-1164", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.13}
+{"model": "aya-expanse:8b", "idx": "1458", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.12}
+{"model": "aya-expanse:8b", "idx": "1458", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.11}
+{"model": "aya-expanse:8b", "idx": "1458", "variant": "egy", "answer": "C", "pred": "D", "correct": false, "raw": "D) صغير\n\n(", "secs": 1.61}
+{"model": "aya-expanse:8b", "idx": "1458", "variant": "lev", "answer": "C", "pred": "A", "correct": false, "raw": "A", "secs": 1.22}
+{"model": "aya-expanse:8b", "idx": "9-1030", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "9-1030", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) مناظر الاست", "secs": 1.7}
+{"model": "aya-expanse:8b", "idx": "9-1030", "variant": "egy", "answer": "C", "pred": "C", "correct": true, "raw": "C) مشاهدات الاحساس", "secs": 1.77}
+{"model": "aya-expanse:8b", "idx": "9-1030", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) لمشاهد الاست", "secs": 1.81}
+{"model": "aya-expanse:8b", "idx": "7-685", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "7-685", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C) الديدان الطرية", "secs": 1.7}
+{"model": "aya-expanse:8b", "idx": "7-685", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) دود طاوى", "secs": 1.84}
+{"model": "aya-expanse:8b", "idx": "7-685", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 1.31}
+{"model": "aya-expanse:8b", "idx": "7-163", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "7-163", "variant": "msa", "answer": "A", "pred": "A", "correct": true, "raw": "A) شحن للأجهزة", "secs": 1.75}
+{"model": "aya-expanse:8b", "idx": "7-163", "variant": "egy", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 1.27}
+{"model": "aya-expanse:8b", "idx": "7-163", "variant": "lev", "answer": "A", "pred": "A", "correct": true, "raw": "A) شحن للأجهزة", "secs": 1.76}
+{"model": "aya-expanse:8b", "idx": "224", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.26}
+{"model": "aya-expanse:8b", "idx": "224", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.17}
+{"model": "aya-expanse:8b", "idx": "224", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "224", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "9-1166", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "9-1166", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) يستمر\n\n", "secs": 1.64}
+{"model": "aya-expanse:8b", "idx": "9-1166", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) الجو\n\n\nالن", "secs": 1.72}
+{"model": "aya-expanse:8b", "idx": "9-1166", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B) يستمر\n\n", "secs": 1.74}
+{"model": "aya-expanse:8b", "idx": "7-1122", "variant": "eng", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "7-1122", "variant": "msa", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.19}
+{"model": "aya-expanse:8b", "idx": "7-1122", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "7-1122", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 1.14}
+{"model": "aya-expanse:8b", "idx": "1200", "variant": "eng", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 1.15}
+{"model": "aya-expanse:8b", "idx": "1200", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) 29 فبراير", "secs": 1.65}
+{"model": "aya-expanse:8b", "idx": "1200", "variant": "egy", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.24}
+{"model": "aya-expanse:8b", "idx": "1200", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 1.2}
+{"model": "aya-expanse:8b", "idx": "7-1077", "variant": "eng", "answer": "D", "pred": "A", "correct": false, "raw": "A", "secs": 1.18}
+{"model": "aya-expanse:8b", "idx": "7-1077", "variant": "msa", "answer": "D", "pred": "A", "correct": false, "raw": "A) أواني ال", "secs": 2.12}
+{"model": "aya-expanse:8b", "idx": "7-1077", "variant": "egy", "answer": "D", "pred": "A", "correct": false, "raw": "A) أواني ال", "secs": 2.15}
+{"model": "aya-expanse:8b", "idx": "7-1077", "variant": "lev", "answer": "D", "pred": "A", "correct": false, "raw": "A", "secs": 1.37}
+{"model": "aya-expanse:8b", "idx": "7-49", "variant": "eng", "answer": "C", "pred": "C", "correct": true, "raw": "C", "secs": 0.5}
+{"model": "aya-expanse:8b", "idx": "7-49", "variant": "msa", "answer": "C", "pred": "C", "correct": true, "raw": "C) بالبازيلاء", "secs": 0.97}
+{"model": "aya-expanse:8b", "idx": "7-49", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.74}
+{"model": "aya-expanse:8b", "idx": "7-49", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C) بالبازيلا\n", "secs": 0.96}
+{"model": "aya-expanse:8b", "idx": "7-1105", "variant": "eng", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "7-1105", "variant": "msa", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "7-1105", "variant": "egy", "answer": "A", "pred": "C", "correct": false, "raw": "C) ممكن الفاير", "secs": 0.97}
+{"model": "aya-expanse:8b", "idx": "7-1105", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C) ممكن يقل", "secs": 0.98}
+{"model": "aya-expanse:8b", "idx": "404", "variant": "eng", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 0.76}
+{"model": "aya-expanse:8b", "idx": "404", "variant": "msa", "answer": "B", "pred": "D", "correct": false, "raw": "D", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "404", "variant": "egy", "answer": "B", "pred": "D", "correct": false, "raw": "D) عيون مايه", "secs": 0.97}
+{"model": "aya-expanse:8b", "idx": "404", "variant": "lev", "answer": "B", "pred": "A", "correct": false, "raw": "A", "secs": 0.77}
+{"model": "aya-expanse:8b", "idx": "8-491", "variant": "eng", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "8-491", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.95}
+{"model": "aya-expanse:8b", "idx": "8-491", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B) عندهم نور الشمس", "secs": 1.25}
+{"model": "aya-expanse:8b", "idx": "8-491", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 1.0}
+{"model": "aya-expanse:8b", "idx": "7-852", "variant": "eng", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "7-852", "variant": "msa", "answer": "A", "pred": "B", "correct": false, "raw": "B", "secs": 0.95}
+{"model": "aya-expanse:8b", "idx": "7-852", "variant": "egy", "answer": "A", "pred": "A", "correct": true, "raw": "A", "secs": 1.0}
+{"model": "aya-expanse:8b", "idx": "7-852", "variant": "lev", "answer": "A", "pred": "C", "correct": false, "raw": "C", "secs": 0.74}
+{"model": "aya-expanse:8b", "idx": "8-190", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "8-190", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B) البحار الفات", "secs": 0.96}
+{"model": "aya-expanse:8b", "idx": "8-190", "variant": "egy", "answer": "B", "pred": "A", "correct": false, "raw": "A) ميه سقعة", "secs": 0.96}
+{"model": "aya-expanse:8b", "idx": "8-190", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "9-881", "variant": "eng", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "9-881", "variant": "msa", "answer": "B", "pred": "C", "correct": false, "raw": "C) إعادة التدوير", "secs": 0.96}
+{"model": "aya-expanse:8b", "idx": "9-881", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C) إعادة تدوير", "secs": 1.04}
+{"model": "aya-expanse:8b", "idx": "9-881", "variant": "lev", "answer": "B", "pred": "C", "correct": false, "raw": "C) إعادة التدوير", "secs": 0.99}
+{"model": "aya-expanse:8b", "idx": "8-179", "variant": "eng", "answer": "D", "pred": "C", "correct": false, "raw": "C", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "8-179", "variant": "msa", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "8-179", "variant": "egy", "answer": "D", "pred": "B", "correct": false, "raw": "B", "secs": 0.73}
+{"model": "aya-expanse:8b", "idx": "8-179", "variant": "lev", "answer": "D", "pred": "D", "correct": true, "raw": "D", "secs": 0.73}
+{"model": "aya-expanse:8b", "idx": "9-478", "variant": "eng", "answer": "C", "pred": "D", "correct": false, "raw": "D", "secs": 0.7}
+{"model": "aya-expanse:8b", "idx": "9-478", "variant": "msa", "answer": "C", "pred": "D", "correct": false, "raw": "D) الأب\n\n", "secs": 0.97}
+{"model": "aya-expanse:8b", "idx": "9-478", "variant": "egy", "answer": "C", "pred": "B", "correct": false, "raw": "B", "secs": 0.49}
+{"model": "aya-expanse:8b", "idx": "9-478", "variant": "lev", "answer": "C", "pred": "C", "correct": true, "raw": "C\n\nمربع بونيت", "secs": 1.01}
+{"model": "aya-expanse:8b", "idx": "1508", "variant": "eng", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "1508", "variant": "msa", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.72}
+{"model": "aya-expanse:8b", "idx": "1508", "variant": "egy", "answer": "B", "pred": "C", "correct": false, "raw": "C", "secs": 0.74}
+{"model": "aya-expanse:8b", "idx": "1508", "variant": "lev", "answer": "B", "pred": "B", "correct": true, "raw": "B", "secs": 0.77}

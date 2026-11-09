@@ -1,0 +1,31 @@
+---
+import { youtubeThumb } from '../lib/site';
+
+interface Props {
+  id: string;
+  title: string;
+  start?: number;
+  hd?: boolean;
+  thumb?: string;
+}
+
+const { id, title, start, hd = false, thumb } = Astro.props;
+const poster = thumb ?? youtubeThumb(id, hd);
+---
+
+<button
+  type="button"
+  class="yt media-interactive"
+  data-yt={id}
+  data-start={start}
+  data-title={title}
+  aria-label={`play video: ${title}`}
+>
+  <img src={poster} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+  <span class="play">
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"></path></svg>
+      play video
+    </span>
+  </span>
+</button>

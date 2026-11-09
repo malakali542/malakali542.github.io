@@ -1,0 +1,28 @@
+---
+interface Props {
+  src: string;
+  poster?: string;
+  label: string;
+  fit?: 'cover' | 'contain';
+  class?: string;
+  captions?: string;
+  start?: number;
+}
+
+const { src, poster, label, fit = 'cover', class: className = '', captions, start } = Astro.props;
+---
+
+<video
+  class:list={['loop-video', fit === 'cover' ? 'media-fill' : 'media-contain', className]}
+  src={src}
+  poster={poster}
+  aria-label={label}
+  muted
+  loop
+  playsinline
+  preload="metadata"
+  data-autoplay
+  data-start={start}
+>
+  {captions && <track kind="captions" src={captions} srclang="en" label="English" />}
+</video>

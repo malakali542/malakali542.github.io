@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import LoopVideo from './LoopVideo.astro';
+import YouTube from './YouTube.astro';
+import CopilotDiagnostics from './demos/CopilotDiagnostics.astro';
+import TrustedAnswers from './demos/TrustedAnswers.astro';
+import PccLibrary from './demos/PccLibrary.astro';
+import MapStore from './demos/MapStore.astro';
+import BridgeTO from './demos/BridgeTO.astro';
+
+type MediaSpec = CollectionEntry<'work'>['data']['card'];
+
+interface Props {
+  media: MediaSpec;
+  label: string;
+}
+
+const { media, label } = Astro.props;
+
+const demos = {
+  'copilot-diagnostics': CopilotDiagnostics,
+  'trusted-answers': TrustedAnswers,
+  pcc: PccLibrary,
+  mapstore: MapStore,
+  bridgeto: BridgeTO,
+} as const;
+
+const Demo = media.kind === 'demo' ? demos[media.name] : null;
+---
+
+<div class="media">
+  {media.kind === 'video' && media.frame === 'laptop' && (
+    <div class="frame-laptop">
+      <div class="laptop-box">
+        <img class="laptop" src="/media/scout/scout-dashboard.png" alt="" loading="lazy" />
+        <LoopVideo src={media.src} poster={media.poster} label={label} class="screen" />
+      </div>
+    </div>
+  )}
+  {media.kind === 'video' && media.frame === 'phone' && (
+    <div class="frame-phone">
+      <LoopVideo src={media.src} poster={media.poster} label={label} fit="contain" />
+    </div>
+  )}
+  {media.kind === 'video' && media.frame === 'none' && (
+    <div class="media" style={media.bg ? `background:${media.bg}` : undefined}>
+      <LoopVideo src={media.src} poster={media.poster} label={label} fit={media.fit} start={media.start} />
+    </div>
+  )}
+  {media.kind === 'youtube' && <YouTube id={media.id} title={media.title} start={media.start} hd={media.hd} />}
+  {media.kind === 'image' && <img class="media-fill" src={media.src} alt={media.alt} loading="lazy" decoding="async" />}
+  {Demo && <Demo />}
+</div>

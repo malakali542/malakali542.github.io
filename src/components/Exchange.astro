@@ -1,0 +1,106 @@
+---
+import '@fontsource/ibm-plex-sans-arabic/arabic-400.css';
+
+interface Props {
+  model: string;
+  dialect: string;
+  prompt: string;
+  reply: string;
+  verdict: string;
+  gloss?: string;
+  instructed?: boolean;
+}
+
+const { model, dialect, prompt, reply, verdict, gloss, instructed = false } = Astro.props;
+// Split the English gloss so quoted Arabic words render in the Arabic font instead of the mono fallback.
+const glossParts = (gloss ?? '').split(/([\u0600-\u06FF][\u0600-\u06FF\s،]*[\u0600-\u06FF]|[\u0600-\u06FF])/).filter(Boolean);
+const isArabic = (s: string) => /[\u0600-\u06FF]/.test(s);
+---
+
+<figure class="exchange">
+  <div class="ex-row user">
+    <span class="ex-who">me, in {dialect}</span>
+    <p lang="ar" dir="rtl">{prompt}</p>
+  </div>
+  <div class="ex-row bot">
+    <span class="ex-who">{model}{instructed ? ', told to match my dialect' : ''}</span>
+    <p lang="ar" dir="rtl">{reply}</p>
+  </div>
+  <figcaption>
+    <span class="ex-verdict">{verdict}</span>
+    {gloss && (
+      <span>
+        {' · '}
+        {glossParts.map((part) => (isArabic(part) ? <span class="ar" lang="ar">{part}</span> : part))}
+      </span>
+    )}
+  </figcaption>
+</figure>
+
+<style>
+  .exchange {
+    margin: 1.8em 0;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+
+  .ex-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ex-row + .ex-row {
+    margin-top: 12px;
+  }
+
+  .ex-who {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--muted);
+  }
+
+  .user .ex-who {
+    align-self: flex-end;
+  }
+
+  .ex-row p {
+    margin: 0;
+    max-width: 88%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-family: 'IBM Plex Sans Arabic', var(--font-body);
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  .user p {
+    align-self: flex-end;
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .bot p {
+    align-self: flex-start;
+    background: var(--bg-soft);
+    border-bottom-left-radius: 4px;
+  }
+
+  .exchange figcaption {
+    margin-top: 12px;
+  }
+
+  .ex-verdict {
+    color: var(--accent);
+  }
+
+  .ar {
+    font-family: 'IBM Plex Sans Arabic', var(--font-body);
+    font-size: 1.12em;
+    letter-spacing: 0;
+  }
+</style>

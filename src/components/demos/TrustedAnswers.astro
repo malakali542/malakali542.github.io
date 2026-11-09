@@ -1,0 +1,171 @@
+---
+// Illustrative reconstruction, not the shipped UI and not real eval data.
+---
+
+<div class="demo demo-trust" data-seq data-cycle="13000" role="img" aria-label="Illustration: the same IT question answered by a generic web-and-LLM answer and by Copilot grounded in trusted sources, then scored by an evaluation rubric.">
+  <div class="q" data-step data-at="200">
+    <span class="who">IT admin</span> How do I block personal accounts on our company laptops?
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="col-head">search + generic LLM</div>
+      <div class="answer" data-step data-at="1400">
+        <p>Try this registry edit. A forum thread says it works on most versions.</p>
+        <span class="src weak">forum · 2019</span>
+      </div>
+      <div class="rubric" data-step data-at="5600"><span class="bad">grounded</span><span class="bad">cited</span><span class="bad">safe to act on</span></div>
+    </div>
+    <div class="col good">
+      <div class="col-head">copilot, grounded</div>
+      <div class="answer" data-step data-at="2800">
+        <p>Set it as a device policy so it covers every managed laptop.<sup>1</sup> Pilot it on one group first.<sup>2</sup></p>
+        <span class="src">1 · official docs</span><span class="src">2 · your IT guidance</span>
+      </div>
+      <div class="rubric" data-step data-at="7200"><span class="ok">grounded</span><span class="ok">cited</span><span class="ok">safe to act on</span></div>
+    </div>
+  </div>
+  <div class="judge" data-step data-at="9000">
+    <span class="mono">llm judge</span> calibrated to expert graders, gates the release
+  </div>
+  <span class="illustration-tag">illustration</span>
+</div>
+
+<style>
+  .demo-trust {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2cqh;
+    padding: 4.5cqh 4.5cqw 5.5cqh;
+    font-size: clamp(9px, 2.2cqw, 18px);
+    line-height: 1.35;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 45%),
+      var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .q {
+    padding: 0.7em 0.9em;
+    border-radius: 0.8em;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-weight: 500;
+  }
+
+  .who {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    color: var(--accent);
+    margin-right: 0.4em;
+  }
+
+  .cols {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    min-height: 0;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    padding: 0.8em 0.9em;
+    border-radius: 0.9em;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
+  }
+
+  .col.good {
+    border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+    background: var(--surface);
+  }
+
+  .col-head {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--muted);
+  }
+
+  .good .col-head {
+    color: var(--accent);
+  }
+
+  .answer p {
+    margin: 0 0 0.5em;
+    color: var(--ink-2);
+  }
+
+  .answer sup {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .src {
+    display: inline-block;
+    margin: 0.2em 0.3em 0 0;
+    padding: 0.15em 0.6em;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+
+  .src.weak {
+    background: var(--bg-soft);
+    color: var(--muted);
+  }
+
+  .rubric {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+    margin-top: auto;
+    padding-top: 0.5em;
+    border-top: 1px dashed var(--line);
+    font-size: 0.9em;
+  }
+
+  .rubric span {
+    padding: 0.1em 0.55em;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  .rubric span::before {
+    margin-right: 0.3em;
+    font-weight: 700;
+  }
+
+  .rubric .ok::before {
+    content: '✓';
+    color: var(--good);
+  }
+
+  .rubric .bad::before {
+    content: '✕';
+    color: #c2412d;
+  }
+
+  .judge {
+    align-self: flex-start;
+    max-width: calc(100% - 7em);
+    padding: 0.6em 0.9em;
+    border-radius: 0.8em;
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .judge .mono {
+    font-size: 0.9em;
+    margin-right: 0.5em;
+    color: var(--highlight);
+  }
+</style>

@@ -1,0 +1,37 @@
+export const site = {
+  name: 'Malak Ali',
+  title: 'malak ali',
+  email: 'malakali542@gmail.com',
+  description:
+    'Malak Ali is a research product manager at Microsoft Research working on Quine. Before that she shipped Recall and Copilot features at Microsoft AI and was a software engineer at Uber and PointClickCare.',
+  links: [
+    { label: 'linkedin', href: 'https://www.linkedin.com/in/-malakali/' },
+    { label: 'github', href: 'https://github.com/malakali542' },
+    { label: 'email', href: 'mailto:malakali542@gmail.com' },
+    { label: 'rss', href: '/rss.xml' },
+  ],
+};
+
+export function formatDate(date: Date, style: 'short' | 'long' = 'short'): string {
+  return date
+    .toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: style === 'long' ? 'long' : 'short',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })
+    .toLowerCase();
+}
+
+export function readingMinutes(text: string): number {
+  const words = text
+    .replace(/^---[\s\S]*?---/, '')
+    .replace(/<[^>]+>/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.round(words / 230));
+}
+
+export function youtubeThumb(id: string, hd = false): string {
+  return `https://i.ytimg.com/vi/${id}/${hd ? 'maxresdefault' : 'hqdefault'}.jpg`;
+}

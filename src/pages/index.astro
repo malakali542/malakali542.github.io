@@ -1,0 +1,119 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import WorkCard from '../components/WorkCard.astro';
+import PostList from '../components/PostList.astro';
+import { site } from '../lib/site';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const byGroup = (group: string) => work.filter((entry) => entry.data.group === group);
+const posts = (await getCollection('writing')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const lists = [
+  {
+    title: 'now',
+    items: [{ name: 'microsoft research', href: '/work/quine/', tag: 'research pm · quine' }],
+  },
+  {
+    title: 'before',
+    items: [
+      { name: 'microsoft ai', href: '/work/recall/', tag: 'pm · recall, copilot' },
+      { name: 'enlighted, a siemens co.', href: '/about/#experience', tag: 'pm intern' },
+      { name: 'uber', href: '/work/uber/', tag: 'swe · uberx share' },
+      { name: 'pointclickcare', href: '/work/pointclickcare/', tag: 'swe · provider portal' },
+    ],
+  },
+  {
+    title: 'on the side',
+    items: [
+      { name: 'scout', href: '/work/scout/', tag: 'co-founder' },
+      { name: 'dots', href: '/work/dots/', tag: 'hackathon winner' },
+    ],
+  },
+  {
+    title: 'community',
+    items: [
+      { name: 'bridgeto youth × amazon', href: '/work/bridgeto/', tag: 'tech director' },
+      { name: 'african microsoft employees', href: '/about/#community', tag: 'engagement director' },
+    ],
+  },
+];
+---
+
+<Base>
+  <section class="container hero">
+    <div>
+      <h1>hi, i'm <em>malak</em>.</h1>
+      <p>i'm a research product manager at microsoft research, where i work on <a href="/work/quine/">quine</a>, a world model of biology and the agent harness that lets scientists use it. i decide what the model should learn next, lead the evals that tell us whether it did, and turn those results into a roadmap across mid-training and post-training.</p>
+      <p>before that i was a product manager in microsoft ai, shipping <a href="/work/recall/">recall</a> and <a href="/work/copilot-diagnostics/">copilot</a> features to millions of windows pcs. before that i wrote code at <a href="/work/uber/">uber</a> and <a href="/work/pointclickcare/">pointclickcare</a>, and studied systems design engineering at the university of waterloo.</p>
+      <p>outside of work i run coding hackathons for toronto kids with <a href="/work/bridgeto/">bridgeto and amazon</a>, and i <a href="/writing/">write</a> about agents, evals and how well language models speak arabic.</p>
+      <div class="links">
+        {site.links.map((link) => <a href={link.href}>{link.label} ↗</a>)}
+      </div>
+    </div>
+    <aside class="side-lists" aria-label="experience at a glance">
+      {lists.map((list) => (
+        <div class="side-list">
+          <h2>{list.title}</h2>
+          <ul>
+            {list.items.map((item) => (
+              <li>
+                <a href={item.href}>{item.name}</a>
+                <span class="tag">[{item.tag}]</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </aside>
+  </section>
+
+  <section class="container section" id="work">
+    <div class="section-head">
+      <h2>selected work</h2>
+      <span class="mono"><a href="/work/">all work →</a></span>
+    </div>
+    <div class="grid">
+      {byGroup('work').map((entry) => <WorkCard entry={entry} />)}
+    </div>
+  </section>
+
+  <section class="container section" id="building">
+    <div class="section-head">
+      <h2>built on the side</h2>
+      <span class="mono muted">startups &amp; hackathons</span>
+    </div>
+    <div class="grid">
+      {byGroup('building').map((entry) => <WorkCard entry={entry} />)}
+    </div>
+  </section>
+
+  <section class="container section" id="writing">
+    <div class="section-head">
+      <h2>writing</h2>
+      <span class="mono"><a href="/writing/">all writing →</a></span>
+    </div>
+    <PostList posts={posts.slice(0, 5)} />
+  </section>
+
+  <section class="container section" id="community">
+    <div class="section-head">
+      <h2>community</h2>
+      <span class="mono muted">teaching &amp; organizing</span>
+    </div>
+    <div class="grid">
+      {byGroup('community').map((entry) => <WorkCard entry={entry} />)}
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title"><a href="/about/#community">african microsoft employees</a></h3>
+          <div class="card-meta">microsoft · 2025 - now · engagement director</div>
+          <p class="card-summary">
+            I lead programming and events for an employee resource group of 900+ members, building community and belonging
+            for African employees across Microsoft.
+          </p>
+          <span class="card-cta" aria-hidden="true">more about me →</span>
+        </div>
+      </article>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,48 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { formatDate, readingMinutes } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<'writing'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const minutes = readingMinutes(post.body ?? '');
+const others = (await getCollection('writing'))
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base title={post.data.title} description={post.data.dek} type="article" published={post.data.date}>
+  <article class="container">
+    <header class="post-head">
+      <a class="back" href="/writing/">← all writing</a>
+      <h1>{post.data.title}</h1>
+      <p class="dek">{post.data.dek}</p>
+      <div class="post-meta">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'long')}</time>
+        <span>{minutes} min read</span>
+        {post.data.tags.length > 0 && <span>{post.data.tags.join(' · ')}</span>}
+      </div>
+    </header>
+    <div class="post-body prose">
+      <Content />
+    </div>
+  </article>
+  {others.length > 0 && (
+    <section class="container section">
+      <div class="section-head">
+        <h2>more writing</h2>
+      </div>
+      <PostList posts={others} />
+    </section>
+  )}
+</Base>

@@ -1,0 +1,4 @@
+qwen2.5:3b: 647s
+qwen2.5:7b: 1513s
+aya-expanse:8b: 7925s
+command-r7b-arabic: 7133s

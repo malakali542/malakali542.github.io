@@ -1,0 +1,128 @@
+---
+interface Series {
+  label: string;
+  values: number[];
+  color?: string;
+}
+
+interface Props {
+  title: string;
+  groups: string[];
+  series: Series[];
+  max?: number;
+  unit?: string;
+  caption?: string;
+}
+
+const { title, groups, series, max = 100, unit = '%', caption } = Astro.props;
+const palette = ['var(--muted)', 'var(--ink-2)', 'var(--accent)', 'var(--highlight)', 'var(--good)'];
+---
+
+<figure class="barchart">
+  <div class="bc-title">{title}</div>
+  <div class="bc-legend">
+    {series.map((s, i) => (
+      <span><i style={`background:${s.color ?? palette[i % palette.length]}`}></i>{s.label}</span>
+    ))}
+  </div>
+  <div class="bc-groups">
+    {groups.map((group, gi) => (
+      <div class="bc-group">
+        <div class="bc-name">{group}</div>
+        <div class="bc-bars">
+          {series.map((s, si) => (
+            <div class="bc-row">
+              <span class="bc-bar" style={`width:${(100 * s.values[gi]) / max}%;background:${s.color ?? palette[si % palette.length]}`}></span>
+              <span class="bc-val">{s.values[gi].toFixed(1)}{unit}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .barchart {
+    margin: 2em 0;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+
+  .bc-title {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .bc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: 8px 0 14px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--muted);
+  }
+
+  .bc-legend i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: -1px;
+  }
+
+  .bc-groups {
+    display: grid;
+    gap: 14px;
+  }
+
+  .bc-group {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+  }
+
+  .bc-name {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink);
+  }
+
+  .bc-bars {
+    display: grid;
+    gap: 3px;
+  }
+
+  .bc-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bc-bar {
+    display: block;
+    height: 10px;
+    border-radius: 3px;
+    min-width: 2px;
+  }
+
+  .bc-val {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 560px) {
+    .bc-group {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4px;
+    }
+  }
+</style>

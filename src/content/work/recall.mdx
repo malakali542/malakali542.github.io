@@ -1,0 +1,90 @@
+---
+title: 'Windows Recall: onboarding, the retail demo, and shipping under scrutiny'
+short: Windows Recall
+org: Microsoft AI
+role: product manager
+period: 2024 - 2026
+order: 4
+group: work
+summary: Recall is the on-device memory for Copilot+ PCs. I built its onboarding flows and the retail demo experience that runs on in-store devices, working closely with UX research and design, and helped take it from preview to general availability.
+card:
+  kind: youtube
+  id: XoXODYYkLqo
+  title: 'Recall on Copilot+ PCs: A better way to recall anything'
+  hd: true
+hero:
+  kind: youtube
+  id: XoXODYYkLqo
+  title: 'Recall on Copilot+ PCs: A better way to recall anything'
+  hd: true
+  caption: Recall on Copilot+ PCs, from the official Windows channel.
+metrics:
+  - value: 30M+
+    label: monthly demo interactions on in-store devices
+  - value: 2.5%
+    label: sales conversion from the retail demo
+  - value: +15%
+    label: opt-in after the try-before-you-buy onboarding redesign
+  - value: 98%
+    label: true positive rate at 0.95 F1 for the risk classifiers
+facts:
+  - label: teams
+    value: 5+ across engineering, design, retail ops, content, partners
+  - label: worked with
+    value: UX research, design, data science
+  - label: shipped
+    value: Insider preview Nov 2024, general availability Apr 2025
+links:
+  - label: 'Windows Experience Blog: Recall reaches general availability on Copilot+ PCs (Apr 25, 2025)'
+    href: https://blogs.windows.com/windowsexperience/2025/04/25/copilot-pcs-are-the-most-performant-windows-pcs-ever-built-now-with-more-ai-features-that-empower-you-every-day/
+  - label: 'Windows Insider Blog: Previewing Recall with Click to Do (Nov 22, 2024)'
+    href: https://blogs.windows.com/windows-insider/2024/11/22/previewing-recall-with-click-to-do-on-copilot-pcs-with-windows-insiders-in-the-dev-channel/
+  - label: 'Windows Experience Blog: Update on Recall security and privacy architecture (Sept 27, 2024)'
+    href: https://blogs.windows.com/windowsexperience/2024/09/27/update-on-recall-security-and-privacy-architecture/
+---
+
+import Figure from '../../components/Figure.astro';
+import VideoBlock from '../../components/VideoBlock.astro';
+
+## Context
+
+Recall takes snapshots of your screen and lets you find anything you've seen on your PC by describing it, with all of the processing on the device. It was also one of the most closely watched features Windows has shipped. After its first announcement in 2024 drew public privacy and security concerns, Recall was reworked, previewed with Windows Insiders in November 2024, and reached general availability on Copilot+ PCs in April 2025.
+
+A feature like that has to earn trust on the first screen a person sees, and again on the first shelf they see it on. Those were my two areas.
+
+## Onboarding
+
+Funnel analysis showed **30% of first-time users dropping off** during onboarding, which made it the biggest retention lever we had. I prototyped quickly and drove the experimentation with UX research, design and our data science partners, running **10+ experiments** on the first-run flow.
+
+One change stood out: letting people try Recall before committing to it. The try-before-you-buy onboarding raised opt-in **15%** and engaged users **5%**, and it shaped the onboarding redesign roadmap that followed. Along the way I also shipped search, enterprise controls and the first-run experiences themselves.
+
+<Figure
+  src="https://winblogs.thesourcemediaassets.com/sites/44/2024/11/1-recall-fre.png"
+  alt="The first page of Recall's first-run experience, introducing Recall as a photographic memory for your PC, with a Next button."
+  caption="The first page of Recall's first-run experience in the Windows Insider preview"
+  credit="Windows Insider Blog"
+  href="https://blogs.windows.com/windows-insider/2024/11/22/previewing-recall-with-click-to-do-on-copilot-pcs-with-windows-insiders-in-the-dev-channel/"
+/>
+
+## The retail demo
+
+Many people meet a new Windows feature on a store shelf before they ever use it at home, so the in-store experience is a product of its own with a very short attention span. I drove Recall's retail launch across **5+ teams** (engineering, design, retail operations, content and partners), landing on-device AI experiences on millions of in-store devices.
+
+The demo experience reached **30M+ monthly demo interactions** with a **2.5% sales conversion rate**.
+
+<VideoBlock
+  youtube="uhuYCNM1bEI"
+  hd
+  title="What is Windows Recall?"
+  caption="How Recall is explained to the people who demo it in stores"
+  credit="Microsoft ExpertZone"
+  href="https://www.youtube.com/watch?v=uhuYCNM1bEI"
+/>
+
+## Responsible AI
+
+I led the Responsible AI release for Recall. We built input, retrieval and output guardrails into the validation pipeline to block harmful use, and I created the risk taxonomies behind classifiers that reached a **98% true positive rate at 0.95 F1**. Getting to launch also meant working through Responsible AI review, the EU's Digital Markets Act and accessibility requirements, all while the product was under intense public scrutiny.
+
+## What I learned
+
+For a privacy-sensitive feature, onboarding is where the architecture becomes something a person can actually feel. The security work had to be right, and the first-run experience had to make it understandable before anyone was asked to say yes.

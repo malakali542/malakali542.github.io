@@ -1,0 +1,149 @@
+---
+title: Ask in Egyptian, get answered in MSA
+dek: I asked four open models the same 200 questions in English, MSA, Egyptian and Levantine, then asked them for everyday help in four dialects. They understand less in dialect, and they almost never answer in one.
+date: 2026-02-08
+tags: [evals, arabic, language models]
+---
+
+import summary from '../../../research/arabic-dialects/results/summary.json';
+import BarChart from '../../components/BarChart.astro';
+import Exchange from '../../components/Exchange.astro';
+
+export const models = [
+  ['qwen2.5:3b', 'Qwen 2.5 3B'],
+  ['qwen2.5:7b', 'Qwen 2.5 7B'],
+  ['aya-expanse:8b', 'Aya Expanse 8B'],
+  ['command-r7b-arabic', 'Command R7B Arabic'],
+].filter(([id]) => summary.mcq[id]?.n === 200 && summary.fidelity[id]?.instructed?.all_dialects?.n === 48);
+
+Ask a language model something in Egyptian Arabic and it will usually answer in Modern Standard Arabic. It's the equivalent of replying to a friend's text in legal English: technically correct and socially deaf. I kept noticing it, so I measured it on my laptop.
+
+Arabic has one written standard and many spoken varieties. MSA is what people read in the news and write in formal documents. At home, at work and in group chats, people speak Egyptian, Levantine, Gulf, Moroccan and more, and the ones furthest apart are hard for each other's speakers to follow. A model that only works in MSA works for documents, not for the people writing to it.
+
+## The setup
+
+Two tests, four open models, one MacBook Air:
+
+- **Comprehension.** [AraDiCE](https://arxiv.org/abs/2409.11404), from QCRI, post-edited the OpenBookQA science questions into MSA, Egyptian and Levantine, alongside the English original. Because the four versions ask the same thing, any gap between them comes from the language variety and not the question. I asked each model the same 200 multiple-choice questions in all four.
+- **Dialect fidelity.** I wrote 12 everyday requests (making dinner, a slow phone, asking a manager for time off) in Egyptian, Levantine, Gulf and Moroccan Arabic, and checked each one with a public dialect classifier. Each request went to each model twice, once as written and once with a system message asking it to reply in my dialect. The same classifier then labeled all 384 replies.
+- **Models.** Qwen 2.5 at 3B and 7B parameters, Cohere's multilingual Aya Expanse 8B, and Cohere's Command R7B Arabic, which was built for Arabic. All of them ran 4-bit quantized at temperature 0.
+
+The code, the prompts and every raw reply are [on the research page](/research/arabic-dialects/).
+
+## They understand less in dialect
+
+<BarChart
+  title="Accuracy on the same 200 questions, by language variety"
+  groups={models.map(([, name]) => name)}
+  series={[
+    { label: 'English', color: 'var(--muted)', values: models.map(([id]) => summary.mcq[id].acc.eng) },
+    { label: 'MSA', color: 'var(--ink-2)', values: models.map(([id]) => summary.mcq[id].acc.msa) },
+    { label: 'Levantine', color: 'var(--accent)', values: models.map(([id]) => summary.mcq[id].acc.lev) },
+    { label: 'Egyptian', color: 'var(--highlight)', values: models.map(([id]) => summary.mcq[id].acc.egy) },
+  ]}
+  caption="AraDiCE OpenBookQA, zero-shot multiple choice, temperature 0"
+/>
+
+On identical questions, every model lost accuracy in Egyptian, between 12.5 and 20.5 points below its own MSA score, and the paired 95% intervals stay above zero for all four. Levantine cost 5.5 to 8.5 points, a smaller gap that only clears zero for Aya and Command R7B. MSA itself trails English by 6 to 15.5 points, so someone asking in Egyptian is two steps removed from what an English speaker gets. The model built for Arabic, Command R7B, had the best Egyptian score at 57.5% and still lost 12.5 points against its own MSA.
+
+Part of the Egyptian gap comes from the dataset itself. AraDiCE's Levantine questions stay closer to MSA wording: on average they share 30% of their words with the MSA version of the same question, against 21% for Egyptian. That's also the point. The further a variety drifts from MSA, the less these models understand it.
+
+## They answer in MSA no matter how you ask
+
+Without any instruction, the four models answered 191 of 192 dialect requests in MSA, and the one exception was a Gulf request to Qwen 3B. The model built for Arabic was no different. Command R7B knew that tabbouleh is Lebanese and that kabsa comes from the Gulf, and it still answered both requests in MSA.
+
+<Exchange
+  model="Qwen 2.5 7B"
+  dialect="Egyptian"
+  prompt="الموبايل بتاعي بقى بطيء أوي، أعمل إيه عشان يبقى أسرع؟"
+  reply="هناك عدة خطوات يمكنك اتباعها لتحسين أداء هاتفك المحمول: ١. تحديث نظام التشغيل: تأكد من أن هاتفك يعمل على آخر إصدار من نظام التشغيل…"
+  verdict="classified as MSA"
+  gloss="I asked “my phone got really slow, what do I do?” It opened with “there are several steps you can follow to improve the performance of your mobile telephone.”"
+/>
+
+<BarChart
+  title="Replies in the same dialect as the request"
+  groups={models.map(([, name]) => name)}
+  series={[
+    { label: 'no instruction', color: 'var(--muted)', values: models.map(([id]) => summary.fidelity[id].plain.all_dialects.match) },
+    { label: 'told to reply in my dialect', color: 'var(--accent)', values: models.map(([id]) => summary.fidelity[id].instructed.all_dialects.match) },
+  ]}
+  caption="48 requests per model and condition, 12 each in Egyptian, Levantine, Gulf and Moroccan, labeled by CAMeLBERT-DID"
+/>
+
+## Asking for dialect makes it weirder
+
+Then I added one system message: “Reply in the same Arabic dialect the user writes in. Do not switch to Modern Standard Arabic.” Here's where the replies went:
+
+| | matched my dialect | stayed in MSA | other dialects answered in Egyptian | had Chinese characters |
+|---|---|---|---|---|
+| Qwen 2.5 3B | 38% | 6% | 67% | 27% |
+| Qwen 2.5 7B | 25% | 31% | 53% | 31% |
+| Aya Expanse 8B | 8% | 92% | 0% | 0% |
+| Command R7B Arabic | 21% | 67% | 11% | 0% |
+
+The two Qwen models did switch when asked, but mostly into Egyptian. Of the Levantine, Gulf and Moroccan requests, 53% (7B) and 67% (3B) came back in Egyptian. Egyptian is the most widely spoken Arabic dialect, and decades of Egyptian film and TV made it the most widely understood. For these models, "dialect" seems to mean Egyptian. The switch also cost content. My question about kabsa got an Egyptian reply that never mentioned kabsa.
+
+<Exchange
+  model="Qwen 2.5 3B"
+  dialect="Gulf Arabic"
+  instructed
+  prompt="شلونك؟ أبي أسوي كبسة اليوم، وش أحتاج؟"
+  reply="صحي نهارك؟ بقى عندك حاجة معينة أم أنك محتاج لبصمة راحة?"
+  verdict="classified as Egyptian"
+  gloss="I asked what I need to make kabsa today. The reply switched to Egyptian (بقى، حاجة، محتاج) and asked whether I had something specific in mind or needed a rest."
+/>
+
+The instruction also shook something loose in Qwen. Between 27% and 31% of its instructed replies contained Chinese characters, against 2% to 6% without the instruction. Sometimes the switch happened in the middle of a word.
+
+<Exchange
+  model="Qwen 2.5 7B"
+  dialect="Gulf Arabic"
+  instructed
+  prompt="شلون أقول لمديري إني أبي إجازة بدون ما يزعل؟"
+  reply="يمكنك تقول له برفق واحترام، مثلاً: «مديري، أنا أرغب في أن أ请假可以这样表达：经理，我希望能请个假。不过你提到的是阿拉伯方言…»"
+  verdict="classified as MSA, with Chinese mid-word"
+  gloss="I asked how to tell my manager I want time off without upsetting him. Halfway through a word the reply switches to Chinese, roughly “asking for leave can be phrased like this… but you mentioned an Arabic dialect.”"
+/>
+
+Aya Expanse mostly ignored the request. 92% of its instructed replies stayed in MSA, often borrowing a word or two from my message, which made them look more local than they were.
+
+<Exchange
+  model="Aya Expanse 8B"
+  dialect="Levantine"
+  instructed
+  prompt="تلفوني صار كتير بطيء، شو بعمل لحتى يصير أسرع؟"
+  reply="إذا كان تلفونك أصبح بطيئًا جدًا، يمكنك اتباع هذه النصائح لتحسين أدائه…"
+  verdict="classified as MSA"
+  gloss="It kept my word for phone (تلفون) and answered everything else in MSA: “if your phone has become very slow, you can follow these tips to improve its performance.”"
+/>
+
+Command R7B Arabic behaved best and still fell short. It switched for 7 of 12 Egyptian requests and 3 of 12 Moroccan ones, never for Levantine or Gulf, and kept two thirds of its replies in MSA. Its seven Egyptian replies were real Egyptian and on topic, and they even matched the grammatical gender of whoever was asking. It never leaked another script, though it wasn't immune to the Egyptian pull: 4 of its 36 replies to the other dialects came back in Egyptian.
+
+<Exchange
+  model="Command R7B Arabic"
+  dialect="Egyptian"
+  instructed
+  prompt="ازيك؟ عايزة أعمل كشري في البيت النهارده، أبدأ منين؟"
+  reply="أهلاً! الكشري من الأكلات المصرية الشهيرة والسهلة إعدادها في البيت. دي خطوات بسيطة تبدئي بيها: ١. المكونات: أولًا، احرصي على وجود المكونات الأساسية…"
+  verdict="classified as Egyptian"
+  gloss="I asked how to start making koshary at home. It answered in Egyptian (دي، تبدئي بيها), in the feminine form my question used: “koshary is a famous Egyptian dish that's easy to make at home, here are some simple steps to start with.”"
+/>
+
+## What I'd change
+
+Accuracy benchmarks ask whether a model understood the question. They don't ask whether it answered in the language it was spoken to, and that's the part a user notices first. Three things would close the gap:
+
+1. **Score the variety of the answer, not just its correctness.** A dialect classifier and 48 prompts were enough to see the problem here. It belongs next to accuracy in every Arabic eval report.
+2. **Treat dialect as a capability with a release bar.** Give it a target, a measured rate and a threshold a model has to clear before it ships, the same way I'd treat tool-use accuracy.
+3. **Build the evals with native speakers.** AraDiCE had native speakers post-edit machine-translated questions, and that's the right pattern. Whoever writes the eval writes the norm, because the eval is what the model is trained to please.
+
+MSA isn't wrong. It just isn't how people talk, and a model that can't tell the difference will keep answering a friend's text like a legal notice.
+
+## Method notes
+
+- These are small models, 4-bit quantized, with one run each at temperature 0. Read it as a probe, not a leaderboard.
+- 200 questions per variety gives intervals of about ±6 points on each accuracy, so I lean on the paired drops, where each question is its own control.
+- The classifier, [CAMeLBERT-DID](https://huggingface.co/CAMeL-Lab/bert-base-arabic-camelbert-mix-did-madar-corpus6) trained on the MADAR corpus, labels the variety of a reply, not its quality. Qwen 3B's "Egyptian" answer to my koshary question was my own question echoed back, with a greeting in Latin letters in front and Chinese characters at the end.
+- I wrote the dialect prompts myself and screened them with the same classifier before running anything. Two Gulf prompts read as Egyptian on the first pass and were rewritten.
+- Command R7B Arabic's chat template adds Cohere's default system preamble whenever a system message is present, so it saw a longer prompt than the other models in the comprehension test and the instructed condition. That's how the model is meant to be run.

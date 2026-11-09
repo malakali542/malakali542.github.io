@@ -1,0 +1,68 @@
+---
+title: 'UberX Share: fewer confused cancellations, server-driven UI, and a 40% faster MapStore'
+short: UberX Share
+org: Uber
+role: software engineer
+period: 2022 - 2023
+order: 5
+group: work
+summary: On UberX Share I built rider flows that explain shared rides before people cancel over them, brought server-driven UI to our microservice and pitched it to the wider shared rides org, and cut MapStore's average query time 40%.
+card:
+  kind: youtube
+  id: 3kb7_3Imvuc
+  title: 'Share the passion. Share the ride | Uber'
+  hd: true
+hero:
+  kind: youtube
+  id: 3kb7_3Imvuc
+  title: 'Share the passion. Share the ride | Uber'
+  hd: true
+  caption: UberX Share, from Uber's official channel.
+metrics:
+  - value: 40%
+    label: lower average MapStore query time
+  - value: +4.5%
+    label: shared-ride adoption from opt-in funnel A/B tests
+  - value: 4
+    label: markets in the UberX Share rollout
+facts:
+  - label: team
+    value: UberX Share, shared rides and matching
+  - label: location
+    value: New York
+  - label: worked with
+    value: legal, policy, operations
+links:
+  - label: 'Uber Newsroom: Introducing UberX Share'
+    href: https://www.uber.com/us/en/newsroom/uberx-share/
+  - label: 'Uber Engineering: a server-driven platform for driver preferences with RIBs'
+    href: https://www.uber.com/us/en/blog/carbon-driver-app-preferences-ribs/
+---
+
+import DemoBlock from '../../components/DemoBlock.astro';
+
+## Context
+
+UberX Share brought shared rides back after Uber paused them in 2020. The trade is simple on paper: you might pick up a co-rider heading the same way, and in exchange you get an upfront discount and up to 20% off if you're matched, while arriving no more than 8 minutes later than a regular UberX ([Uber Newsroom](https://www.uber.com/us/en/newsroom/uberx-share/)).
+
+On paper. In the app, a rider who didn't understand that trade would see an unexpected stop or a stranger getting in, and cancel.
+
+## Flows that explain the ride before it surprises you
+
+Some cancellations weren't about price or wait time at all. They came from riders who didn't understand what they had booked. I built flows to cut those cancellations, including the **first-time-user experience for UberX Share in the Rider app**, so the trade is explained before the ride instead of discovered during it.
+
+Alongside that, I ran **A/B experiments on the opt-in funnels** and turned the research and data analysis into feature changes that shipped, lifting shared-ride adoption **4.5%**. I also led the rollout across **4 markets**, coordinating legal, policy and operations so the technical implementation matched each market's regulatory requirements.
+
+## Server-driven UI
+
+Rider flows change constantly, and every change that waits on an app release is slow to test. I **onboarded server-driven UI to our microservice**, so the backend describes what a screen shows and we could change and experiment with flows without shipping a new app version. Once it worked for us, I evangelized it across the shared rides and ride matching org.
+
+## MapStore, 40% faster
+
+MapStore is an internal service other engineering teams use for map data. I redesigned the service interface and the query architecture: **paginated** responses that used to return entire result sets, **rewrote the slowest SQL queries**, and trimmed payloads so the internal tools on top of it **loaded faster**. Average query time dropped **40%** for the teams that depend on it.
+
+<DemoBlock name="mapstore" caption="Illustration: the same paginated query before and after the redesign. Not the real interface." />
+
+## What I learned
+
+The cheapest fix for a confusing product is often an explanation at the right moment, not a new feature. And internal infrastructure is a product too. MapStore's users were engineers on other teams, and they noticed a 40% faster query as much as riders notice a faster pickup.

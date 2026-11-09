@@ -1,0 +1,85 @@
+---
+title: Two agents, one owner
+dek: The agent economy needs a buyer's side, and someone independent to check that it exists.
+date: 2026-10-12
+tags: [agents, commerce, evals]
+---
+
+If I give an AI agent a $200 budget for headphones, I want it to find the best purchase for me. I don't want it to find the most profitable way for its owner to spend my $200.
+
+That distinction gets harder to see when the same company operates the agent helping me buy, the agent helping a business sell, and the advertising system deciding which businesses get considered. The interface can show two agents negotiating while the same platform controls how they meet and which options are available.
+
+Calling the first agent "mine" doesn't establish whom it represents. I can give it instructions without having any control over the commercial objectives its operator builds around those instructions.
+
+## The seller already has representation
+
+This is no longer a question about hypothetical products. [Meta's Business Agent](https://about.fb.com/news/2026/06/meta-business-agent/) can recommend products from a business catalog, qualify leads and close sales. Meta says more than one million businesses already use it on WhatsApp and Messenger, and it's expanding to Instagram.
+
+On the consumer side, [Meta's personal agent Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) can open a browser, fill out forms, negotiate on someone's behalf and help make purchases. These are different products with different roles, offered by the same company.
+
+The business behind them matters. In its 2025 results, Meta reported $196.2 billion in advertising revenue out of $201.0 billion in total revenue, which means about 98% of its revenue came from advertising.
+
+That doesn't prove anything about how Muse ranks a particular purchase. It does explain why I want more than a friendly interface before treating a consumer agent as an independent buyer's representative.
+
+Meta also states real protections. Muse asks for approval before purchases, shows a complete audit trail, and doesn't share a person's conversations or the data in their virtual machine with Meta's ad systems. Those commitments matter, and it would be wrong to describe the product as secretly feeding conversations into ad targeting.
+
+But protecting my conversations and representing my purchasing interests are different obligations. A platform could keep my private data out of its ad systems while still deciding which merchants its assistant considers, how it ranks offers, or which commercial relationships shape the experience.
+
+Shared ownership is a conflict to govern, not proof that every recommendation is corrupt.
+
+## What disappears when shopping becomes a task
+
+The shopping web isn't neutral today. Sponsored results, affiliate reviews and marketplace rankings already influence what people buy, and agents didn't invent that problem.
+
+They can make it harder to inspect.
+
+When I delegate shopping, I'm asking software to do the comparison work I no longer want to do myself. That means I may stop seeing the alternatives, the reasons for rejecting them, and the commercial incentives that shaped the shortlist. Part of the convenience comes from removing that work from view.
+
+Consider a hypothetical purchase. Two pairs of headphones meet every requirement I specified, and I've said to prefer the cheaper option when that happens. One costs $120 and the other costs $190.
+
+Suppose the agent's operator earns more by directing me to the $190 pair, so the cheaper one never makes the shortlist. The agent can stay under my $200 limit, produce a persuasive explanation and ask for my approval before paying, and none of those steps establishes that it represented me. My spending limit has become room for someone else's commercial objective instead of a constraint on my own.
+
+A sponsored label on the final offer would disclose something useful, but it wouldn't explain why the $120 option disappeared. Approval confirms the purchase I was shown, not the independence of the search that produced it.
+
+This is where abstraction can become more abusive than the shopping process it replaces. An advertisement tries to persuade me. An agent entrusted with comparison and purchasing can shape the decision before there's anything left for me to approve.
+
+## Two bots don't make two sides
+
+"Agent-to-agent" describes how software communicates. It doesn't tell us whether the parties have independent interests.
+
+A merchant's agent is supposed to help the merchant sell, and there's nothing deceptive about that role. The problem starts when the agent presented as my representative answers to the same commercial interests without a binding obligation to represent me within the task I delegated.
+
+Using the same model or hosting provider doesn't, by itself, collapse buyer and seller into one party. The concern is shared control over objectives, rankings and access, not the fact that both agents call the same API. Two differently named agents can still have objectives set by the same owner, and their exchange might be useful automation, but it isn't evidence of independent negotiation.
+
+I wouldn't claim that advertisers win every transaction. The platform needs people to find its assistant useful, and a good recommendation can serve the buyer, the seller and the platform at once. Nor are a platform's interests identical to every advertiser's. The harder question is what happens when those interests diverge, because without an enforceable buyer-side obligation, my interests can be weighed against the owner's revenue instead of governing the purchase.
+
+Open protocols don't make that conflict go away. Interoperability helps independent agents compete, but compatible messages don't establish independent representation. An outside buyer's agent also needs real access to merchants: if it can only see a restricted catalog, or has to use rankings supplied by the advertising platform, switching assistants doesn't change who controls the choices.
+
+## Independent has to mean something
+
+I don't think every buyer needs to run a model on a laptop or avoid technology made by large companies. A small startup funded by referral commissions can have the same conflict as a much larger platform. Independence has to describe how the agent is operated, not the name on its model.
+
+Four things would make it real:
+
+- **No paid priority.** Seller payments shouldn't buy priority in an agent acting as my buyer's representative. If compensation is involved, I should be able to see it and whether it affected the search. Calling a result "relevant" isn't an adequate explanation for a paid preference.
+- **A record of the search, not just the purchase.** The log should include the meaningful alternatives and the reasons for the choice, not just proof that the agent opened a page and clicked a button.
+- **Control over what gets revealed.** I should decide which constraints the agent shares with sellers, because my maximum budget isn't automatically an offer to spend it.
+- **Portability.** I need to be able to move my preferences and permissions to another provider. Otherwise an agent that learns to serve me well becomes expensive to leave, even after I stop trusting its operator.
+
+[Stanford researchers have argued for a duty of loyalty for consumer AI agents](https://hai.stanford.edu/policy/designing-loyalty-ai-agents-and-conflicts-of-interest), especially in higher-stakes settings. That's a useful starting point: an obligation to act in the user's interests within the task they delegated, rather than quietly subordinating those interests to the developer's or the deployer's.
+
+## Someone has to check
+
+A duty of loyalty needs a way to detect violations and consequences when they happen, and that's the piece I think is missing. A promise in a product announcement can't do that job. Neither can the agents themselves, since each one is, by design, on somebody's side.
+
+The plumbing for agent payments is already arriving. Google's [Agent Payments Protocol](https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol), launched with more than 60 payments and technology partners, uses signed "mandates" to prove what a user authorized and that the cart they approved is the cart they paid for. That's real progress on consent. It still can't tell me whether the $120 headphones were ever on the list.
+
+Commerce has solved a version of this before. Card networks settle disputes between people who will never meet, auditors sign off on books they didn't write, and product testers buy items off the shelf instead of trusting the box. Each of them is a party that is neither the buyer nor the seller, and gets paid to stay that way.
+
+Agents need that third party, and the closest tool we have is the one I use at work every day: evals. An independent tester could run the same shopping tasks through different buyer agents, with known best answers, and publish how often each one found the cheaper option, disclosed a paid placement or walked away from a bad deal. It would have to run continuously, the way we run regression evals on models, because an agent's behavior can change with a model update or a new partnership. Mystery shopping for software is cheap, and it turns "trust us" into a number anyone can check.
+
+I want agents to make comparison shopping less exhausting. They could check total prices, compare return policies, challenge unnecessary upgrades and walk away from a bad deal without getting tired. An ad-supported service could still provide real value, and a subscription alone wouldn't guarantee loyalty.
+
+But the benefit depends on having someone on the buyer's side, and someone else checking that they stayed there. Before I hand software my budget, I want to know whether it's allowed to bargain against its own owner's commercial interests.
+
+If the answer is no, I haven't hired a buyer's agent. I've given the seller a more convenient way to reach my wallet.

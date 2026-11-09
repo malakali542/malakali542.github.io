@@ -1,0 +1,232 @@
+---
+// Illustrative reconstruction of the diagnostics flow, not the shipped UI.
+---
+
+<div class="demo demo-diag" data-seq data-cycle="15000" role="img" aria-label="Illustration: Copilot asks permission, runs a read-only diagnostic script on the PC, and explains the Wi-Fi problem it found.">
+  <div class="win">
+    <div class="win-bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="win-title">Copilot</span>
+    </div>
+    <div class="chat">
+      <div class="msg user" data-step data-at="300">my wifi keeps dropping every few minutes</div>
+      <div class="msg bot" data-step data-at="1500">I can check this PC's network adapter and recent connection events. It's a read-only script that runs on your device.</div>
+      <div class="consent" data-step data-at="3200">
+        <div class="consent-title">Run a diagnostic on this PC?</div>
+        <div class="consent-row"><span>reads</span> adapter status, power settings, 24h of Wi-Fi events</div>
+        <div class="consent-row"><span>changes</span> nothing</div>
+        <div class="consent-actions">
+          <span class="btn primary allow">Allow once<span class="cursor" data-step data-at="4500" aria-hidden="true"></span></span>
+          <span class="btn">Not now</span>
+        </div>
+      </div>
+      <div class="term" data-step data-at="5600">
+        <div data-step data-at="5900"><b>&gt;</b> Get-NetAdapter -Name "Wi-Fi"</div>
+        <div class="out" data-step data-at="6700">Status Up · driver 22.250.1.2</div>
+        <div data-step data-at="7500"><b>&gt;</b> netsh wlan show wlanreport</div>
+        <div class="out" data-step data-at="8400">12 disconnects · reason: power saving</div>
+      </div>
+      <div class="msg bot" data-step data-at="9600">Found it: Windows is switching your Wi-Fi adapter off to save power. Want me to change that setting for you? I'll ask before I touch anything.</div>
+      <div class="chips" data-step data-at="11200"><span class="btn primary">Fix it</span><span class="btn">Show me how</span></div>
+    </div>
+  </div>
+  <span class="illustration-tag">illustration</span>
+</div>
+
+<style>
+  .demo-diag {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 4.5cqh 6cqw;
+    font-size: clamp(9px, 2.15cqw, 17px);
+    line-height: 1.35;
+    background:
+      radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 45%),
+      radial-gradient(circle at 90% 85%, color-mix(in srgb, var(--highlight) 35%, transparent), transparent 45%),
+      var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .win {
+    width: min(100%, 64em);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1em;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .win-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.7em 0.9em;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    color: var(--muted);
+  }
+
+  .win-bar .dot {
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: var(--line);
+  }
+
+  .win-title {
+    margin-left: 0.6em;
+  }
+
+  .chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.6em;
+    padding: 0.9em 1.1em 1.1em;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, transparent, #000 2.2em);
+  }
+
+  .msg {
+    max-width: 82%;
+    padding: 0.55em 0.85em;
+    border-radius: 0.9em;
+    color: var(--ink);
+  }
+
+  .msg.user {
+    align-self: flex-end;
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 0.25em;
+  }
+
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--bg-soft);
+    border-bottom-left-radius: 0.25em;
+  }
+
+  .consent {
+    align-self: flex-start;
+    width: 78%;
+    padding: 0.7em 0.9em;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+    border-radius: 0.8em;
+    background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface));
+    color: var(--ink);
+  }
+
+  .consent-title {
+    font-weight: 600;
+    margin-bottom: 0.35em;
+  }
+
+  .consent-row {
+    color: var(--ink-2);
+  }
+
+  .consent-row span {
+    display: inline-block;
+    min-width: 4.6em;
+    font-family: var(--font-mono);
+    color: var(--muted);
+  }
+
+  .consent-actions,
+  .chips {
+    display: flex;
+    gap: 0.5em;
+    margin-top: 0.55em;
+  }
+
+  .btn {
+    padding: 0.3em 0.8em;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    color: var(--ink);
+  }
+
+  .btn.primary {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .allow {
+    position: relative;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .allow:has(.cursor.is-on) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .cursor {
+    position: absolute;
+    right: -0.5em;
+    bottom: -1em;
+    width: 1.3em;
+    height: 1.3em;
+    background: no-repeat center / contain
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l15 9-6.5 1.5L9.5 19z' fill='%23111' stroke='%23fff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
+  .term {
+    align-self: stretch;
+    padding: 0.6em 0.8em;
+    border-radius: 0.6em;
+    background: #16181d;
+    color: #d7dae0;
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+  }
+
+  .term b {
+    color: #8fd18f;
+    font-weight: 500;
+  }
+
+  .term .out {
+    color: #9aa3b2;
+    padding-left: 1em;
+  }
+
+  .chips {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+
+  /* Behave like a real chat: unrevealed messages take no space, newest sits at the bottom. */
+  .demo-diag:global(.seq-on) .chat [data-step]:not(:global(.is-on)) {
+    display: none;
+  }
+
+  .chat [data-step]:global(.is-on) {
+    animation: pop 0.35s ease;
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(0.5em);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

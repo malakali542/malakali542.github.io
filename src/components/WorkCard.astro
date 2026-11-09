@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Media from './Media.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  headingLevel?: 'h3' | 'h2';
+}
+
+const { entry, headingLevel = 'h3' } = Astro.props;
+const { title, short, org, period, role, summary, card } = entry.data;
+const href = `/work/${entry.id}/`;
+const Heading = headingLevel;
+---
+
+<article class="card">
+  <div class="card-media">
+    <Media media={card} label={`${short}: preview`} />
+  </div>
+  <div class="card-body">
+    <Heading class="card-title"><a href={href}>{title}</a></Heading>
+    <div class="card-meta">{org} · {period} · {role}</div>
+    <p class="card-summary">{summary}</p>
+    <span class="card-cta" aria-hidden="true">read the case study →</span>
+  </div>
+</article>

@@ -1,0 +1,18 @@
+---
+import type { demoNames } from '../content.config';
+import Media from './Media.astro';
+
+interface Props {
+  name: (typeof demoNames)[number];
+  caption?: string;
+}
+
+const { name, caption } = Astro.props;
+---
+
+<figure>
+  <div class="figure-media tall">
+    <Media media={{ kind: 'demo', name }} label={caption ?? 'illustration'} />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

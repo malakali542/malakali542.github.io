@@ -1,0 +1,50 @@
+---
+title: 'Copilot diagnostics: letting Copilot run code on your PC to fix it'
+short: Copilot diagnostics
+org: Microsoft AI
+role: product manager
+period: 2024 - 2026
+order: 2
+group: work
+summary: Copilot was bad at fixing PCs because it couldn't see the PC. I owned diagnostics in Copilot Tasks, which lets Copilot write and run code locally, with the user's consent, so it troubleshoots from real system state instead of guesses.
+card:
+  kind: demo
+  name: copilot-diagnostics
+hero:
+  kind: demo
+  name: copilot-diagnostics
+  caption: An illustration of the consent-then-execute idea, not the shipped UI.
+metrics:
+  - value: 10M+
+    label: Windows Copilot users the capability shipped to
+facts:
+  - label: product
+    value: Copilot Tasks on Windows
+  - label: owned
+    value: product definition, consent flows, model readiness, guardrails
+---
+
+## The problem
+
+People ask Copilot things like "why is my laptop so slow" or "my wifi keeps dropping." Copilot used to answer those from the outside. It could offer the generic checklist (restart, update your drivers, run the troubleshooter) that the person had usually tried already, because the answer to most PC problems lives in local state a chat model can't see: event logs, driver versions, battery reports, disk usage, adapter settings.
+
+So the gap wasn't only model intelligence. Copilot had no way to look at the machine it was supposed to fix.
+
+## What I did
+
+I owned product definition for **diagnostics in Copilot Tasks**, the capability that lets Copilot generate code and execute it locally on a person's Windows PC. Copilot can write a diagnostic, run it on the device, read the output and reason from what it actually found.
+
+Running model-written code on someone's personal computer is a big ask, so most of the product work was deciding exactly when and how Copilot is allowed to do it:
+
+- **Consent flows.** I designed how Copilot asks before it runs anything on a person's machine, so the user stays the one who decides.
+- **Model readiness criteria.** I defined the bar a model had to clear before it could generate and execute code for real users, and the evals behind that bar.
+- **Execution guardrails and human-approval boundaries.** I drew the line between what the agent can do on its own and what always needs a person to approve, including the permission patterns for exposing OS capabilities to the agent as tools.
+- **OS context.** I shipped Copilot and Windows integrations that surface richer system context, so answers start from the machine's real state.
+
+## Outcome
+
+Diagnostics shipped to **10M+ Windows Copilot users**. The goal was to move troubleshooting from "here are 6 things to try" to "here is what is wrong with this PC, and here is a fix if you want it."
+
+## What I learned
+
+Agents on a personal computer are a trust product before they are a model product. The hardest calls on this project were rarely about what the model could do. They were about what it should be allowed to do without asking, and how to make that boundary obvious to the person at the keyboard.

@@ -1,0 +1,30 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  credit?: string;
+  href?: string;
+  contain?: boolean;
+  blend?: boolean;
+}
+
+const { src, alt, caption, credit, href, contain = false, blend = false } = Astro.props;
+---
+
+<figure>
+  <div class:list={['figure-media', { blend }]}>
+    <img src={src} alt={alt} loading="lazy" decoding="async" referrerpolicy="no-referrer" style={contain ? 'object-fit:contain;max-height:560px;margin-inline:auto' : undefined} />
+  </div>
+  {(caption || credit) && (
+    <figcaption>
+      {caption}
+      {credit && (
+        <>
+          {caption ? ' · ' : ''}
+          {href ? <a href={href}>{credit}</a> : credit}
+        </>
+      )}
+    </figcaption>
+  )}
+</figure>

@@ -1,0 +1,44 @@
+---
+import YouTube from './YouTube.astro';
+import LoopVideo from './LoopVideo.astro';
+
+interface Props {
+  youtube?: string;
+  hd?: boolean;
+  src?: string;
+  poster?: string;
+  title: string;
+  caption?: string;
+  credit?: string;
+  href?: string;
+  phone?: boolean;
+  start?: number;
+  bg?: string;
+  contain?: boolean;
+}
+
+const { youtube, hd = false, src, poster, title, caption, credit, href, phone = false, start, bg, contain = false } = Astro.props;
+---
+
+<figure>
+  <div class="video-wrap" style={phone ? 'aspect-ratio:auto;background:var(--bg-soft)' : bg ? `background:${bg}` : undefined}>
+    {youtube && <YouTube id={youtube} title={title} hd={hd} />}
+    {src && !phone && <LoopVideo src={src} poster={poster} label={title} start={start} fit={contain ? 'contain' : 'cover'} />}
+    {src && phone && (
+      <div class="frame-phone" style="height:520px">
+        <LoopVideo src={src} poster={poster} label={title} fit="contain" />
+      </div>
+    )}
+  </div>
+  {(caption || credit) && (
+    <figcaption>
+      {caption}
+      {credit && (
+        <>
+          {caption ? ' · ' : ''}
+          {href ? <a href={href}>{credit}</a> : credit}
+        </>
+      )}
+    </figcaption>
+  )}
+</figure>

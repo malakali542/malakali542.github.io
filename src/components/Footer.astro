@@ -1,0 +1,16 @@
+---
+import { site } from '../lib/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <p class="say-hi" style="margin:0">building something in evals, agents<br />or ai for science? <a href={`mailto:${site.email}`}>say hi</a>.</p>
+      <div class="footer-links">
+        {site.links.map((link) => <a href={link.href}>{link.label}</a>)}
+      </div>
+    </div>
+    <p class="footer-note">© {year} malak ali · seattle · built with astro, set in instrument serif and inter</p>
+  </div>
+</footer>

@@ -1,0 +1,12 @@
+import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
+
+export default defineConfig({
+  site: process.env.SITE_URL ?? 'https://malakali542.github.io',
+  integrations: [mdx(), sitemap()],
+  devToolbar: { enabled: false },
+  markdown: {
+    shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },
+  },
+});

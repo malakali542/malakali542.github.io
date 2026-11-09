@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+research/arabic-dialects/.venv/
+public/research/
+__pycache__/
+*.pyc

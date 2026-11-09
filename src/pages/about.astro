@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/site';
+
+const experience = [
+  { when: '2026 - now', what: 'Microsoft Research', role: 'research product manager, Quine', href: '/work/quine/', detail: 'Capability roadmap, evals across mid-training and post-training, competitive analysis and strategy for a multimodal world model of biology.' },
+  { when: '2024 - 2026', what: 'Microsoft AI', role: 'product manager, Recall and Copilot', href: '/work/recall/', detail: 'Recall onboarding and retail demo, Copilot diagnostics with local code execution, trusted sources and evals for commercial Copilot.' },
+  { when: '2023', what: 'Enlighted, a Siemens company', role: 'product manager intern', detail: 'Launched location-intelligence and asset-tracking tags for a B2B IoT platform, across hardware, software and go-to-market.' },
+  { when: '2022 - 2023', what: 'Uber', role: 'software engineer, UberX Share', href: '/work/uber/', detail: 'Rider flows that cut confused cancellations, server-driven UI, and a 40% faster MapStore. New York.' },
+  { when: '2021 - 2022', what: 'PointClickCare', role: 'software engineer', href: '/work/pointclickcare/', detail: 'Provider portal, a shared UI library, and CI pipelines that run 30% faster.' },
+];
+
+const community = [
+  { when: '2025 - now', what: 'African Microsoft Employees', role: 'engagement director', detail: 'Programming and events for a 900+ member employee resource group.' },
+  { when: '2020 - now', what: 'BridgeTO Youth × Amazon', role: 'tech director & mentor', href: '/work/bridgeto/', detail: 'Curriculum and hackathons that teach Toronto youth to code by remixing music in Python. Marketing lead since 2021.' },
+];
+
+const honors = [
+  { when: '2020', what: 'Google scholarship to the Grace Hopper Celebration (GHC)', detail: 'Google' },
+  { when: '2020', what: 'Youth leader, Future Skills: A Conversation with President Barack Obama', detail: 'The Economic Club of Canada' },
+  { when: '2019', what: 'Class of 1986 Scholarship', detail: 'University of Waterloo' },
+  { when: '2019', what: 'Walied and Deena Soliman All Star Scholarship', detail: 'The Muslim Award of Excellence' },
+  { when: '2019', what: 'Lincoln Alexander Chancellor Scholarship', detail: 'University of Guelph' },
+];
+---
+
+<Base title="about" description="About Malak Ali: research product manager at Microsoft Research, formerly Microsoft AI, Uber and PointClickCare. Waterloo Systems Design Engineering.">
+  <section class="container case-head">
+    <h1>about</h1>
+  </section>
+  <section class="container two-col">
+    <div class="prose">
+      <p>
+        I'm Malak. I work at the point where a model becomes a product: figuring out what it can do, proving it with evals,
+        and putting it in front of the people who need it. Right now that's Quine at Microsoft Research, where the users are
+        scientists and the stakes are experiments that take weeks to run.
+      </p>
+      <p>
+        I started as an engineer. At PointClickCare and Uber I shipped production code, which is still how I read a design
+        doc: what breaks, who gets paged, how long it takes to load. At Microsoft AI I moved into product and spent almost 2
+        years on Recall and Copilot, two features that taught me how much of AI product work is earning trust on the first
+        run.
+      </p>
+      <p>
+        I studied Systems Design Engineering at the University of Waterloo, with minors in management science and
+        computing. Since 2020 I've also been teaching kids to code with BridgeTO, which has made me better at explaining
+        things than anything else I've done.
+      </p>
+      <p>
+        I'm based in Seattle. The fastest way to reach me is <a href={`mailto:${site.email}`}>{site.email}</a>, and I'm
+        also on <a href="https://www.linkedin.com/in/-malakali/">LinkedIn</a>.
+      </p>
+    </div>
+    <div>
+      <div class="side-list" style="margin-bottom:28px">
+        <h2>things i'm into</h2>
+        <ul>
+          <li>evals that predict what users will feel <span class="tag">[work]</span></li>
+          <li>agents that ask before they act <span class="tag">[work]</span></li>
+          <li><a href="/writing/arabic-dialects-benchmark/">arabic dialects and the models that miss them</a> <span class="tag">[writing]</span></li>
+          <li>teaching python through music <span class="tag">[bridgeto]</span></li>
+        </ul>
+      </div>
+      <div class="side-list">
+        <h2>built with codex, on the side</h2>
+        <ul>
+          <li><a href="https://microsoft.github.io/quine/">the quine website</a> <span class="tag">[microsoft research]</span></li>
+          <li>tiny voyages <span class="tag">[daily geography game]</span></li>
+          <li>skyward <span class="tag">[daily trivia game]</span></li>
+          <li>career paths for newcomers to canada <span class="tag">[tools]</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="container section" id="experience">
+    <div class="section-head"><h2>experience</h2></div>
+    <ul class="timeline">
+      {experience.map((item) => (
+        <li>
+          <span class="when">{item.when}</span>
+          <span class="what">
+            {item.href ? <a href={item.href}>{item.what}</a> : item.what} <span class="muted" style="font-weight:400">· {item.role}</span>
+            <span class="detail">{item.detail}</span>
+          </span>
+        </li>
+      ))}
+      <li>
+        <span class="when">education</span>
+        <span class="what">
+          University of Waterloo <span class="muted" style="font-weight:400">· BASc, Systems Design Engineering</span>
+          <span class="detail">Minors in management science and computing.</span>
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="container section" id="community">
+    <div class="section-head"><h2>community</h2></div>
+    <ul class="timeline">
+      {community.map((item) => (
+        <li>
+          <span class="when">{item.when}</span>
+          <span class="what">
+            {item.href ? <a href={item.href}>{item.what}</a> : item.what} <span class="muted" style="font-weight:400">· {item.role}</span>
+            <span class="detail">{item.detail}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section" id="honors">
+    <div class="section-head"><h2>honors</h2></div>
+    <ul class="timeline">
+      {honors.map((item) => (
+        <li>
+          <span class="when">{item.when}</span>
+          <span class="what">{item.what}<span class="detail">{item.detail}</span></span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>

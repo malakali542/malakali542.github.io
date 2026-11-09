@@ -1,0 +1,22 @@
+{
+  "egy": {
+    "passed": 12,
+    "total": 12
+  },
+  "lev": {
+    "passed": 12,
+    "total": 12
+  },
+  "glf": {
+    "passed": 12,
+    "total": 12
+  },
+  "mgr": {
+    "passed": 12,
+    "total": 12
+  },
+  "msa": {
+    "passed": 8,
+    "total": 8
+  }
+}
