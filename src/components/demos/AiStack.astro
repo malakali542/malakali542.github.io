@@ -1,0 +1,221 @@
+---
+// Illustrative diagram of Malak's personal AI stack, assembling from the bottom up.
+---
+
+<div class="demo demo-stack" data-seq data-cycle="14000" role="img" aria-label="Illustration: local models at the bottom, an orchestrator running agents in parallel worktrees, Capy and Hermes harnesses with a skill improving from version 1 to 3, personal skills, and the apps they ship.">
+  <div class="layer ships" data-step data-at="8600">
+    <span class="lbl">ships</span>
+    <span class="pill">job search pipeline</span><span class="pill">budgeting apps</span><span class="pill">daily games</span><span class="pill">this site</span>
+  </div>
+  <div class="layer skills" data-step data-at="7200">
+    <span class="lbl">skills</span>
+    <span class="pill">style editor</span><span class="pill">substack writer</span><span class="pill">session memory</span><span class="pill">resume tailor</span>
+  </div>
+  <div class="layer harness" data-step data-at="3400">
+    <span class="lbl">harnesses</span>
+    <span class="pill strong">Capy <em>parallel builds</em></span>
+    <span class="pill strong rsi">Hermes <em>skill</em>
+      <span class="ver"><b class="v1">v1</b><b class="v2" data-step data-at="4600">v2</b><b class="v3" data-step data-at="5800">v3</b></span>
+      <svg class="loop" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </span>
+  </div>
+  <div class="layer orch" data-step data-at="1200">
+    <span class="lbl">orchestrator <em>built on Orca</em></span>
+    <div class="lanes">
+      <span class="lane"><i>research</i><b style="--w:82%"></b></span>
+      <span class="lane"><i>build</i><b style="--w:64%"></b></span>
+      <span class="lane"><i>review</i><b style="--w:46%"></b></span>
+      <span class="lane"><i>eval</i><b style="--w:92%"></b></span>
+    </div>
+  </div>
+  <div class="layer models" data-step data-at="200">
+    <span class="lbl">local models</span>
+    <span class="pill chip-q">Qwen</span><span class="pill chip-g">Gemma</span><span class="pill chip-p">Phi</span>
+    <span class="note">on my laptop</span>
+  </div>
+  <span class="illustration-tag">diagram</span>
+</div>
+
+<style>
+  .demo-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.2cqh;
+    padding: 5cqh 6cqw 7cqh;
+    font-size: clamp(9px, 1.9cqw, 16px);
+    line-height: 1.25;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 15% 85%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 45%),
+      radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--highlight) 34%, transparent), transparent 45%),
+      var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .layer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.7em 0.9em;
+    border-radius: 0.9em;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .lbl {
+    min-width: 7.5em;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--accent);
+  }
+
+  .lbl em,
+  .pill em {
+    font-style: normal;
+    color: var(--muted);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.25em 0.75em;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 0.92em;
+    white-space: nowrap;
+  }
+
+  .pill.strong {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    font-weight: 600;
+  }
+
+  .pill.strong em {
+    font-weight: 400;
+  }
+
+  .chip-q {
+    border-color: color-mix(in srgb, #615ced 50%, var(--line));
+  }
+
+  .chip-g {
+    border-color: color-mix(in srgb, #3c8cf2 50%, var(--line));
+  }
+
+  .chip-p {
+    border-color: color-mix(in srgb, #2f9e6e 50%, var(--line));
+  }
+
+  .note {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    color: var(--muted);
+  }
+
+  .ver {
+    position: relative;
+    display: inline-grid;
+    min-width: 1.6em;
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+
+  .ver b {
+    grid-area: 1 / 1;
+    font-weight: 500;
+    background: var(--bg);
+  }
+
+  .loop {
+    width: 1em;
+    height: 1em;
+    color: var(--accent);
+  }
+
+  .demo-stack:global(.seq-on) .loop {
+    animation: spin 2.4s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .orch {
+    align-items: center;
+  }
+
+  .orch .lbl {
+    flex: 0 0 100%;
+  }
+
+  .lanes {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4em 1em;
+  }
+
+  .lane {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+  }
+
+  .lane i {
+    font-style: normal;
+    color: var(--muted);
+  }
+
+  .lane b {
+    position: relative;
+    height: 0.55em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    overflow: hidden;
+  }
+
+  .lane b::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--w);
+    border-radius: inherit;
+    background: var(--accent);
+  }
+
+  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane b::after {
+    animation: fill 2.6s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+  }
+
+  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane:nth-child(2) b::after {
+    animation-delay: 0.3s;
+  }
+
+  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane:nth-child(3) b::after {
+    animation-delay: 0.6s;
+  }
+
+  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane:nth-child(4) b::after {
+    animation-delay: 0.9s;
+  }
+
+  @keyframes fill {
+    from {
+      width: 0;
+    }
+  }
+</style>

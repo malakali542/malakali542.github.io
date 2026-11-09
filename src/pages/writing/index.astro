@@ -10,8 +10,7 @@ const posts = (await getCollection('writing')).sort((a, b) => b.data.date.valueO
   <section class="container case-head">
     <h1>writing</h1>
     <p class="lede">
-      Notes on agents, evals and language models, mostly written to figure out what I think. There's an
-      <a href="/rss.xml">rss feed</a> if you want the next {posts.length > 1 ? 'ones' : 'one'}.
+      Notes on agents, evals and language models, mostly written to figure out what I think. {posts.length} so far.
     </p>
   </section>
   <section class="container section">

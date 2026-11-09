@@ -420,6 +420,27 @@ h4 {
   color: var(--accent);
 }
 
+.ai-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+}
+
+.ai-card .card-media {
+  border-bottom: 0;
+  border-right: 1px solid var(--line);
+}
+
+@media (max-width: 860px) {
+  .ai-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ai-card .card-media {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+
 /* ---------- media ---------- */
 .media {
   position: relative;
@@ -545,6 +566,38 @@ h4 {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.yt-ambient {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+.yt-ambient img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Cover the card like object-fit: cover, then crop YouTube's title overlay off the edges. */
+.yt-ambient iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100cqw, calc(100cqh * 16 / 9));
+  height: max(100cqh, calc(100cqw * 9 / 16));
+  transform: translate(-50%, -50%) scale(1.2);
+  border: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.yt-ambient iframe.is-ready {
+  opacity: 1;
 }
 
 .video-wrap {
@@ -1073,6 +1126,13 @@ figcaption {
 }
 
 @media (max-width: 560px) {
+  /* Illustrations stack more content than a 16:9 phone frame fits. */
+  .case-hero .hero-frame:has(.demo),
+  .figure-media.tall:has(.demo),
+  .card-media:has(.demo) {
+    aspect-ratio: 4 / 3;
+  }
+
   .post-list li,
   .timeline li {
     grid-template-columns: minmax(0, 1fr);
@@ -1085,6 +1145,14 @@ figcaption {
 
   .site-header {
     flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .case-hero .hero-frame:has(.demo),
+  .figure-media.tall:has(.demo),
+  .card-media:has(.demo) {
+    aspect-ratio: 1 / 1;
   }
 }
 

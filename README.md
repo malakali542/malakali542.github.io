@@ -14,7 +14,19 @@ npm run preview   # serve dist/ locally
 npm run style     # check all site prose against the malak-style rules
 ```
 
-Set `SITE_URL` when building for a real domain (used for canonical URLs, the sitemap and RSS). It defaults to `https://malakali542.github.io`. The output in `dist/` can go on GitHub Pages, Vercel, Netlify or any static host.
+## Deploy
+
+The site lives at [malak.club](https://malak.club), served by GitHub Pages from the public repo [malakali542/malakali542.github.io](https://github.com/malakali542/malakali542.github.io). Every push to its `main` branch runs `.github/workflows/deploy.yml`, which builds the site and publishes `dist/`. `SITE_URL` (default `https://malak.club`) sets canonical URLs and the sitemap. The custom domain is set in the repo's Pages settings, not with a `CNAME` file, because Actions deployments ignore that file.
+
+The source of truth is `portfolio/` in the private protos repo. To publish, run this from the protos repo root:
+
+```bash
+git subtree push --prefix=portfolio site main
+```
+
+(`site` is a git remote pointing at the public repo.)
+
+DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to GitHub Pages (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153) and a `CNAME` for `www` pointing to `malakali542.github.io`.
 
 ## Where things live
 
@@ -25,6 +37,7 @@ Set `SITE_URL` when building for a real domain (used for canonical URLs, the sit
 | `src/content.config.ts` | the schema for both collections |
 | `src/pages/index.astro` | home page copy and the experience lists |
 | `src/pages/about.astro` | about, experience timeline, community, honors |
+| `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
 | `src/components/Media.astro` | renders a card or hero from `kind: video \| youtube \| demo \| image` |
 | `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, BridgeTO). Each one is labeled "illustration" on the page. |
 | `public/media/` | self-hosted media (Dots and Scout demo videos and posters) |

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import WorkCard from '../components/WorkCard.astro';
 import PostList from '../components/PostList.astro';
+import Media from '../components/Media.astro';
 import { site } from '../lib/site';
 
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
@@ -46,7 +47,7 @@ const lists = [
       <h1>hi, i'm <em>malak</em>.</h1>
       <p>i'm a research product manager at microsoft research, where i work on <a href="/work/quine/">quine</a>, a world model of biology and the agent harness that lets scientists use it. i decide what the model should learn next, lead the evals that tell us whether it did, and turn those results into a roadmap across mid-training and post-training.</p>
       <p>before that i was a product manager in microsoft ai, shipping <a href="/work/recall/">recall</a> and <a href="/work/copilot-diagnostics/">copilot</a> features to millions of windows pcs. before that i wrote code at <a href="/work/uber/">uber</a> and <a href="/work/pointclickcare/">pointclickcare</a>, and studied systems design engineering at the university of waterloo.</p>
-      <p>outside of work i run coding hackathons for toronto kids with <a href="/work/bridgeto/">bridgeto and amazon</a>, and i <a href="/writing/">write</a> about agents, evals and how well language models speak arabic.</p>
+      <p>outside of work i run coding hackathons for toronto kids with <a href="/work/bridgeto/">bridgeto and amazon</a>, build my own software with <a href="/ai/">local models and agents</a>, and <a href="/writing/">write</a> about agents, evals and how well language models speak arabic.</p>
       <div class="links">
         {site.links.map((link) => <a href={link.href}>{link.label} ↗</a>)}
       </div>
@@ -86,6 +87,28 @@ const lists = [
     <div class="grid">
       {byGroup('building').map((entry) => <WorkCard entry={entry} />)}
     </div>
+  </section>
+
+  <section class="container section" id="ai">
+    <div class="section-head">
+      <h2>how i use ai</h2>
+      <span class="mono"><a href="/ai/">my stack →</a></span>
+    </div>
+    <article class="card ai-card">
+      <div class="card-media">
+        <Media media={{ kind: 'demo', name: 'ai-stack' }} label="My AI stack" />
+      </div>
+      <div class="card-body">
+        <h3 class="card-title"><a href="/ai/">Local models, parallel agents, self-improving skills</a></h3>
+        <div class="card-meta">qwen · gemma · phi · orca · capy · hermes</div>
+        <p class="card-summary">
+          I run Qwen, Gemma and Phi models locally, coordinate coding agents with my own orchestrator built on Orca, and
+          use Capy and Hermes for recursive self-improvement. With my own skills on top, I've replaced about half of my
+          consumer subscriptions, from a job search pipeline to budgeting apps to our family's daily games.
+        </p>
+        <span class="card-cta" aria-hidden="true">see how it fits together →</span>
+      </div>
+    </article>
   </section>
 
   <section class="container section" id="writing">

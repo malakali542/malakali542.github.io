@@ -47,4 +47,4 @@ for m in qwen2.5:3b qwen2.5:7b aya-expanse:8b command-r7b-arabic; do ollama pull
 
 ## Data and licenses
 
-`fetch_data.py` recreates `data/obqa_parallel.jsonl`, a 200-item subset of AraDiCE OpenBookQA released by QCRI under CC BY-NC-SA 4.0. The question text isn't republished here. The prompts, code and model replies in this folder are mine.
+`data/obqa_parallel.jsonl` is a 200-item subset of AraDiCE OpenBookQA by QCRI, kept in the source repository under its original CC BY-NC-SA 4.0 license, and `fetch_data.py` recreates it. The website doesn't republish the question text. The prompts, code and model replies are mine.

@@ -1,0 +1,305 @@
+---
+// Illustrative reconstruction of guided search: suggestions while typing, then filters that adapt to the results.
+---
+
+<div class="demo demo-gs" data-seq data-cycle="13000" role="img" aria-label="Illustration: a search for 'green jacket' shows suggestions as the user types, then filters narrow the results from 38 moments to 2.">
+  <div class="win">
+    <div class="bar">
+      <span class="logo" aria-hidden="true"></span>
+      <div class="q">
+        <svg class="lens" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <span class="typed"><span data-step data-at="400">gr</span><span data-step data-at="650">een</span><span data-step data-at="900"> ja</span><span data-step data-at="1150">cket</span></span><span class="caret" aria-hidden="true"></span>
+      </div>
+    </div>
+    <ul class="suggest" data-step data-at="1400">
+      <li class="s1" data-step data-at="1500">green jacket <em>on a shopping site</em><span class="pick" data-step data-at="2900"></span></li>
+      <li data-step data-at="1700">green jacket <em>in an email</em></li>
+      <li data-step data-at="1900">green jacket <em>last week</em></li>
+    </ul>
+    <span class="go" data-step data-at="3700"></span>
+    <div class="results" data-step data-at="3800">
+      <div class="filters" data-step data-at="4500">
+        <span class="chip f1">in Edge<span class="on" data-step data-at="5600"></span></span>
+        <span class="chip f2">last week<span class="on" data-step data-at="7000"></span></span>
+        <span class="chip">shopping</span>
+        <span class="count"><span class="n0">38 moments</span><span class="n1">9 moments</span><span class="n2">2 moments</span></span>
+      </div>
+      <div class="grid">
+        <div class="tile m1 m2 hit"><i class="shot jacket"></i><span>Edge · last week</span><span class="found" data-step data-at="8400">found it</span></div>
+        <div class="tile"><i class="shot mail"></i><span>Outlook · 2 weeks ago</span></div>
+        <div class="tile m1 m2"><i class="shot jacket alt"></i><span>Edge · last week</span></div>
+        <div class="tile"><i class="shot chat"></i><span>Teams · yesterday</span></div>
+        <div class="tile m1"><i class="shot page"></i><span>Edge · March</span></div>
+        <div class="tile"><i class="shot photo"></i><span>Photos · last week</span></div>
+      </div>
+    </div>
+  </div>
+  <span class="illustration-tag">illustration</span>
+</div>
+
+<style>
+  .demo-gs {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 5cqh 6cqw;
+    font-size: clamp(9px, 2cqw, 16px);
+    line-height: 1.3;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 45%),
+      radial-gradient(circle at 88% 85%, color-mix(in srgb, var(--highlight) 32%, transparent), transparent 45%),
+      var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .win {
+    position: relative;
+    width: min(100%, 62em);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    padding: 1em 1.1em;
+    border-radius: 1em;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+  }
+
+  .logo {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 0.4em;
+    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, var(--highlight)));
+    flex: none;
+  }
+
+  .q {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.55em 0.8em;
+    border-radius: 999px;
+    border: 1.5px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+    background: var(--bg);
+  }
+
+  .lens {
+    width: 1.1em;
+    height: 1.1em;
+    color: var(--muted);
+    flex: none;
+  }
+
+  .caret {
+    width: 1.5px;
+    height: 1.1em;
+    background: var(--accent);
+    animation: blink 1s steps(1) infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Typed characters and the dropdown take no space until they appear. */
+  .demo-gs:global(.seq-on) .typed [data-step]:not(:global(.is-on)),
+  .demo-gs:global(.seq-on) .suggest:not(:global(.is-on)),
+  .demo-gs:global(.seq-on) .results:not(:global(.is-on)) {
+    display: none;
+  }
+
+  .typed [data-step] {
+    transition: none;
+  }
+
+  .suggest {
+    list-style: none;
+    margin: -0.4em 0 0 2.2em;
+    padding: 0.35em;
+    border-radius: 0.8em;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .suggest li {
+    position: relative;
+    padding: 0.45em 0.7em;
+    border-radius: 0.55em;
+  }
+
+  .suggest em {
+    font-style: normal;
+    color: var(--muted);
+  }
+
+  .s1:has(:global(.pick.is-on)) {
+    background: var(--accent-soft);
+  }
+
+  .demo-gs:has(:global(.go.is-on)) .suggest {
+    display: none;
+  }
+
+  .go {
+    position: absolute;
+  }
+
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    min-height: 0;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45em;
+  }
+
+  .chip {
+    position: relative;
+    padding: 0.25em 0.75em;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    font-size: 0.92em;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .chip:has(:global(.on.is-on)) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--muted);
+  }
+
+  .n1,
+  .n2 {
+    display: none;
+  }
+
+  .demo-gs:has(:global(.f1 .on.is-on)) .n0 {
+    display: none;
+  }
+
+  .demo-gs:has(:global(.f1 .on.is-on)) .n1 {
+    display: inline;
+  }
+
+  .demo-gs:has(:global(.f2 .on.is-on)) .n1 {
+    display: none;
+  }
+
+  .demo-gs:has(:global(.f2 .on.is-on)) .n2 {
+    display: inline;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6em;
+  }
+
+  .tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    font-size: 0.82em;
+    color: var(--muted);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .shot {
+    display: block;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.45em;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+
+  .shot.jacket {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M38 14 50 22 62 14 84 26 78 52 69 48 69 90 31 90 31 48 22 52 16 26Z' fill='%239ccc3d'/%3E%3Cpath d='M50 22v68' stroke='%237aa52c' stroke-width='2.5'/%3E%3Cpath d='M38 14 50 30 62 14' fill='none' stroke='%237aa52c' stroke-width='2.5'/%3E%3C/svg%3E") left 14% center / auto 82% no-repeat,
+      linear-gradient(90deg, transparent 52%, var(--line) 52% 54%, transparent 54%),
+      repeating-linear-gradient(180deg, transparent 0 0.55em, color-mix(in srgb, var(--ink) 9%, transparent) 0.55em 0.7em) right / 40% 60% no-repeat,
+      #f5f7f2;
+  }
+
+  .shot.jacket.alt {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M38 14 50 22 62 14 84 26 78 52 69 48 69 90 31 90 31 48 22 52 16 26Z' fill='%239ccc3d'/%3E%3Cpath d='M50 22v68' stroke='%237aa52c' stroke-width='2.5'/%3E%3Cpath d='M38 14 50 30 62 14' fill='none' stroke='%237aa52c' stroke-width='2.5'/%3E%3C/svg%3E") right 16% center / auto 74% no-repeat,
+      repeating-linear-gradient(180deg, transparent 0 0.55em, color-mix(in srgb, var(--ink) 9%, transparent) 0.55em 0.7em) left 12% center / 45% 55% no-repeat,
+      #f3f5f8;
+  }
+
+  .shot.mail {
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--accent) 25%, transparent) 0 28%, transparent 28%),
+      repeating-linear-gradient(180deg, transparent 0 0.5em, color-mix(in srgb, var(--ink) 10%, transparent) 0.5em 0.62em),
+      #f6f6f9;
+  }
+
+  .shot.chat {
+    background:
+      radial-gradient(ellipse 30% 14% at 30% 30%, color-mix(in srgb, var(--accent) 30%, transparent) 0 98%, transparent 100%),
+      radial-gradient(ellipse 30% 14% at 70% 62%, color-mix(in srgb, var(--ink) 14%, transparent) 0 98%, transparent 100%),
+      #f4f3f8;
+  }
+
+  .shot.page {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--ink) 16%, transparent) 0 18%, transparent 18%),
+      repeating-linear-gradient(180deg, transparent 0 0.5em, color-mix(in srgb, var(--ink) 8%, transparent) 0.5em 0.6em),
+      #f7f7f7;
+  }
+
+  .shot.photo {
+    background: linear-gradient(160deg, #f2c96b, #e98a5f 55%, #7c6fd0);
+  }
+
+  .demo-gs:has(:global(.f1 .on.is-on)) .tile:not(.m1),
+  .demo-gs:has(:global(.f2 .on.is-on)) .tile:not(.m2) {
+    opacity: 0.16;
+  }
+
+  .hit:has(:global(.found.is-on)) .shot {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .found {
+    position: absolute;
+    top: 0.4em;
+    left: 0.4em;
+    padding: 0.1em 0.5em;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
+</style>

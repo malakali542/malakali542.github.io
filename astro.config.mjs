@@ -3,7 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? 'https://malakali542.github.io',
+  site: process.env.SITE_URL ?? 'https://malak.club',
   integrations: [mdx(), sitemap()],
   devToolbar: { enabled: false },
   markdown: {

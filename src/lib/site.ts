@@ -8,7 +8,6 @@ export const site = {
     { label: 'linkedin', href: 'https://www.linkedin.com/in/-malakali/' },
     { label: 'github', href: 'https://github.com/malakali542' },
     { label: 'email', href: 'mailto:malakali542@gmail.com' },
-    { label: 'rss', href: '/rss.xml' },
   ],
 };
 

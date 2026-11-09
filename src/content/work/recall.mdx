@@ -6,12 +6,13 @@ role: product manager
 period: 2024 - 2026
 order: 4
 group: work
-summary: Recall is the on-device memory for Copilot+ PCs. I built its onboarding flows and the retail demo experience that runs on in-store devices, working closely with UX research and design, and helped take it from preview to general availability.
+summary: Recall is the on-device memory for Copilot+ PCs. I built its onboarding flows and its retail demo, ran guided search experiments to help people refine their searches, and tested ideas in my own user studies with interfaces I prototyped myself.
 card:
   kind: youtube
   id: XoXODYYkLqo
   title: 'Recall on Copilot+ PCs: A better way to recall anything'
   hd: true
+  autoplay: true
 hero:
   kind: youtube
   id: XoXODYYkLqo
@@ -32,6 +33,8 @@ facts:
     value: 5+ across engineering, design, retail ops, content, partners
   - label: worked with
     value: UX research, design, data science
+  - label: research
+    value: my own user studies, AI-built prototypes
   - label: shipped
     value: Insider preview Nov 2024, general availability Apr 2025
 links:
@@ -44,6 +47,7 @@ links:
 ---
 
 import Figure from '../../components/Figure.astro';
+import DemoBlock from '../../components/DemoBlock.astro';
 import VideoBlock from '../../components/VideoBlock.astro';
 
 ## Context
@@ -65,6 +69,21 @@ One change stood out: letting people try Recall before committing to it. The try
   credit="Windows Insider Blog"
   href="https://blogs.windows.com/windows-insider/2024/11/22/previewing-recall-with-click-to-do-on-copilot-pcs-with-windows-insiders-in-the-dev-channel/"
 />
+
+## Guided search
+
+Recall only works if people can find what they saw, so search is the product. In personal search tools like this, first-try search success usually sits around 10% to 15%, and it climbs to 50% to 60% once people refine their query and search again. Recall matched the first number, but its success after a re-search only reached about 30%. People who missed on the first try weren't finding their way to a better query.
+
+I ran guided search experiments to close that gap:
+
+- **Suggestions as you type.** A small model suggests completions in the search bar while you're still typing, so a vague query becomes a specific one before you hit enter.
+- **Dynamic filters.** Filters that adapt to the results let people narrow a broad search instead of starting over.
+
+<DemoBlock name="guided-search" caption="Illustration: suggestions while you type, then filters that narrow the results. Not the shipped UI." />
+
+## Research without waiting on engineering
+
+I ran my own user studies with Recall users. To test ideas quickly, I prototyped with AI tools and built working interfaces myself, without engineering, then put those prototypes in front of participants. That let me test real interactions with users, not static mockups, before asking engineering to build anything.
 
 ## The retail demo
 

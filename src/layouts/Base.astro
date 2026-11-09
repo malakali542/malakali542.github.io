@@ -33,7 +33,6 @@ const ogImage = new URL(image, Astro.site);
     <meta name="author" content={site.name} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title="malak ali · writing" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content={type} />
     <meta property="og:title" content={fullTitle} />
@@ -94,6 +93,34 @@ const ogImage = new URL(image, Astro.site);
           { threshold: 0.25 },
         );
         videos.forEach((v) => videoObserver.observe(v));
+      }
+
+      // Ambient YouTube loops: muted, no controls, only while on screen. Reduced-motion users keep the thumbnail.
+      if (!reduceMotion) {
+        const ambientObserver = new IntersectionObserver(
+          (entries) => {
+            for (const { target, isIntersecting } of entries) {
+              const host = target as HTMLElement;
+              const existing = host.querySelector('iframe');
+              if (isIntersecting && !existing) {
+                const id = host.dataset.ytAmbient;
+                const start = host.dataset.start ? `&start=${host.dataset.start}` : '';
+                const frame = document.createElement('iframe');
+                frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&playsinline=1&rel=0&iv_load_policy=3&disablekb=1&fs=0&modestbranding=1${start}`;
+                frame.allow = 'autoplay; encrypted-media; picture-in-picture';
+                frame.title = host.dataset.title ?? 'video';
+                frame.tabIndex = -1;
+                frame.setAttribute('aria-hidden', 'true');
+                frame.addEventListener('load', () => window.setTimeout(() => frame.classList.add('is-ready'), 1200));
+                host.append(frame);
+              } else if (!isIntersecting && existing) {
+                existing.remove();
+              }
+            }
+          },
+          { threshold: 0.35 },
+        );
+        document.querySelectorAll<HTMLElement>('[data-yt-ambient]').forEach((el) => ambientObserver.observe(el));
       }
 
       // YouTube embeds load only after a click.

@@ -1,0 +1,34 @@
+---
+title: Sovereign AI is not a data center
+dek: The sovereignty that matters is a refusal, and Arabic is where you can see it break.
+date: 2026-05-17
+tags: [arabic, post-training, evals, policy]
+---
+
+Every government pitch for sovereign AI shows the same three things: a data center on home soil, a national cloud, and a compliance checkbox for where the bytes live. Data residency. That is the version being sold, and it is the least interesting part.
+
+Here is the part nobody procures: a model does not just store data, it holds a position. It decides what to answer, what to soften, what to refuse, and who counts as the default human. Those decisions get set in post-training, by a specific set of annotators, against a specific rubric, in a specific language. Right now that language is English and those values are Californian. You can host the weights in Riyadh and the judgment still ships from Menlo Park.
+
+I work on post-training and evaluation, and the uncomfortable truth from the inside is that "alignment" is not neutral. It is a preference set. When a model learns from human feedback, it learns the feedback of the people you hired and the rubric you wrote. Change the annotators and the rubric and you change what the model believes a good answer is.
+
+Arabic is the cleanest place to watch that happen.
+
+Start with the language. There is no single Arabic. There is Modern Standard Arabic, which people write and broadcast but rarely speak at home, and then there are the dialects: Egyptian, Levantine, Gulf, Maghrebi and many more, some of them hard for each other's speakers to follow. More than 400 million people use Arabic every day, according to [UNESCO](https://www.unesco.org/en/world-arabic-language-day). In February I [measured how open models handle that spread](/writing/arabic-dialects-benchmark/). On the same 200 questions, they lost 12.5 to 20.5 points when the question was in Egyptian instead of MSA, and when I asked for everyday help in four dialects, 191 of 192 replies came back in MSA. It is the equivalent of replying to a friend's text in legal English: technically correct and socially deaf.
+
+Now go past grammar to values, where it actually costs something. Ask a model about fasting, inheritance, family obligation, or what counts as a rude way to answer an elder. The model has an opinion, and the opinion was set by people who were not in the room. It hedges on things that are ordinary in Cairo and lectures on things that are ordinary in Dubai. Its refusals are the tell. A refusal is a values statement in a polite font. When a model declines a religious question that any local imam would answer plainly, it is not being safe. It is being foreign.
+
+This is why data residency is a decoy. Moving the servers changes nothing about the rubric. The sovereign layer is not the hardware, it is the post-training and the evaluation set. Whoever writes the eval writes the norm, because the eval is the thing the model is optimized to please. If your eval was authored in English and machine translated, you did not localize a model. You imported someone else's conscience and put subtitles on it.
+
+I am not claiming Western labs are malicious, only that they are specific. Every model is trained by someone, and someone is never neutral. The error is shipping one group's defaults as a universal and calling the output aligned. Alignment, exported globally from a single culture, is cultural export with a better legal team.
+
+So what would real sovereign AI look like? Not a flag on a building, but three concrete things.
+
+**First, native evaluation.** Build the benchmark in dialect, with local annotators, scoring the answers a real person would want, including the refusals a real person would find insulting. The eval is the constitution. Write your own.
+
+**Second, region-specific post-training.** Take an open-weight base model and run the reinforcement learning with feedback from people who actually live there. This is now cheap enough that a serious team can do it for the price of a mid-size government IT contract, not a chip fab.
+
+**Third, a public refusal ledger.** Publish what the model will not do and why. If sovereignty means anything, a citizen should be able to see whose norms their national model enforces, and argue with them. A refusal should be a policy you can read, not a wall you hit.
+
+The countries treating sovereign AI as a real estate problem will spend a billion dollars to run someone else's values on local electricity. The ones treating it as a post-training and evaluation problem will spend a fraction of that and own the part that matters, which is the judgment.
+
+Sovereignty was never about where the data sleeps. It is about whose answer the machine gives when your citizen asks in their own words. Right now, for most Arabic speakers, that answer arrives from very far away, in a language it does not quite speak, carrying values nobody there voted for. You cannot buy your way out of that with a data center. You have to train it.

@@ -1,0 +1,16 @@
+---
+import { youtubeThumb } from '../lib/site';
+
+interface Props {
+  id: string;
+  title: string;
+  start?: number;
+  hd?: boolean;
+}
+
+const { id, title, start, hd = false } = Astro.props;
+---
+
+<div class="yt-ambient" data-yt-ambient={id} data-start={start} data-title={title}>
+  <img src={youtubeThumb(id, hd)} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+</div>

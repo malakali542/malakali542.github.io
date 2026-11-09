@@ -1,0 +1,181 @@
+---
+import Base from '../layouts/Base.astro';
+import Media from '../components/Media.astro';
+
+const skills = [
+  {
+    name: 'malak-style',
+    what: 'An editor that checks my writing for em dashes, buzzwords, hedges, semicolon chains and machine rhythm, then fixes what it can. Every page on this site passed it.',
+  },
+  {
+    name: 'substack-writer',
+    what: 'Drafts an essay in my voice from a topic or the day’s Hacker News, runs it through the style gate, and stages it as an unpublished draft for me to edit.',
+  },
+  {
+    name: 'session-memory',
+    what: 'Saves what an agent learned in one session and loads it into the next, so context survives between tools and days.',
+  },
+  {
+    name: 'startup-validator',
+    what: 'Takes an idea from market and competitor research through user validation to a go or no-go call.',
+  },
+];
+---
+
+<Base
+  title="how i use ai"
+  description="Malak Ali's personal AI stack: local Qwen, Gemma and Phi models, an orchestrator built on Orca, Capy and Hermes harnesses set up for recursive self-improvement, personal skills, and the software that replaced half her subscriptions."
+>
+  <section class="container case-head">
+    <p class="eyebrow">how i use ai</p>
+    <h1>At work I shape what models learn. At home I put them to work.</h1>
+    <p class="lede">Local models on my laptop, coding agents working in parallel, harnesses that improve their own skills, and a library of skills I wrote myself. I've replaced about half of my consumer subscriptions with software I built this way.</p>
+  </section>
+
+  <section class="container">
+    <div class="case-hero">
+      <div class="hero-frame">
+        <Media media={{ kind: 'demo', name: 'ai-stack' }} label="My AI stack, assembling from local models up to the apps it ships" />
+      </div>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="ai-grid">
+      <article class="ai-block">
+        <p class="eyebrow">01 · models</p>
+        <h2>Local first</h2>
+        <p>Qwen, Gemma and Microsoft’s Phi models run on my MacBook. Anything private, like budgets and my job search, never leaves the machine, and long jobs run overnight without an API bill. My <a href="/writing/arabic-dialects-benchmark/">Arabic dialects benchmark</a> ran four models through more than 900 prompts each on this laptop.</p>
+      </article>
+      <article class="ai-block">
+        <p class="eyebrow">02 · orchestration</p>
+        <h2>My own orchestrator, built on Orca</h2>
+        <p>I run coding agents in parallel with an orchestrator I built on the open-source <a href="https://github.com/stablyai/orca">Orca</a>. Every agent gets its own git worktree and branch, so several can work in one repo without colliding, and I review their branches the way I’d review a team’s pull requests. This site was built in one of those worktrees.</p>
+      </article>
+      <article class="ai-block">
+        <p class="eyebrow">03 · harnesses</p>
+        <h2>The best harnesses, set up for self-improvement</h2>
+        <p>The harness around a model decides as much as the model does, so I use the strongest ones I can find. <a href="https://capy.ai">Capy</a> runs fleets of coding agents, each in its own cloud sandbox. <a href="https://github.com/NousResearch/hermes-agent">Hermes</a>, from Nous Research, writes a skill when it works out how to do something new and refines it the next time a similar task comes up. I run both for recursive self-improvement: agents that write, test and improve the tools they use, so each run starts ahead of the last.</p>
+      </article>
+      <article class="ai-block">
+        <p class="eyebrow">04 · skills</p>
+        <h2>Skills I wrote myself</h2>
+        <p>A skill is a folder of instructions and scripts an agent loads only when it needs them. A few of mine:</p>
+        <ul class="skill-list">
+          {skills.map((skill) => (
+            <li>
+              <code>{skill.name}</code>
+              <span>{skill.what}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="section-head">
+      <h2>software instead of subscriptions</h2>
+      <span class="mono muted">built for me and my family</span>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">A job search that runs itself</h3>
+          <div class="card-meta">python · launchd · multi-agent</div>
+          <p class="card-summary">Every morning at 8, a scout checks job boards, funding news and newsletters and writes me a digest. When I pick a role, a multi-agent loop (a role reader, a strategist, a tailor and a recruiter reviewer) tailors my resume. A separate judge then scores every bullet against my own evidence bank, with a rubric and 24 calibration cases, and any doubt fails the gate. It drafts outreach but never sends it.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">Budgeting without a budgeting app</h3>
+          <div class="card-meta">saved in the browser</div>
+          <p class="card-summary">My own budgeting and expense-splitting apps. I import card transactions, review each purchase, and settle up with family at the end. Everything is saved in the browser, not on someone else’s server.</p>
+        </div>
+      </article>
+      <article class="card wide-card">
+        <div class="games">
+          <img src="/media/built/tiny-voyages.jpg" alt="Tiny Voyages: a daily geography game with a globe, a 3,750 km distance target and a 65% over-water condition." loading="lazy" />
+          <img src="/media/built/skyward.jpg" alt="Skyward: a pixel-art daily trivia climb showing prompt 3 of 7 and an altitude meter." loading="lazy" />
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Our own NYT, without the paywall</h3>
+          <div class="card-meta">daily games · built with Codex</div>
+          <p class="card-summary">NYT-style daily puzzles, so my family gets a new game every morning without another subscription. <strong>Tiny Voyages</strong> is a geography game played on a globe: six untimed rounds, 600 points. <strong>Skyward</strong> is a daily trivia climb with 112 prompts and nearly 19,000 accepted answers.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(20px, 3vw, 36px) clamp(24px, 4vw, 56px);
+  }
+
+  .ai-block .eyebrow {
+    margin: 0 0 6px;
+  }
+
+  .ai-block h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.8rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+
+  .ai-block p {
+    margin: 0 0 0.8em;
+  }
+
+  .skill-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .skill-list li {
+    display: grid;
+    gap: 2px;
+  }
+
+  .skill-list code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  .skill-list span {
+    font-size: 0.97rem;
+  }
+
+  .wide-card {
+    grid-column: 1 / -1;
+  }
+
+  .games {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .games img {
+    width: 100%;
+    height: clamp(220px, 32vw, 420px);
+    object-fit: cover;
+    object-position: top;
+  }
+
+  @media (max-width: 860px) {
+    .ai-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
