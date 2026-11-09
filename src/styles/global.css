@@ -366,7 +366,7 @@ h4 {
     padding: 28px 32px;
   }
 
-  .grid > .card:only-child .card-cta {
+  .grid > .card:only-child .card-foot {
     margin-top: 10px;
   }
 }
@@ -451,6 +451,38 @@ h4 {
   color: var(--accent);
 }
 
+.card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.card-foot .card-cta {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.card-badge {
+  padding: 2px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-soft);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+/* Cards with no case study behind them don't lift, since there's nothing to open. */
+.card-static:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--line);
+}
+
 .ai-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -529,6 +561,41 @@ h4 {
   width: auto;
   object-fit: contain;
   mix-blend-mode: multiply;
+}
+
+.frame-laptop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--bg-soft), color-mix(in srgb, var(--bg-soft) 70%, var(--accent-soft)));
+}
+
+.frame-laptop .laptop-box {
+  position: relative;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 3 / 2;
+}
+
+.frame-laptop .laptop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.frame-laptop .screen {
+  position: absolute;
+  left: 24.06%;
+  top: 19.14%;
+  width: 52.03%;
+  height: 49.14%;
+  object-fit: cover;
+  background: #000;
+  z-index: 1;
 }
 
 .yt {
@@ -915,6 +982,59 @@ figcaption {
 .prose td:not(:first-child),
 .prose th:not(:first-child) {
   text-align: right;
+}
+
+/* Tables of sentences rather than numbers: wrap, align left, and stack each row on phones. */
+.prose .table-text table {
+  display: table;
+  table-layout: fixed;
+  font-size: 0.9rem;
+}
+
+.prose .table-text th,
+.prose .table-text td {
+  white-space: normal;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.prose .table-text td:first-child {
+  font-weight: 600;
+}
+
+.prose .table-text th:nth-child(1) {
+  width: 17%;
+}
+
+.prose .table-text th:nth-child(2) {
+  width: 27%;
+}
+
+@media (max-width: 560px) {
+  .prose .table-text thead {
+    display: none;
+  }
+
+  .prose .table-text tr,
+  .prose .table-text td {
+    display: block;
+  }
+
+  .prose .table-text tr {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .prose .table-text td {
+    padding: 2px 0;
+    border: 0;
+  }
+
+  .prose .table-text td:nth-child(2) {
+    color: var(--muted);
+    font-style: italic;
+  }
 }
 
 .prose .footnotes {

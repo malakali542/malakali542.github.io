@@ -40,7 +40,7 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 | `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
 | `src/components/Media.astro` | renders a card or hero from `kind: video \| youtube \| demo \| image` |
 | `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, the offshore wind simulation) and the AI stack diagram. Each one is labeled "illustration" or "diagram" on the page. |
-| `public/media/` | self-hosted media (the Dots demo, the Suelo site recording, the trimmed Recall and UberX Share card clips, the offshore wind report figures, and their posters) |
+| `public/media/` | self-hosted media (the Dots and Scout demos, the Suelo site recording, the Career Compass clip, the trimmed Recall and UberX Share card clips, the offshore wind report figures, and their posters) |
 | `research/arabic-dialects/` | the benchmark behind the Arabic dialects post: harness, prompts, raw replies and scores. The post's "Method, code and data" section explains it and lists every file (`src/components/ResearchFiles.astro`), and the old `/research/arabic-dialects/` page redirects there |
 | `scripts/sync-research.mjs` | runs before `dev` and `build`, publishing the benchmark files under `/research/arabic-dialects/` (the AraDiCE question text is left out, `fetch_data.py` downloads it) |
 
@@ -69,6 +69,8 @@ metrics:
 ---
 ```
 
+Optional fields: `caseStudy: false` shows the entry as a card only, with no page behind it (Scout and Career Compass work this way), and `badge` adds a short label to the card, like Suelo's "more coming soon".
+
 MDX bodies can import `VideoBlock`, `Figure`, `DemoBlock`, `FacebookVideo` and `BarChart` from `src/components/`.
 
 ### The case study bar
@@ -87,7 +89,8 @@ Not everything needs a case study. Work that can't clear the bar, and community 
 
 ## Media sources
 
-- **Dots**: demo video and screens copied from [ericdachen.com/design](https://ericdachen.com/design), from the project Malak built with Eric Chen.
+- **Dots and Scout**: demo videos and screens copied from [ericdachen.com/design](https://ericdachen.com/design), from the projects Malak built with Eric Chen.
+- **Career Compass**: a 17-second cut of Malak's own screen recording (September 2025), with the landing page, the analysis steps and a sample pathway. Her email was patched out of the results header, and the recording's login, postal code and LinkedIn pages aren't used.
 - **Quine**: the official [Microsoft Research announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) video (YouTube) and figure animations, embedded from microsoft.com rather than re-hosted.
 - **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources. The home card loops a 12-second cut of the Windows video (3.1s to 15.4s, product footage only) as a self-hosted MP4, so YouTube's player overlay never shows.
 - **UberX Share**: Uber's official launch video. The home card loops a 20-second cut (23.5s to 43.8s, from the app close-up to the UberX Share title) the same way.

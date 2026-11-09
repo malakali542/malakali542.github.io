@@ -28,6 +28,8 @@ const lists = [
     title: 'on the side',
     items: [
       { name: 'suelo', href: '/work/suelo/', tag: 'co-founder' },
+      { name: 'career compass', href: '#career-compass', tag: '~400 monthly users' },
+      { name: 'scout', href: '#scout', tag: 'co-founder' },
       { name: 'dots', href: '/work/dots/', tag: 'hackathon winner' },
     ],
   },
@@ -47,7 +49,7 @@ const lists = [
       <p class="tagline">engineer + product hybrid · uwaterloo alum · seattle</p>
       <p>i'm a research product manager at microsoft research, where i work on <a href="/work/quine/">quine</a>, a world model of biology and the agent harness that lets scientists use it. i decide what the model should learn next, lead the evals that tell us whether it did, and turn those results into a roadmap across mid-training and post-training.</p>
       <p>before that i was a product manager in microsoft ai, shipping <a href="/work/recall/">recall</a> and <a href="/work/copilot-diagnostics/">copilot</a> features to millions of windows pcs. before that i wrote code at <a href="/work/uber/">uber</a> and <a href="/work/pointclickcare/">pointclickcare</a>, and studied systems design engineering at the university of waterloo.</p>
-      <p>outside of work i run coding hackathons for toronto kids with <a href="/about/#community">bridgeto and amazon</a>, build my own software with <a href="/ai/">frontier models, local models and agent swarms</a>, and <a href="/writing/">write</a> about agents, evals and how well language models speak arabic.</p>
+      <p>outside of work i run coding hackathons for toronto kids with <a href="/about/#community">bridgeto and amazon</a>, build my own software with <a href="/ai/">frontier models, local models and agent swarms</a>, and <a href="/writing/">write</a> about ai for science, agents, evals and how well language models speak arabic.</p>
       <div class="links">
         {site.links.map((link) => <a href={link.href}>{link.label} ↗</a>)}
       </div>
@@ -82,7 +84,7 @@ const lists = [
   <section class="container section" id="building">
     <div class="section-head">
       <h2>built on the side</h2>
-      <span class="mono muted">startups &amp; hackathons</span>
+      <span class="mono muted">startups, tools &amp; hackathons</span>
     </div>
     <div class="grid">
       {byGroup('building').map((entry) => <WorkCard entry={entry} />)}

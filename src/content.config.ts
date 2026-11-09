@@ -9,7 +9,7 @@ const media = z.discriminatedUnion('kind', [
     kind: z.literal('video'),
     src: z.string(),
     poster: z.string().optional(),
-    frame: z.enum(['none', 'phone']).default('none'),
+    frame: z.enum(['none', 'laptop', 'phone']).default('none'),
     fit: z.enum(['cover', 'contain']).default('cover'),
     bg: z.string().optional(),
     start: z.number().optional(),
@@ -46,6 +46,10 @@ const work = defineCollection({
     period: z.coerce.string(),
     order: z.number(),
     group: z.enum(['work', 'building']),
+    // false: the entry shows as a card only, with no case study page behind it.
+    caseStudy: z.boolean().default(true),
+    // A short label on the card, like "more coming soon" or a usage number.
+    badge: z.string().optional(),
     summary: z.string(),
     card: media,
     hero: media.optional(),

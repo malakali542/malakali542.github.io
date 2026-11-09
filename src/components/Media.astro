@@ -33,6 +33,14 @@ const Demo = media.kind === 'demo' ? demos[media.name] : null;
 ---
 
 <div class="media">
+  {media.kind === 'video' && media.frame === 'laptop' && (
+    <div class="frame-laptop">
+      <div class="laptop-box">
+        <img class="laptop" src="/media/scout/scout-dashboard.png" alt="" loading="lazy" />
+        <LoopVideo src={media.src} poster={media.poster} label={label} class="screen" />
+      </div>
+    </div>
+  )}
   {media.kind === 'video' && media.frame === 'phone' && (
     <div class="frame-phone">
       <LoopVideo src={media.src} poster={media.poster} label={label} fit="contain" />

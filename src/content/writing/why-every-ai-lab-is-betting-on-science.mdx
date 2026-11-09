@@ -1,0 +1,67 @@
+---
+title: Why every major AI lab is betting on science
+dek: Google DeepMind, Anthropic, OpenAI and Microsoft have reached the same hypothesis, that AI can compress decades of scientific progress into years. Here's the case for it, why it's happening now, and the bottleneck none of them have solved.
+date: 2026-11-03
+tags: [ai for science, biology, research]
+---
+
+In October 2024, half of the [Nobel Prize in Chemistry](https://www.nobelprize.org/prizes/chemistry/2024/press-release/) went to Demis Hassabis and John Jumper of Google DeepMind for AlphaFold, a model that predicts the 3D shape of a protein from its sequence. By 2025, [more than 3 million researchers in over 190 countries](https://deepmind.google/blog/alphafold-five-years-of-impact/) had used it. Two years after that prize, every major AI lab has a science effort, and the US government has called its own AI-for-science program [comparable to the Manhattan Project](https://www.whitehouse.gov/presidential-actions/2025/11/launching-the-genesis-mission/). Last month, Google DeepMind, Isomorphic Labs and Meta joined the Department of Energy, the NIH and Biohub in a [$1.8 billion commitment](https://biohub.org/news/virtual-biology-initiative-expansion/) to generate the biological data needed to build a virtual cell.
+
+AI for science means using models to do parts of research itself: reading the literature, proposing hypotheses, choosing experiments and analyzing what comes back. I work on one of these efforts, [Quine](/work/quine/) at Microsoft Research, and friends outside the field keep asking me why everyone is piling in at once. This is my answer: the hypothesis the labs share, why it's happening now instead of five years ago, and the bottleneck that will decide how fast it pays off.
+
+## The hypothesis
+
+The labs disagree about plenty, but on science they make the same bet in almost the same words.
+
+Hassabis likes to recall the pitch he gave investors when DeepMind started in 2010: "Step one: Solve intelligence. Step two: Use it to solve everything else" ([Stanford GSB](https://www.gsb.stanford.edu/insights/demis-hassabis-thinks-were-foothills-singularity)). When Scott Pelley of 60 Minutes asked him in April 2025 about the end of disease, he [answered](https://www.cbsnews.com/news/artificial-intelligence-google-deepmind-ceo-demis-hassabis-60-minutes-transcript/): "I think that's within reach. Maybe within the next decade or so, I don't see why not."
+
+Dario Amodei, Anthropic's CEO, put a number on it in his October 2024 essay [Machines of Loving Grace](https://darioamodei.com/essay/machines-of-loving-grace): "my basic prediction is that AI-enabled biology and medicine will allow us to compress the progress that human biologists would have achieved over the next 50-100 years into 5-10 years." He calls the result the "compressed 21st century."
+
+Sam Altman made the same argument about speed in [The Gentle Singularity](https://blog.samaltman.com/the-gentle-singularity), in June 2025: "If we can do a decade's worth of research in a year, or a month, then the rate of progress will obviously be quite different." He also wrote that "2026 will likely see the arrival of systems that can figure out novel insights."
+
+Under the quotes sits a simple argument. Most of what people want from technology, from new medicines to cheaper batteries, is limited by how fast science moves, and science moves at the speed of good hypotheses and the experiments that test them. Amodei's version is that a handful of discoveries, like CRISPR, account for much of the progress in biology, and that "powerful AI could at least 10x the rate of these discoveries." If AI can propose better hypotheses, choose which experiments to run and read the results faster, progress compounds, because every answer sharpens the next question.
+
+## Everyone is in
+
+That hypothesis now has products, programs and a lot of capital behind it.
+
+<div class="table-text">
+
+| Who | The bet | Recent proof |
+|---|---|---|
+| Google DeepMind | Models that make discoveries, and a company to turn them into drugs | Its [AI co-scientist](https://research.google/blog/accelerating-scientific-breakthroughs-with-an-ai-co-scientist/) proposed drug repurposing candidates for acute myeloid leukemia that held up in lab experiments. Isomorphic Labs raised $600 million in March 2025, then [$2.1 billion](https://www.isomorphiclabs.com/articles/isomorphic-labs-announces-series-b-investment-round) in May 2026. |
+| Anthropic | Claude as a working tool for scientists | [Claude for Life Sciences](https://www.anthropic.com/news/claude-for-life-sciences) (October 2025) connects to Benchling, PubMed and 10x Genomics. Its AI for Science program [expanded to 20 foundations and research institutions](https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions) in October 2026. |
+| OpenAI | "The next great scientific instrument," in Kevin Weil's words | OpenAI for Science launched in September 2025. In 2026 its models [resolved or advanced 10 long-standing problems](https://openai.com/index/ten-advances-in-mathematics/) in math and theoretical computer science, and it committed [more than $250 million](https://openai.com/index/chatgpt-for-academic-researchers/) through 2027 to outside research, including free access for 100,000 researchers. |
+| Microsoft | Agents for R&D, and a world model of biology | [Microsoft Discovery](https://azure.microsoft.com/en-us/blog/transforming-rd-with-agentic-ai-introducing-microsoft-discovery/) found a coolant prototype free of "forever chemicals" in about 200 hours. [Quine](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) and the Broad Institute ranked thousands of compounds for pancreatic cancer research in one weekend. |
+| Startups | Companies built around AI and their own labs | [Xaira](https://techcrunch.com/2024/04/24/xaira-an-ai-drug-discovery-startup-launches-with-a-massive-1b-says-its-ready-to-start-developing-drugs/) launched with $1 billion in 2024. [Lila Sciences](https://www.lila.ai/news/announcing-the-close-of-our-series-a) raised $550 million in 2025, and [Periodic Labs](https://techcrunch.com/2025/09/30/former-openai-and-deepmind-researchers-raise-whopping-300m-seed-to-automate-science/) raised a $300 million seed. |
+| Governments | Science as national infrastructure | The US Genesis Mission (November 2025) directs the Department of Energy to build an AI platform on the national labs' supercomputers, including tools for autonomous experiments. The UK [committed more than £1 billion](https://www.gov.uk/government/news/prime-minister-sets-out-blueprint-to-turbocharge-ai) to expand its AI Research Resource 20 times by 2030. |
+
+</div>
+
+## Why now
+
+The idea isn't new. AlphaFold's breakthrough came in 2020, and people have used machine learning in labs for decades. Four things changed in the last two years.
+
+**Models started reasoning at a research level.** In July 2025, an advanced version of Gemini Deep Think and an experimental OpenAI model both reached gold-medal level at the International Mathematical Olympiad, solving five of the six problems, and [DeepMind's result](https://deepmind.google/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/) was graded and certified by the IMO's own coordinators. Within a year, models moved from competition problems to open ones. In May 2026, an OpenAI model [disproved a long-standing conjecture in discrete geometry](https://openai.com/index/model-disproves-discrete-geometry-conjecture/), which OpenAI called "the first time that a prominent open problem, central to a subfield of mathematics, has been solved autonomously by AI." DeepMind's AlphaProof Nexus [resolved 9 of 353 open Erdős problems](https://arxiv.org/abs/2605.22763) at a few hundred dollars each, with every proof checked by the Lean proof assistant. Math matters here because a proof either checks or it doesn't, which makes it the cleanest evidence that a model is reasoning instead of recalling.
+
+**Agents can do the work, not just answer questions.** In a single run, Edison Scientific's [Kosmos](https://edisonscientific.com/news/announcing-kosmos) reads 1,500 papers and runs 42,000 lines of analysis code. Its beta users estimate it does in one day what would take them six months. Google's AI co-scientist uses a team of agents that propose hypotheses, critique and rank them, and evolve the strongest. For liver fibrosis, its standout pick was vorinostat, an existing drug, which [blocked 91% of a damage response that can drive liver scarring](https://deepmind.google/blog/uncovering-repurposed-medicines-to-fight-liver-fibrosis/) in experiments at Stanford.
+
+**Science grades its own work.** The method behind today's reasoning models, reinforcement learning with verifiable rewards, needs tasks where an answer can be checked, and science is full of them: a proof compiles, a predicted structure matches the experiment, an assay confirms the prediction or it doesn't. That's why so much of my week goes to evals, because in science the eval and the experiment are often the same thing. The training data is arriving too. Arc Institute trained [Evo 2](https://arcinstitute.org/news/evo2) on 9.3 trillion DNA letters from more than 128,000 genomes, and Meta's [OMol25](https://ai.meta.com/blog/meta-fair-science-new-open-source-releases/) dataset holds more than 100 million molecular snapshots that took 6 billion core hours to compute.
+
+**The economics are hard to ignore.** About [90% of drug candidates that enter clinical trials fail](https://pmc.ncbi.nlm.nih.gov/articles/PMC9293739/), and the Tufts Center for the Study of Drug Development [estimated](https://csdd.tufts.edu/research/longitudinal-studies) the average cost of bringing one new drug to market at about $2.6 billion, including the cost of the failures along the way. At those numbers, even a small improvement in which candidates reach the clinic is worth billions, and investors have priced that in. Isomorphic's second round was more than three times the size of its first, and it closed just over a year later.
+
+## What's still hard
+
+Every one of these systems runs into the same wall eventually: the lab bench. A model can propose a thousand hypotheses in an afternoon, but each one still has to be tested in cells, then animals, then people, and those experiments take weeks to years.
+
+The labs say so themselves. Describing a closed-loop project with Ginkgo Bioworks that ran more than 36,000 reactions across 580 plates and cut the cost of cell-free protein synthesis by 40%, [OpenAI wrote](https://openai.com/index/gpt-5-lowers-protein-synthesis-cost/) that "in much of life science, the bottleneck is iteration." Google Research made the same point in October: wet-lab experiments "have not kept pace, making experimental readouts more of a bottleneck than ever" ([Google Research](https://research.google/blog/grounding-ai-agents-in-biological-reality-building-blocks-for-autonomous-wet-labs/)). The timelines show it too. In January, Hassabis said Isomorphic expected its first clinical trials by the end of 2026, a year later than the end-of-2025 target he had given before ([Reuters](https://www.yahoo.com/news/articles/google-backed-isomorphic-labs-delays-203558389.html)).
+
+Speed also raises the cost of being wrong. Edison reports that 79.4% of Kosmos's conclusions are accurate, which is impressive and still means about one in five isn't. In a literature review that's an annoyance, but in an experiment queue it's weeks of a scientist's time, so someone has to know which conclusions to distrust before the lab does. And biology carries a harder risk than wasted time. A model good enough to help design a useful protein can help design a harmful one, which is why biosafety review now belongs in the release process for models like these. I lead that review for Quine.
+
+## Where I think this goes
+
+From inside one of these efforts, I think the hypothesis is right and most of the timelines are early, and the gap between the two is the loop. A model's prediction is worth something only after an experiment confirms it, and the result of that experiment is the most valuable training data a model can get, because nobody else has it. The teams that close that loop fastest, from prediction to experiment to result to a better model, will pull ahead.
+
+That's why the players look different up close even though they describe the same bet. The frontier labs bring the reasoning, Lila and Periodic are building their own automated labs, and Isomorphic runs its own drug programs. On Quine we connect the model to scientists, contract research labs and partners, so wet-lab results come back as training and evaluation data.
+
+So when I look at any AI-for-science effort, I ask one question first: how long does it take for a result from the lab to change the model? Hassabis's step one is moving faster than almost anyone predicted. Step two runs through the lab, and if the 21st century does get compressed, that loop will set the pace.

@@ -4,7 +4,9 @@ import Base from '../../layouts/Base.astro';
 import Media from '../../components/Media.astro';
 
 export async function getStaticPaths() {
-  const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  const work = (await getCollection('work'))
+    .filter((entry) => entry.data.caseStudy)
+    .sort((a, b) => a.data.order - b.data.order);
   return work.map((entry, i) => ({
     params: { slug: entry.id },
     props: { entry, prev: work[i - 1] ?? null, next: work[i + 1] ?? null },
@@ -28,7 +30,7 @@ const facts = [{ label: 'role', value: data.role }, ...data.facts];
   <article class="container">
     <header class="case-head">
       <a class="back" href="/work/">← all work</a>
-      <p class="eyebrow">{data.org} · {data.period}</p>
+      <p class="eyebrow">{data.org} · {data.period}{data.badge && ` · ${data.badge}`}</p>
       <h1>{data.title}</h1>
       <p class="lede">{data.summary}</p>
       <dl class="facts">
