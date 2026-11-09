@@ -36,7 +36,6 @@ const lists = [
     title: 'community',
     items: [
       { name: 'bridgeto youth × amazon', href: '/work/bridgeto/', tag: 'tech director' },
-      { name: 'african microsoft employees', href: '/about/#community', tag: 'engagement director' },
     ],
   },
 ];
@@ -129,17 +128,6 @@ const lists = [
     </div>
     <div class="grid">
       {byGroup('community').map((entry) => <WorkCard entry={entry} />)}
-      <article class="card">
-        <div class="card-body">
-          <h3 class="card-title"><a href="/about/#community">african microsoft employees</a></h3>
-          <div class="card-meta">microsoft · 2025 - now · engagement director</div>
-          <p class="card-summary">
-            I lead programming and events for an employee resource group of 900+ members, building community and belonging
-            for African employees across Microsoft.
-          </p>
-          <span class="card-cta" aria-hidden="true">more about me →</span>
-        </div>
-      </article>
     </div>
   </section>
 </Base>

@@ -396,6 +396,29 @@ h4 {
   gap: clamp(20px, 3vw, 32px);
 }
 
+/* A section with only one card gives it the whole row: media on the left, text on the right. */
+@media (min-width: 861px) {
+  .grid > .card:only-child {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+
+  .grid > .card:only-child .card-media {
+    border-bottom: 0;
+    border-right: 1px solid var(--line);
+  }
+
+  .grid > .card:only-child .card-body {
+    justify-content: center;
+    padding: 28px 32px;
+  }
+
+  .grid > .card:only-child .card-cta {
+    margin-top: 10px;
+  }
+}
+
 .card {
   position: relative;
   display: flex;
