@@ -18,7 +18,7 @@ npm run style     # check all site prose against the malak-style rules
 
 The site lives at [malak.club](https://malak.club), served by GitHub Pages from the public repo [malakali542/malakali542.github.io](https://github.com/malakali542/malakali542.github.io). Every push to its `main` branch runs `.github/workflows/deploy.yml`, which builds the site and publishes `dist/`. `SITE_URL` (default `https://malak.club`) sets canonical URLs and the sitemap. The custom domain is set in the repo's Pages settings, not with a `CNAME` file, because Actions deployments ignore that file.
 
-The source of truth is `portfolio/` in the private protos repo. To publish, run this from the protos repo root:
+The source of truth is `portfolio/` in the private protos repo. To publish, commit there, then run this from the root of a protos checkout whose branch contains `portfolio/`:
 
 ```bash
 git subtree push --prefix=portfolio site main
