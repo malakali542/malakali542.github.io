@@ -6,7 +6,7 @@ role: software engineer
 period: 2022 - 2023
 order: 5
 group: work
-summary: On UberX Share I built rider flows that explain shared rides before people cancel over them, brought server-driven UI to our microservice and pitched it to the wider shared rides org, and cut MapStore's average query time 40%.
+summary: On UberX Share I built rider flows that explain shared rides before people cancel over them, ran opt-in experiments that lifted shared-ride adoption 4.5%, and cut MapStore's average query time 40%.
 card:
   kind: video
   src: /media/uber/uberx-share-clip.mp4
@@ -40,25 +40,31 @@ links:
 
 import DemoBlock from '../../components/DemoBlock.astro';
 
-## Context
+## The problem
 
-UberX Share brought shared rides back after Uber paused them in 2020. The trade is simple on paper: you might pick up a co-rider heading the same way, and in exchange you get an upfront discount and up to 20% off if you're matched, while arriving no more than 8 minutes later than a regular UberX ([Uber Newsroom](https://www.uber.com/us/en/newsroom/uberx-share/)).
+UberX Share brought shared rides back after Uber paused them in 2020. The trade is simple on paper: you might pick up a co-rider heading the same way, and in exchange you get an upfront discount, up to 20% off if you're matched, and arrive no more than 8 minutes later than a regular UberX ([Uber Newsroom](https://www.uber.com/us/en/newsroom/uberx-share/)). In the app it wasn't always simple. A rider who didn't understand the trade would see an unexpected stop or a stranger getting in, and cancel.
 
-On paper. In the app, a rider who didn't understand that trade would see an unexpected stop or a stranger getting in, and cancel.
+## The calls I made
 
-## Flows that explain the ride before it surprises you
+### Explain the ride before it surprises you
 
 Some cancellations weren't about price or wait time at all. They came from riders who didn't understand what they had booked. I built flows to cut those cancellations, including the **first-time-user experience for UberX Share in the Rider app**, so the trade is explained before the ride instead of discovered during it.
 
-Alongside that, I ran **A/B experiments on the opt-in funnels** and turned the research and data analysis into feature changes that shipped, lifting shared-ride adoption **4.5%**. I also led the rollout across **4 markets**, coordinating legal, policy and operations so the technical implementation matched each market's regulatory requirements.
+### Let experiments decide the opt-in flow
 
-## Server-driven UI
+I ran **A/B experiments on the opt-in funnels** and turned the research and data analysis into feature changes that shipped, lifting shared-ride adoption **4.5%**.
 
-Rider flows change constantly, and every change that waits on an app release is slow to test. I **onboarded server-driven UI to our microservice**, so the backend describes what a screen shows and we could change and experiment with flows without shipping a new app version. Once it worked for us, I evangelized it across the shared rides and ride matching org.
+### Change flows without an app release
 
-## MapStore, 40% faster
+Rider flows change constantly, and every change that waits on an app release is slow to test. I **onboarded server-driven UI to our microservice**, so the backend describes what a screen shows and we could change and test flows without shipping a new app version. Once it worked for us, I pitched it to the wider shared rides and ride matching org.
 
-MapStore is an internal service other engineering teams use for map data. I redesigned the service interface and the query architecture: **paginated** responses that used to return entire result sets, **rewrote the slowest SQL queries**, and trimmed payloads so the internal tools on top of it **loaded faster**. Average query time dropped **40%** for the teams that depend on it.
+### Roll out market by market
+
+I led the rollout across **4 markets**, coordinating legal, policy and operations so the technical implementation matched each market's regulatory requirements.
+
+### Make MapStore 40% faster
+
+MapStore is an internal service other engineering teams use for map data. I redesigned its service interface and query architecture: **paginated** responses that used to return entire result sets, **rewrote the slowest SQL queries**, and trimmed payloads so the internal tools built on it **loaded faster**. Average query time dropped **40%** for the teams that depend on it.
 
 <DemoBlock name="mapstore" caption="Illustration: the same paginated query before and after the redesign. Not the real interface." />
 

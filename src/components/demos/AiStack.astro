@@ -24,7 +24,7 @@ const models = [
 ];
 const agentNames = ['research', 'build', 'review', 'eval', 'test', 'docs'];
 const shipList = [
-  { name: 'job search', sub: 'submitted via CUA' },
+  { name: 'suelo', sub: 'startup prototype' },
   { name: 'quant desk', sub: 'morning brief' },
   { name: 'news digest', sub: 'my sources, one page' },
   { name: 'budgets', sub: 'saved in the browser' },
@@ -54,7 +54,7 @@ const wHarness = row(
   16, 28, 190, 10,
 ).map((c, i) => ({ ...c, at: 7200 + i * 150, rsi: Boolean(c.extra) }));
 const wSkills = row(
-  ['user research', 'STE100 voice', 'loops + swarms', 'benchmark sessions', 'resume tailoring', 'malak-style'].map((text) => ({ text })),
+  ['user research', 'STE100 voice', 'loops + swarms', 'benchmark sessions', 'session memory', 'malak-style'].map((text) => ({ text })),
   15, 26, 190, 10,
 ).map((c, i) => ({ ...c, at: 8400 + i * 150 }));
 
@@ -86,7 +86,7 @@ const cShipRow = (names: string[], y: number, at0: number) => {
   });
 };
 const cShips = [
-  ...cShipRow(['job search', 'quant desk', 'news digest'], 430, 3400),
+  ...cShipRow(['suelo', 'quant desk', 'news digest'], 430, 3400),
   ...cShipRow(['budgets', 'daily games', 'this site'], 484, 4900),
 ];
 const loopIcon = 'M10 3.5a6.5 6.5 0 1 0 6.1 4.3M16.5 3v4.6h-4.6';
@@ -97,7 +97,7 @@ const loopIcon = 'M10 3.5a6.5 6.5 0 1 0 6.1 4.3M16.5 3v4.6h-4.6';
   data-seq
   data-cycle="13000"
   role="img"
-  aria-label="Diagram: Claude and GPT plus local Qwen, Gemma and Phi models feed a router that picks a model and effort per step. An Orca hub runs a swarm of six agents in their own worktrees. Harnesses (Claude Code, Codex, Copilot CLI, Capy, Hermes) improve their own skills from v1 to v3. Skills include user research, STE100 voice, loops and swarms, and benchmark sessions. What ships: a job search that submits applications, an investing desk, a news digest, budgets, daily games and this site."
+  aria-label="Diagram: Claude and GPT plus local Qwen, Gemma and Phi models feed a router that picks a model and effort per step. An Orca hub runs a swarm of six agents in their own worktrees. Harnesses (Claude Code, Codex, Copilot CLI, Capy, Hermes) improve their own skills from v1 to v3. Skills include user research, STE100 voice, loops and swarms, and benchmark sessions. What ships: the Suelo startup prototype, an investing desk, a news digest, budgets, daily games and this site."
 >
   <svg class="stack-svg wide" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMin meet" aria-hidden="true">
     <defs>
@@ -229,7 +229,7 @@ const loopIcon = 'M10 3.5a6.5 6.5 0 1 0 6.1 4.3M16.5 3v4.6h-4.6';
       </g>
     ))}
     <g data-step data-at="9800">
-      <text x="48" y="666" class="t14 s-dim">frontier for reasoning · local for bulk runs · applications go out only after I approve</text>
+      <text x="48" y="666" class="t14 s-dim">frontier for reasoning · local for bulk runs · nothing ships without my review</text>
     </g>
   </svg>
 

@@ -4,9 +4,9 @@ short: Copilot diagnostics
 org: Microsoft AI
 role: product manager
 period: 2024 - 2026
-order: 2
+order: 3
 group: work
-summary: Copilot was bad at fixing PCs because it couldn't see the PC. I owned diagnostics in Copilot Tasks, which lets Copilot write and run code locally, with the user's consent, so it troubleshoots from real system state instead of guesses.
+summary: Copilot couldn't fix PCs because it couldn't see them. I owned diagnostics in Copilot Tasks, which lets Copilot write and run code on your PC with your consent, and shipped it to 10M+ Windows Copilot users.
 card:
   kind: demo
   name: copilot-diagnostics
@@ -26,24 +26,24 @@ facts:
 
 ## The problem
 
-People ask Copilot things like "why is my laptop so slow" or "my wifi keeps dropping." Copilot used to answer those from the outside. It could offer the generic checklist (restart, update your drivers, run the troubleshooter) that the person had usually tried already, because the answer to most PC problems lives in local state a chat model can't see: event logs, driver versions, battery reports, disk usage, adapter settings.
+People ask Copilot things like "why is my laptop so slow" or "my wifi keeps dropping." Copilot used to answer from the outside, with the generic checklist (restart, update your drivers, run the troubleshooter) that people had usually tried already. The answer to most PC problems lives in local state a chat model can't see: event logs, driver versions, battery reports, disk usage and adapter settings. So the gap wasn't only model intelligence. Copilot had no way to look at the machine it was supposed to fix.
 
-So the gap wasn't only model intelligence. Copilot had no way to look at the machine it was supposed to fix.
+## What I owned
 
-## What I did
+I owned product definition for **diagnostics in Copilot Tasks**, the capability that lets Copilot generate code and run it locally on a person's Windows PC. Copilot writes a diagnostic, runs it on the device, reads the output and reasons from what it actually found.
 
-I owned product definition for **diagnostics in Copilot Tasks**, the capability that lets Copilot generate code and execute it locally on a person's Windows PC. Copilot can write a diagnostic, run it on the device, read the output and reason from what it actually found.
+## The calls I made
 
-Running model-written code on someone's personal computer is a big ask, so most of the product work was deciding exactly when and how Copilot is allowed to do it:
+Running model-written code on someone's personal computer is a big ask, so most of the product work was deciding exactly when and how Copilot gets to do it.
 
-- **Consent flows.** I designed how Copilot asks before it runs anything on a person's machine, so the user stays the one who decides.
-- **Model readiness criteria.** I defined the bar a model had to clear before it could generate and execute code for real users, and the evals behind that bar.
-- **Execution guardrails and human-approval boundaries.** I drew the line between what the agent can do on its own and what always needs a person to approve, including the permission patterns for exposing OS capabilities to the agent as tools.
-- **OS context.** I shipped Copilot and Windows integrations that surface richer system context, so answers start from the machine's real state.
+- **Ask before running anything.** I designed the consent flows, so Copilot asks before it runs code and the person at the keyboard stays the one who decides.
+- **Set a readiness bar before real users.** I defined the criteria a model had to meet before it could generate and execute code for real users, and the evals behind them.
+- **Draw the line between acting alone and asking first.** I set the execution guardrails and the human-approval boundaries: what the agent can do on its own and what always needs a person to approve. That included the MCP permission patterns for exposing OS capabilities to the agent as tools.
+- **Give Copilot the machine's context.** I shipped Copilot and Windows integrations that surface richer system context, so answers start from the PC's real state.
 
 ## Outcome
 
-Diagnostics shipped to **10M+ Windows Copilot users**. The goal was to move troubleshooting from "here are 6 things to try" to "here is what is wrong with this PC, and here is a fix if you want it."
+Diagnostics shipped to **10M+ Windows Copilot users**. The goal was to move troubleshooting from "here are 6 things to try" to "here is what's wrong with this PC, and here is a fix if you want it."
 
 ## What I learned
 

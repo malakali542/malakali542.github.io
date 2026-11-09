@@ -6,7 +6,7 @@ role: research product manager
 period: 2026 - now
 order: 1
 group: work
-summary: I define what Quine's model should be able to do, lead the evals that measure it across mid-training and post-training, and turn the results into the roadmap, the data strategy and the compute plan.
+summary: I decide what Quine's model should learn next and lead the evals that show whether it did, across mid-training and RL. Turning partner failures into training data raised benchmark pass rates 15% over three model iterations.
 card:
   kind: video
   src: https://www.microsoft.com/en-us/research/wp-content/uploads/2026/09/QUINE-Visual1_Lite_FinalComp_V2_FIG-1.mp4
@@ -21,19 +21,21 @@ hero:
   hd: true
   caption: Introducing Quine, Microsoft Research, September 2026.
 metrics:
-  - value: 50,000+
-    label: GPU-hours directed across mid-training and RL
   - value: +15%
-    label: partner benchmark pass rate, across three model iterations
+    label: partner benchmark pass rate, over three model iterations
   - value: +12%
     label: held-out task accuracy from the team's first RLVR program
-  - value: 100+
-    label: scientists across four labs on the multi-agent workbench
+  - value: 30%
+    label: less time from research question to experimental plan, for 100+ scientists
+  - value: 50,000+
+    label: GPU-hours I direct across mid-training and RL
 facts:
   - label: team
     value: core team of 8, 30+ contributors
   - label: model
-    value: 5 biological modalities, mid-training then RLVR
+    value: LLM post-trained across 5 biological modalities, mid-training then RLVR
+  - label: scope
+    value: capability roadmap, evals, data, compute, biosafety
   - label: users
     value: scientists, research labs, enterprise partners
 links:
@@ -49,11 +51,11 @@ links:
 
 import VideoBlock from '../../components/VideoBlock.astro';
 
-## What Quine is
+## The problem
 
-Biology runs on slow loops. A scientist proposes something, waits weeks for an experiment, and spends scarce samples on the answer even when it's no. Quine is Microsoft Research's attempt to make those loops shorter. It has two parts that are built together: a **world model of biology** that learns shared representations across genomics, proteins, chemistry, RNA and cell state, and imaging, and a **harness** that connects that model to scientific tools, the literature, the wet lab and the scientists using it.
+Biology runs on slow loops. A scientist proposes something, waits weeks for an experiment, and spends scarce samples on the answer even when it's no. Quine is Microsoft Research's attempt to shorten those loops, with two parts built together: a **world model of biology** that learns shared representations across genomics, proteins, chemistry, RNA and cell state, and imaging, and a **harness** that connects the model to scientific tools, the literature, the wet lab and the scientists using it.
 
-The [public announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) describes the result we care about most. With collaborators at the Broad Institute, Quine ranked thousands of compounds by their predicted ability to shift pancreatic cancer cells between states. In the lab, the top-ranked compounds produced the largest intended shifts, and narrowing the search took one weekend, potentially saving months of experimental work.
+The [public announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) shows what that looks like when it works. With collaborators at the Broad Institute, Quine ranked thousands of compounds by their predicted ability to shift pancreatic cancer cells between states. In the lab, the top-ranked compounds produced the largest intended shifts, and narrowing the search took one weekend.
 
 <VideoBlock
   src="https://www.microsoft.com/en-us/research/wp-content/uploads/2026/09/QUINE-Visual2_FinalComp_LITE_V4_FIG-2_UPDATED.mp4"
@@ -66,44 +68,36 @@ The [public announcement](https://www.microsoft.com/en-us/research/blog/introduc
   href="https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/"
 />
 
-## What a research product manager does here
+## What I own
 
-The model is a large language model post-trained across five biological modalities. Our training stack is mid-training followed by reinforcement learning with verifiable rewards (RLVR). My job is the set of decisions that sit around the training runs: which capabilities matter, how we'll know we have them, what data and compute it takes, and when a checkpoint is good enough to put in front of a scientist.
+The model is a large language model post-trained across five biological modalities, with mid-training followed by reinforcement learning with verifiable rewards (RLVR). I own the decisions that sit around the training runs: which capabilities matter, how we'll know the model has them, what data and compute that takes, and when a checkpoint is ready for scientists. That covers the capability roadmap, the evals, acquisition of 40+ internal and external datasets, 50,000+ GPU-hours of compute, the research workbench scientists use, and biosafety.
 
-### 1. Defining capability
+## The calls I made
 
-I own the capability roadmap. For each model iteration I translate four inputs into capability targets, release gates and training investments:
+### Write evals from what scientists actually do
 
-- **Research priorities** from the scientists building the model.
-- **Usage signal** from the labs and partners working with the model.
-- **Competitive analysis.** I track Google's AI co-scientist, AWS's scientific discovery work and Anthropic's science efforts, and run external models through our own eval pipeline so comparisons happen on our tasks instead of someone else's launch post. That analysis set our data acquisition strategy and the synthetic data strategy behind **4+ shipped capabilities**.
-- **Eval results,** which decide whether a target was hit or needs another iteration.
+I ran evaluation programs with research labs and **five Fortune 500 pharma R&D partners**, on drug discovery and preclinical work like cell type annotation and perturbation prediction. Their workflows showed us capabilities we weren't measuring yet. Each real-world failure became new mid-training data or a new RL task, and benchmark pass rates rose **15% across three model iterations**. Beyond those programs, I've negotiated **10+** evaluation partnerships with academic institutions and Fortune 500 companies to use our research tools and models in real-world deployments, and some have produced novel candidates for drug discovery.
 
-Capabilities need data, so I also own acquisition and onboarding for training and evaluation data across all five modalities: intake, licensing and compliance review, and quality gates across **40+ internal and external datasets.**
+Competitive analysis fed the same roadmap. Studying Google's AI co-scientist, AWS's scientific discovery work and Anthropic's science efforts set our data acquisition strategy and the synthetic data strategy behind **4+ shipped capabilities**.
 
-### 2. Leading evals across mid-training and post-training
+### Fix the data before scaling RL
 
-Evals are how a research team agrees on what "better" means. I lead them end to end:
+For the team's first RLVR program I designed the verifiable-reward task set, the evaluation framework and the learning curriculum. Gaps in the training data and preprocessing were holding it back, and fixing them improved held-out task accuracy **12%**. I also led the team's first adversarial and held-out evaluation program, with stress tests built to surface unexpected behavior and a repeatable way to track failure modes across model iterations.
 
-- **The team's first RLVR program.** I designed the verifiable-reward task set, the evaluation framework and the learning curriculum, and found the training-data and preprocessing gaps holding it back. Fixing them improved held-out task accuracy **12%**.
-- **Partner evaluation programs.** I ran evals with research labs and **five Fortune 500 pharma R&D partners** across drug discovery and preclinical workflows like cell type annotation and perturbation prediction. Real-world failure modes became new mid-training data and RL tasks, and benchmark pass rates rose **15% across three model iterations.** I've negotiated **10+** evaluation partnerships with academic institutions and Fortune 500 companies so far.
-- **Promotion gates.** I set the model-readiness criteria that turn benchmark and held-out results into go or no-go decisions, agreed across **30+ researchers**, plus the data and eval dashboards they use to catch regressions.
-- **Compute.** I direct **50,000+ GPU-hours** across mid-training and RL, prioritizing experiments, writing their success criteria, and moving compute toward the capability gaps the evals expose.
+### Let the evals move the compute
 
-### 3. Getting it to scientists
+I direct **50,000+ GPU-hours** across mid-training and RL, writing the success criteria for each experiment and moving compute toward the capability gaps the evals expose. Promotion gates agreed across **30+ researchers** turn benchmark and held-out results into go or no-go decisions, and the data and eval dashboards I built help those researchers catch regressions.
 
-A model scientists can't use doesn't change any science. I'm the product lead for the multi-agent research workbench that sits on top of the model. It orchestrates literature review, data analysis and agentic workflows into wet-lab-ready experimental plans. I ran the workflow research that decided which connectors and skills we built, then onboarded and supported the scientists using it. It has reached **100+ scientists across four labs** and cut the time from research question to experimental plan by **30%**.
+### Judge the product by time to an experiment
 
-I also lead external deployments. The research system went to four academic labs and the model went to four enterprises, each with telemetry, evals and benchmarks I defined with the researchers involved. Those feedback loops reduced the time to generate and rank candidates by **15%**. On the wet-lab side I run the validation loop with four contract research organizations, so model predictions get tested in assays and the results come back as training and evaluation data.
+I'm the product lead for the multi-agent research workbench on top of the model, which turns literature review, data analysis and agentic workflows into wet-lab-ready experimental plans. Workflow research with scientists decided which connectors and skills we built, and I defined how we benchmark the system: benchmarking pipelines, core evals and custom gym benchmarks for agent capabilities. It reached **100+ scientists across four labs** and cut the time from research question to experimental plan by **30%**.
 
-### 4. Safety
+I led deployments of the research system to four academic labs and of the model to four enterprises, with telemetry, evals and benchmarks I defined with the researchers involved, and those feedback loops cut the time to generate and rank candidates by **15%**. For enterprise use I specified the protected managed environments, the access APIs and the evaluation requirements. I also run the wet-lab validation loop with four contract research organizations, so predictions get tested in assays and the results come back as training and evaluation data. That loop surfaced novel candidate pathways in pancreatic cancer and metastasis, now prioritized for wet-lab validation.
 
-I'm the program and product lead for biosafety. With policy, research, engineering and Microsoft's internal safety board, I set up release criteria and a review process now used across Microsoft research teams and **20+ models**. That review surfaced a case where model outputs could be combined with public data to enable misuse. It changed a release decision and led to new output filtering.
+### Make biosafety a release gate
 
-### 5. The website
-
-I built the [Quine website](https://microsoft.github.io/quine/) with Codex. It's where scientists applied to the first Quine Research Fellowship, with applications open from September 29 to November 2, 2026.
+I'm the program and product lead for biosafety. With policy, research, engineering and Microsoft's internal safety board, I set up release criteria and a review process now used across Microsoft research teams and **20+ models**. The review caught a case where model outputs could be combined with public data to enable misuse, which changed a release decision and led to new output filtering.
 
 ## What I've learned
 
-The eval is the real product spec. Whoever writes it decides what the model gets better at, so I try to write evals from what scientists actually do instead of from what is easy to grade. Compute should follow evidence: the fastest way to waste 1,000 GPU-hours is to keep training on a target your evals stopped believing in. And scientists rarely ask for a smarter model. They ask for a shorter path to an experiment worth running, which is a product problem as much as a research one.
+The eval is the real product spec. Whoever writes it decides what the model gets better at, so I write evals from what scientists actually do instead of from what's easy to grade. Compute should follow evidence, because the fastest way to waste 1,000 GPU-hours is to keep training toward a target your evals stopped believing in. And scientists rarely ask for a smarter model. They want a shorter path to an experiment worth running, which makes this a product problem as much as a research one.

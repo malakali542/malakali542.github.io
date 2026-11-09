@@ -4,9 +4,9 @@ short: Suelo
 org: Startup, formerly SwiftZone
 role: co-founder
 period: 2026 - now
-order: 6.9
+order: 7
 group: building
-summary: Suelo is building agents that research candidate sites for real estate developers, compare them with the brief, and prepare the next round of diligence. I co-founded it, first as SwiftZone, and I build the agents and the product.
+summary: Suelo builds agents that research candidate sites for real estate developers and prepare the next round of diligence. I co-founded it as SwiftZone, and we've since narrowed it to the first decision in development, whether a site is worth pursuing.
 card:
   kind: video
   src: /media/suelo/suelo-site.mp4
@@ -18,13 +18,6 @@ hero:
   src: /media/suelo/suelo-site.mp4
   poster: /media/suelo/suelo-poster.jpg
   caption: Suelo's site. The structural study separates its floor plates as you scroll.
-metrics:
-  - value: 7
-    label: steps from a forwarded candidate site to drafts waiting for review
-  - value: 81
-    label: synthetic sites in the workbench's stress tests
-  - value: 20
-    label: rounds of research, design, build and test
 facts:
   - label: formerly
     value: SwiftZone
@@ -32,23 +25,33 @@ facts:
     value: three co-founders, two of us engineers
   - label: stage
     value: working prototype on public and synthetic data
-  - label: built with
-    value: my agent workflows and startup research skills
+  - label: I build
+    value: the agents, the product and the site
 ---
 
 import Figure from '../../components/Figure.astro';
 
 ## The problem
 
-A site decision draws on many records. Planning rules, parcel geometry, terrain and consultant reports from geotechnical, environmental, traffic and civil teams each answer a different part of the same question, and they arrive on different timelines. Someone still has to reconcile them, test the assumptions and prepare the next investigation, and today that person works out of email threads and shared folders.
+A site decision draws on many records. Planning rules, parcel geometry, terrain and consultant reports from geotechnical, environmental, traffic and civil teams each answer a different part of the same question, and they arrive on different timelines. Someone still has to reconcile them, test the assumptions and decide what to investigate next, and today that person works out of email threads and shared folders.
 
-Suelo started as SwiftZone, an AI coordination layer for pre-construction. Since then the focus has narrowed to the first decision in that chain: whether a candidate site is worth pursuing, and what to investigate next.
+## The calls we made
 
-## What we're building
+### Start with one decision, not all of pre-construction
 
-Suelo starts with acquisition research. Its agents research candidate sites against a developer's brief, bring together the permitted site records, compare the requirements and flag what's still unresolved. The work product is a candidate comparison, the references behind it, and the questions for the next round of diligence. Diligence and planning coordination come after that.
+SwiftZone set out to coordinate everything that happens before construction starts. Our competitor research showed that a general coordination layer was already crowded, and a founder's own acquisition workflow pointed at a sharper first job: research a candidate site against the developer's brief before anyone spends money on diligence. Suelo starts there, and diligence and planning coordination come next.
 
-It works inside the files and email threads a team already uses instead of asking them to adopt another dashboard. Agents prepare the research and the follow-up work, and the team's own professionals review every finding and decide what happens next.
+### Work where developers already work
+
+Suelo runs inside the files and email threads a team already uses, so adopting it doesn't mean adopting another dashboard.
+
+### Keep a person on every decision
+
+Agents prepare the research and draft the follow-up work, and nothing goes out until someone on the team has reviewed it.
+
+### Refuse numbers nobody can source
+
+An early revenue case in our plan turned out to be arithmetic an agent had produced, with no customer behind it, so we gave it no weight. A claim audit then went back through our earlier pitch materials, and anything the evidence didn't establish stayed out of the business case.
 
 <Figure src="/media/suelo/suelo-workflows.jpg" alt="Suelo site section titled 'From the brief to the next work', listing acquisition research, diligence and feasibility, and planning coordination. Acquisition research is selected: research supplied candidates against the development brief, and the work product is a candidate comparison, supporting references and questions for further diligence. A drawing of a site study sits beside it." caption="Three workflows, starting with acquisition research" />
 
@@ -61,6 +64,10 @@ It works inside the files and email threads a team already uses instead of askin
 
 <Figure src="/media/suelo/suelo-workbench.jpg" alt="The Suelo workbench overview: a sidebar with acquisition studio, review workspace and strategy lab, a heading reading 'See the next decision', counts of 3 sample opportunities, 24 planning comments and 12 evidence gaps to review, and an illustrative opportunity pipeline." caption="The workbench, on sample projects" />
 
-## How we work
+## Where it stands
 
-We run Suelo the way I run most things now, with <a href="/ai/">agents</a>: 20 rounds so far of research, planning, design, building and testing, with agent teams applying startup skills for competition, customer discovery, pricing and go-to-market, and a claim audit that strips out anything we can't back up. It's early. Everything so far runs on public and synthetic data while we line up pilots with developers.
+It's early. Everything so far runs on public and synthetic data, and the next test is whether a developer will pay for a site-research assignment before a real decision. We run Suelo the way I run most things now, with <a href="/ai/">agents</a>: 20 rounds of research, planning, design, building and testing so far, with agent teams applying startup skills for competition, customer discovery, pricing and go-to-market.
+
+## What I've learned
+
+The hardest discipline in agent-assisted research is turning down numbers that look finished. Agents can produce a confident revenue model in minutes, and the job is to ask where every number came from before it shapes a decision.

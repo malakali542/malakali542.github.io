@@ -20,16 +20,15 @@ const skills = [
     what: 'Inspired by Andrej Karpathy, it has agents explain things in ASD-STE100 Simplified Technical English, the controlled language written for aircraft maintenance manuals, with one meaning per word and short, unambiguous sentences.',
   },
   {
-    name: 'resume tailoring',
-    what: 'Tailors my resume to a role from my own accomplishment bank, then sends every claim and the final layout to an independent reviewer before anything goes out.',
-  },
-  {
     name: 'malak-style',
     what: 'An editor that checks my writing for em dashes, buzzwords, hedges, semicolon chains and machine rhythm, then fixes what it can. Every page on this site passed it.',
   },
+  {
+    name: 'session memory',
+    what: 'Saves what an agent learned in one session and loads it into the next, so context survives between tools and days.',
+  },
 ];
 
-const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
 ---
 
 <Base
@@ -39,7 +38,7 @@ const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
   <section class="container case-head">
     <p class="eyebrow">how i use ai</p>
     <h1>At work I shape what models learn. At home I put them to work.</h1>
-    <p class="lede">Frontier models for the hard reasoning, local models for bulk runs and private data, swarms of coding agents working in parallel, and harnesses that write and improve their own skills. I’ve replaced about half of my consumer subscriptions with software I built this way, from a job search that submits its own applications to my own news digest.</p>
+    <p class="lede">Frontier models for the hard reasoning, local models for bulk runs and private data, swarms of coding agents working in parallel, and harnesses that write and improve their own skills. I’ve replaced about half of my consumer subscriptions with software I built this way, from my own news digest and investing desk to daily games for my family.</p>
   </section>
 
   <section class="container">
@@ -60,7 +59,7 @@ const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
       <article class="ai-block">
         <p class="eyebrow">02 · pipelines</p>
         <h2>One kernel for everything that runs daily</h2>
-        <p><code>lifeos</code> is a small Python kernel with no third-party dependencies that runs my daily pipelines under launchd. Each run pulls its sources in parallel, scores and ranks what it finds, hands the write-up to a model, and delivers a report, with an append-only record so every run can say what changed since the last one. My job search scout and my investing desk share it, along with one trace and eval layer. By default a run can only write local files, and messages are drafted, never sent.</p>
+        <p><code>lifeos</code> is a small Python kernel with no third-party dependencies that runs my daily pipelines under launchd. Each run pulls its sources in parallel, scores and ranks what it finds, hands the write-up to a model, and delivers a report, with an append-only record so every run can say what changed since the last one. My investing desk runs on it, and every pipeline shares one trace and eval layer. By default a run can only write local files, and messages are drafted, never sent.</p>
       </article>
       <article class="ai-block">
         <p class="eyebrow">03 · orchestration</p>
@@ -84,7 +83,7 @@ const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
             </li>
           ))}
         </ul>
-        <p class="muted small">Others keep session memory between tools, draft Substack posts in my voice, and take a startup idea from research to a go or no-go call.</p>
+        <p class="muted small">Others draft Substack posts in my voice and take a startup idea from research to a go or no-go call.</p>
       </article>
       <article class="ai-block wide-block">
         <p class="eyebrow">06 · at work</p>
@@ -100,16 +99,6 @@ const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
       <span class="mono muted">built for me and my family</span>
     </div>
     <div class="grid">
-      <article class="card wide-card">
-        <div class="card-body">
-          <h3 class="card-title">A job search that applies for me</h3>
-          <div class="card-meta">python · launchd · multi-agent · computer use</div>
-          <ol class="pipeline" aria-label="How an application moves through the pipeline">
-            {pipeline.map((step, i) => <li class:list={{ last: i === pipeline.length - 1 }}>{step}</li>)}
-          </ol>
-          <p class="card-summary">Every morning at 8, a scout checks job boards, funding news and newsletters and writes me a digest. When I pick a role, a multi-agent loop (a role reader, a strategist, a tailor and a recruiter reviewer) tailors my resume, and a separate judge scores every bullet against my own evidence bank, with a rubric and 24 calibration cases. Once I approve, a computer-use agent opens the application in my browser, fills in the employer’s form and submits it, and the pipeline records every attempt and receipt.</p>
-        </div>
-      </article>
       <article class="card">
         <div class="card-body">
           <h3 class="card-title">An investing desk instead of a terminal</h3>
@@ -134,7 +123,7 @@ const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
       <article class="card">
         <div class="card-body">
           <h3 class="card-title">This site</h3>
-          <div class="card-meta">astro · built in an orca worktree</div>
+          <div class="card-meta">built in an orca worktree</div>
           <p class="card-summary">Built with coding agents in one of my worktrees, with every page run through my style skill before it shipped. The benchmark behind the Arabic dialects post ran on my laptop.</p>
         </div>
       </article>
@@ -216,43 +205,6 @@ const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
     font-size: 0.92rem;
   }
 
-  .pipeline {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 4px;
-    margin: 10px 0 4px;
-    padding: 0;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-  }
-
-  .pipeline li {
-    padding: 3px 10px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--bg-soft);
-    white-space: nowrap;
-  }
-
-  .pipeline li:not(:last-child)::after {
-    content: '→';
-    margin-left: 12px;
-    margin-right: -6px;
-    color: var(--muted);
-  }
-
-  .pipeline li:not(:last-child) {
-    border-color: transparent;
-    background: none;
-    padding-inline: 4px 10px;
-  }
-
-  .pipeline li.last {
-    border-color: color-mix(in srgb, #2f9e6e 55%, var(--line));
-    background: color-mix(in srgb, #2f9e6e 14%, transparent);
-  }
 
   .games {
     display: grid;

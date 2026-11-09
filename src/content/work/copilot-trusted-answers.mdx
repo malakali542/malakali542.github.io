@@ -4,9 +4,9 @@ short: Trusted answers for commercial Copilot
 org: Microsoft AI
 role: product manager
 period: 2024 - 2026
-order: 3
+order: 4
 group: work
-summary: Enterprise customers were getting help answers no better than a web search or a generic chatbot. I connected Copilot to trusted sources and built the LLM-as-judge evals that decided when an answer was good enough to ship, raising session success 7 points.
+summary: Enterprise customers were getting help answers no better than a web search. I grounded Copilot in trusted sources and built the LLM-as-judge evals that decided when an answer was good enough to ship, raising session success 7 points.
 card:
   kind: demo
   name: trusted-answers
@@ -31,26 +31,28 @@ links:
 
 ## The problem
 
-When an IT admin asks Copilot how to configure something across a fleet of company laptops, a wrong answer has a cost: they act on it. The alternatives they had were a web search that returns forum threads and stale docs, or a general-purpose chatbot that sounds equally confident whether or not it's right.
+When an IT admin asks Copilot how to configure something across a fleet of company laptops, a wrong answer has a cost, because they act on it. The alternatives they had were a web search that returns forum threads and stale docs, or a general-purpose chatbot that sounds equally confident whether or not it's right.
 
 For commercial customers, "better than search" has to mean two concrete things. The answer comes from a source the customer can trust, and someone has measured that it's correct often enough to rely on.
 
-## What I did
+## The calls I made
 
-**Connected trusted sources.** I worked on grounding Copilot's help answers in trusted sources, so responses come from content we could stand behind instead of whatever ranked well on the web.
+**Ground answers in sources we can stand behind.** I worked on grounding Copilot's help answers in trusted sources, so responses come from content we can vouch for instead of whatever ranked well on the web.
 
-**Built the evals.** I defined the LLM-as-judge evaluation strategy for Copilot's help experiences: the methodology, the scoring criteria and the success thresholds. Every answer was scored on two things:
+**Score two things, not one.** I defined the LLM-as-judge evaluation strategy for Copilot's help experiences: the methodology, the scoring criteria and the success thresholds. Every answer was scored on:
 
 - **Tool-invocation accuracy.** Did Copilot call the right source or tool for this question?
 - **Response quality.** Is the answer correct, complete and safe to act on?
 
-A judge model is only useful if it agrees with the people it's standing in for, so I calibrated the judge against domain-expert assessments and ran offline evals with Applied Science before trusting it to gate a release.
+A wrong tool call and a wrong answer need different fixes, so scoring them separately told the team where to look.
 
-**Set release thresholds.** Changes had to clear those thresholds to ship, which turned "it feels better" into a number the team could argue about.
+**Make the judge earn its place.** A judge model is only useful if it agrees with the people it stands in for, so I calibrated it against domain-expert assessments and ran offline evals with Applied Science before trusting it to gate a release.
+
+**Turn "it feels better" into a threshold.** Changes had to clear the success thresholds to ship, which gave the team a number to argue about instead of an impression.
 
 ## Outcome
 
-Session success rate rose **7 percentage points**, and the team had an eval calibrated to expert judgment that every later change to sources or prompts had to pass.
+Session success rate rose **7 percentage points**, and every later change to sources or prompts had to pass an eval calibrated to expert judgment.
 
 ## What I learned
 

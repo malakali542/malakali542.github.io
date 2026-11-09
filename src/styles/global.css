@@ -182,82 +182,34 @@ h4 {
   text-decoration-color: var(--accent);
 }
 
-.theme-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 10px 4px 4px;
-  border: 1px solid var(--line);
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
+  border: 1px solid var(--line);
   background: var(--surface);
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
-.theme-switch:hover {
+.theme-toggle:hover {
   border-color: var(--accent);
+  transform: rotate(-12deg);
 }
 
-.ts-track {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 52px;
-  height: 28px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--bg-soft);
-  border: 1px solid var(--line);
-}
-
-.ts-icon {
-  position: relative;
-  z-index: 1;
-  width: 14px;
-  height: 14px;
-  color: var(--muted);
-  transition: color 0.25s ease;
-}
-
-.ts-knob {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--ink);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
-  transition: transform 0.25s cubic-bezier(0.3, 0.7, 0.2, 1), background-color 0.25s ease;
-}
-
-.ts-sun {
-  color: var(--bg);
-}
-
-:root[data-theme='dark'] .ts-knob {
-  transform: translateX(24px);
-}
-
-:root[data-theme='dark'] .ts-sun {
-  color: var(--muted);
-}
-
-:root[data-theme='dark'] .ts-moon {
-  color: var(--bg);
-}
-
-.ts-l-dark,
-:root[data-theme='dark'] .ts-l-light {
+.theme-toggle .icon-sun {
   display: none;
 }
 
-:root[data-theme='dark'] .ts-l-dark {
-  display: inline;
+:root[data-theme='dark'] .theme-toggle .icon-sun {
+  display: block;
+}
+
+:root[data-theme='dark'] .theme-toggle .icon-moon {
+  display: none;
 }
 
 /* ---------- hero ---------- */
@@ -577,41 +529,6 @@ h4 {
   width: auto;
   object-fit: contain;
   mix-blend-mode: multiply;
-}
-
-.frame-laptop {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, var(--bg-soft), color-mix(in srgb, var(--bg-soft) 70%, var(--accent-soft)));
-}
-
-.frame-laptop .laptop-box {
-  position: relative;
-  height: 100%;
-  max-width: 100%;
-  aspect-ratio: 3 / 2;
-}
-
-.frame-laptop .laptop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.frame-laptop .screen {
-  position: absolute;
-  left: 24.06%;
-  top: 19.14%;
-  width: 52.03%;
-  height: 49.14%;
-  object-fit: cover;
-  background: #000;
-  z-index: 1;
 }
 
 .yt {
@@ -1219,11 +1136,6 @@ figcaption {
   .figure-media.tall:has(.demo),
   .card-media:has(.demo) {
     aspect-ratio: 1 / 1;
-  }
-
-  /* The sun and moon in the track still say what the switch does. */
-  .theme-switch .ts-label {
-    display: none;
   }
 }
 

@@ -39,8 +39,8 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 | `src/pages/about.astro` | about, experience timeline, community, honors |
 | `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
 | `src/components/Media.astro` | renders a card or hero from `kind: video \| youtube \| demo \| image` |
-| `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, BridgeTO, the offshore wind simulation) and the AI stack diagram. Each one is labeled "illustration" or "diagram" on the page. |
-| `public/media/` | self-hosted media (Dots and Scout demos, the trimmed Recall and UberX Share card clips, and their posters) |
+| `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, the offshore wind simulation) and the AI stack diagram. Each one is labeled "illustration" or "diagram" on the page. |
+| `public/media/` | self-hosted media (the Dots demo, the Suelo site recording, the trimmed Recall and UberX Share card clips, the offshore wind report figures, and their posters) |
 | `research/arabic-dialects/` | the benchmark behind the Arabic dialects post: harness, prompts, raw replies and scores. The post's "Method, code and data" section explains it and lists every file (`src/components/ResearchFiles.astro`), and the old `/research/arabic-dialects/` page redirects there |
 | `scripts/sync-research.mjs` | runs before `dev` and `build`, publishing the benchmark files under `/research/arabic-dialects/` (the AraDiCE question text is left out, `fetch_data.py` downloads it) |
 
@@ -59,7 +59,7 @@ order: 10            # position on the home page
 group: work          # work | building | community
 summary: One or two sentences for the card and the page lede.
 card:
-  kind: youtube      # or video (src, poster, frame: none|laptop|phone, fit, start), demo (name), image (src, alt)
+  kind: youtube      # or video (src, poster, frame: none|phone, fit, start), demo (name), image (src, alt)
   id: VIDEO_ID
   title: Video title
   hd: true           # use the max-res YouTube thumbnail when it exists
@@ -71,15 +71,28 @@ metrics:
 
 MDX bodies can import `VideoBlock`, `Figure`, `DemoBlock`, `FacebookVideo` and `BarChart` from `src/components/`.
 
+### The case study bar
+
+A case study ships only if it clears this bar. Check it whenever you add or edit one.
+
+1. **Lead with the result.** The summary says what Malak owned and what changed, with a number, in two sentences or fewer.
+2. **Only verified numbers.** Every metric comes from the accomplishment bank (`career/resume/experience/experience.md` in protos), the resume or a public source, and keeps its exact meaning: a relative lift stays a relative lift, and a result stays attached to the program that produced it. Show two to four metrics, outcomes over activity. A case with one real outcome shows one rather than padding with counts.
+3. **Decisions, not task lists.** The body runs from the problem, to the calls she made and the reasoning behind each, to what happened, to what she learned.
+4. **Clear ownership.** Say what she owned and who she worked with, and credit team results to the team.
+5. **Real evidence.** Use public footage or figures where they exist, and label illustrations as illustrations.
+6. **Short.** About three minutes to read. Cut anything that doesn't support a decision or a result.
+7. **Passes `npm run style`.**
+
+Not everything needs a case study. Work that can't clear the bar, and community roles like BridgeTO, live on the about page instead, and a project worth telling as a story can go in `src/content/writing/`, the way the 2024 offshore wind simulation is an engineering case study post.
+
 ## Media sources
 
-- **Dots and Scout**: demo videos and screens copied from [ericdachen.com/design](https://ericdachen.com/design), from the projects Malak built with Eric Chen.
+- **Dots**: demo video and screens copied from [ericdachen.com/design](https://ericdachen.com/design), from the project Malak built with Eric Chen.
 - **Quine**: the official [Microsoft Research announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) video (YouTube) and figure animations, embedded from microsoft.com rather than re-hosted.
 - **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources. The home card loops a 12-second cut of the Windows video (3.1s to 15.4s, product footage only) as a self-hosted MP4, so YouTube's player overlay never shows.
 - **UberX Share**: Uber's official launch video. The home card loops a 20-second cut (23.5s to 43.8s, from the app close-up to the UberX Share title) the same way.
-- **BridgeTO**: BridgeTO's own Facebook video of the Your Voice is Power hackathon.
 - **Suelo**: a scroll recording of Suelo's site, captured frame by frame from the local prototype build, plus screenshots of the site and its workbench. Every project shown is a sample.
-- **Offshore wind simulation**: the workflow, profit and power figures come from the team's University of Waterloo report (2024). The animated card is an illustration built from the report's numbers.
+- **Offshore wind post**: the workflow, profit and power figures come from the team's University of Waterloo report (2024). The animated illustration is built from the report's numbers.
 - **Arabic dialects post**: every example reply is a real model output from `research/arabic-dialects/results/`, and the charts read `summary.json` directly.
 
 YouTube embeds use `youtube-nocookie.com` and only load after a click.

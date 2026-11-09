@@ -61,15 +61,10 @@ const ogImage = new URL(image, Astro.site);
     <script>
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const themeSwitch = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
-      const syncSwitch = () =>
-        themeSwitch?.setAttribute('aria-checked', String(document.documentElement.dataset.theme === 'dark'));
-      syncSwitch();
-      themeSwitch?.addEventListener('click', () => {
+      document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
         const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
         document.documentElement.dataset.theme = next;
         localStorage.setItem('theme', next);
-        syncSwitch();
       });
 
       // Loop videos play only while on screen. Reduced-motion users get controls instead.

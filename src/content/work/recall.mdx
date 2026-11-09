@@ -1,12 +1,12 @@
 ---
-title: 'Windows Recall: onboarding, the retail demo, and shipping under scrutiny'
+title: 'Windows Recall: earning trust on the first screen and the store shelf'
 short: Windows Recall
 org: Microsoft AI
 role: product manager
 period: 2024 - 2026
-order: 4
+order: 2
 group: work
-summary: Recall is the on-device memory for Copilot+ PCs. I built its onboarding flows and its retail demo, ran guided search experiments to help people refine their searches, and tested ideas in my own user studies with interfaces I prototyped myself.
+summary: I led Recall's onboarding and its retail launch. Letting people try Recall before committing raised opt-in 15%, and the in-store demo reached 30M+ interactions a month at a 2.5% sales conversion.
 card:
   kind: video
   src: /media/recall/recall-clip.mp4
@@ -18,12 +18,12 @@ hero:
   hd: true
   caption: Recall on Copilot+ PCs, from the official Windows channel.
 metrics:
+  - value: +15%
+    label: opt-in from the try-before-you-buy onboarding
   - value: 30M+
     label: monthly demo interactions on in-store devices
   - value: 2.5%
     label: sales conversion from the retail demo
-  - value: +15%
-    label: opt-in after the try-before-you-buy onboarding redesign
   - value: 98%
     label: true positive rate at 0.95 F1 for the risk classifiers
 facts:
@@ -31,8 +31,6 @@ facts:
     value: 5+ across engineering, design, retail ops, content, partners
   - label: worked with
     value: UX research, design, data science
-  - label: research
-    value: my own user studies, AI-built prototypes
   - label: shipped
     value: Insider preview Nov 2024, general availability Apr 2025
 links:
@@ -48,17 +46,17 @@ import Figure from '../../components/Figure.astro';
 import DemoBlock from '../../components/DemoBlock.astro';
 import VideoBlock from '../../components/VideoBlock.astro';
 
-## Context
+## The problem
 
-Recall takes snapshots of your screen and lets you find anything you've seen on your PC by describing it, with all of the processing on the device. It was also one of the most closely watched features Windows has shipped. After its first announcement in 2024 drew public privacy and security concerns, Recall was reworked, previewed with Windows Insiders in November 2024, and reached general availability on Copilot+ PCs in April 2025.
+Recall takes snapshots of your screen and lets you find anything you've seen on your PC by describing it, with all of the processing on the device. It was also one of the most closely watched features Windows has shipped. Its first announcement in 2024 drew public privacy and security concerns, so Recall was reworked, previewed with Windows Insiders in November 2024, and reached general availability on Copilot+ PCs in April 2025.
 
-A feature like that has to earn trust on the first screen a person sees, and again on the first shelf they see it on. Those were my two areas.
+That left two places where Recall had to earn trust: the first screen a person sees, and the store shelf where many people meet it first. Funnel analysis put a number on the first one. **30% of first-time users dropped off during onboarding**, which made onboarding our biggest retention lever.
 
-## Onboarding
+## The calls I made
 
-Funnel analysis showed **30% of first-time users dropping off** during onboarding, which made it the biggest retention lever we had. I prototyped quickly and drove the experimentation with UX research, design and our data science partners, running **10+ experiments** on the first-run flow.
+### Let people try it before they commit
 
-One change stood out: letting people try Recall before committing to it. The try-before-you-buy onboarding raised opt-in **15%** and engaged users **5%**, and it shaped the onboarding redesign roadmap that followed. Along the way I also shipped search, enterprise controls and the first-run experiences themselves.
+I ran **10+ experiments** on the first-run flow with UX research, design and our data science partners. One change stood out: letting people try Recall before committing to it. That try-before-you-buy onboarding raised opt-in **15%** and engaged users **5%**, and it shaped the onboarding redesign roadmap that followed. Along the way I also shipped search, enterprise controls and the first-run experiences themselves.
 
 <Figure
   src="https://winblogs.thesourcemediaassets.com/sites/44/2024/11/1-recall-fre.png"
@@ -68,26 +66,22 @@ One change stood out: letting people try Recall before committing to it. The try
   href="https://blogs.windows.com/windows-insider/2024/11/22/previewing-recall-with-click-to-do-on-copilot-pcs-with-windows-insiders-in-the-dev-channel/"
 />
 
-## Guided search
+### Prototype it myself, then test it with users
 
-Recall only works if people can find what they saw, so search is the product. In personal search tools like this, first-try search success usually sits around 10% to 15%, and it climbs to 50% to 60% once people refine their query and search again. Recall matched the first number, but its success after a re-search only reached about 30%. People who missed on the first try weren't finding their way to a better query.
+I ran my own user studies with Recall users. To test ideas before asking engineering to build them, I built working interfaces myself with AI prototyping tools and put them in front of participants. That let me test real interactions instead of static mockups, without waiting on engineering.
 
-I ran guided search experiments to close that gap:
+### Guide the second search
+
+Recall only works if people can find what they saw, so search is the product. In personal search tools, first-try success usually sits around 10% to 15% and climbs to 50% to 60% once people refine their query and search again. Recall matched the first number, but its success after a re-search only reached about 30%: people who missed on the first try weren't finding their way to a better query. I ran guided search experiments to close that gap:
 
 - **Suggestions as you type.** A small model suggests completions in the search bar while you're still typing, so a vague query becomes a specific one before you hit enter.
 - **Dynamic filters.** Filters that adapt to the results let people narrow a broad search instead of starting over.
 
 <DemoBlock name="guided-search" caption="Illustration: suggestions while you type, then filters that narrow the results. Not the shipped UI." />
 
-## Research without waiting on engineering
+### Treat the store as a product
 
-I ran my own user studies with Recall users. To test ideas quickly, I prototyped with AI tools and built working interfaces myself, without engineering, then put those prototypes in front of participants. That let me test real interactions with users, not static mockups, before asking engineering to build anything.
-
-## The retail demo
-
-Many people meet a new Windows feature on a store shelf before they ever use it at home, so the in-store experience is a product of its own with a very short attention span. I drove Recall's retail launch across **5+ teams** (engineering, design, retail operations, content and partners), landing on-device AI experiences on millions of in-store devices.
-
-The demo experience reached **30M+ monthly demo interactions** with a **2.5% sales conversion rate**.
+Many people meet a new Windows feature on a store shelf before they ever use it at home, so the in-store demo is a product of its own, with a very short attention span. I drove Recall's retail launch across **5+ teams** (engineering, design, retail operations, content and partners), landing on-device AI experiences on millions of in-store devices. The demo reached **30M+ monthly interactions** at a **2.5% sales conversion rate**.
 
 <VideoBlock
   youtube="uhuYCNM1bEI"
@@ -98,10 +92,10 @@ The demo experience reached **30M+ monthly demo interactions** with a **2.5% sal
   href="https://www.youtube.com/watch?v=uhuYCNM1bEI"
 />
 
-## Responsible AI
+### Build the guardrails into the release
 
-I led the Responsible AI release for Recall. We built input, retrieval and output guardrails into the validation pipeline to block harmful use, and I created the risk taxonomies behind classifiers that reached a **98% true positive rate at 0.95 F1**. Getting to launch also meant working through Responsible AI review, the EU's Digital Markets Act and accessibility requirements, all while the product was under intense public scrutiny.
+I led the Responsible AI release for Recall. We built input, retrieval and output guardrails into the validation pipeline to block harmful use, and I created the risk taxonomies behind classifiers that reached a **98% true positive rate at 0.95 F1**. Getting to launch also meant clearing Responsible AI review, the EU's Digital Markets Act and accessibility requirements while the product was under intense public scrutiny.
 
 ## What I learned
 
-For a privacy-sensitive feature, onboarding is where the architecture becomes something a person can actually feel. The security work had to be right, and the first-run experience had to make it understandable before anyone was asked to say yes.
+For a privacy-sensitive feature, onboarding is where the architecture becomes something a person can feel. The security work had to be right, and the first-run experience had to make it understandable before anyone was asked to say yes.

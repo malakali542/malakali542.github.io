@@ -1,42 +1,16 @@
 ---
-title: 'Offshore wind in Newfoundland: why we passed on the most profitable bay'
-short: Offshore wind simulation
-org: University of Waterloo
-role: engineering team project
-period: 2024
-order: 8.5
-group: building
-summary: An agent-based simulation of offshore wind farms in two Newfoundland bays, run one day at a time over a 25-year service life. The model said Conception Bay would earn the most. We recommended Bay of Islands, for the communities around it.
-card:
-  kind: demo
-  name: wind-sim
-hero:
-  kind: demo
-  name: wind-sim
-  caption: An illustration of the simulation. The profit figures and census numbers come from our report.
-metrics:
-  - value: 50 × 8 MW
-    label: turbines in each simulated farm
-  - value: 25 years
-    label: simulated one day at a time
-  - value: $1.8B
-    label: profit from the farm we recommended, about $72M a year
-facts:
-  - label: school
-    value: University of Waterloo, 2024
-  - label: method
-    value: agent-based simulation with random wind and component failures
-  - label: agents
-    value: environment, wind turbine, maintenance
-  - label: client, in the brief
-    value: Government of Newfoundland and Labrador
+title: "Engineering case study: the most profitable bay wasn't the right one"
+dek: For a University of Waterloo engineering project, my team simulated 25 years of offshore wind farms in two Newfoundland bays, one day at a time. The model said Conception Bay. We recommended Bay of Islands.
+date: 2024-04-26
+tags: [engineering case study, simulation, energy]
 ---
 
+import DemoBlock from '../../components/DemoBlock.astro';
 import Figure from '../../components/Figure.astro';
 
-## The question
+Newfoundland and Labrador had signed a memorandum of understanding with the federal government that would make the province the main regulator and beneficiary of offshore wind once Bill C-49 passed, and 16 bays had been identified for development. My team took two of them, on opposite sides of the island: Conception Bay on the southeast coast and Bay of Islands on the west. The brief was to tell the provincial government which one should host its first offshore wind farm, and with which class of turbine.
 
-Newfoundland and Labrador had signed a memorandum of understanding with the federal government that would make the province the main regulator and beneficiary of offshore wind once Bill C-49 passed, and 16 bays had been identified for development. Our team took two of them, on opposite sides of the island: Conception Bay on the southeast coast and Bay of Islands on the west. The question was which one should host the province's first offshore wind farm, and with which class of turbine.
+<DemoBlock name="wind-sim" caption="Illustration of the simulation: turbines break down, a crew repairs them, and profit builds over 25 years. The profit and census figures come from our report." />
 
 ## The model
 
@@ -52,7 +26,7 @@ Each farm had 50 turbines rated at 8 MW, and power sold at $143/MWh. Capital, op
 
 ## What it found
 
-Costs barely differed between the bays: about $3.4 to $3.55 billion over 25 years in every scenario, most of it capital. Power did. Conception Bay produced roughly 1.5 to 2.3 times as much and earned about $4.6 billion in profit with any turbine class. In Bay of Islands profit ranged from about $0.1 billion with Class 1 turbines to $1.8 billion with Class 3.
+Costs barely differed between the bays: about $3.4 to $3.55 billion over 25 years in every scenario, most of it capital. Power did. Conception Bay produced roughly 1.5 to 2.3 times as much and earned about $4.6 billion in profit with any turbine class. In Bay of Islands, profit ranged from about $0.1 billion with Class 1 turbines to $1.8 billion with Class 3.
 
 <Figure src="/media/wind/total-profit.png" alt="Bar chart of total profit in billions of dollars. Conception Bay is about 4.6 for IEC classes 1, 2 and 3. Bay of Islands is about 0.1 for class 1, 1.05 for class 2 and 1.8 for class 3." caption="Total profit over 25 years by bay and IEC class" contain blend />
 
@@ -66,4 +40,8 @@ The Class 3 farm in Bay of Islands still made about $1.8 billion over 25 years i
 
 ## What the model left out
 
-It skipped transmission lines, which can add 15 to 20% to the cost of a wind project, and it ignored inflation and what happens to turbines at the end of their life. It also used onshore power curves for offshore turbines, because those were the curves we could get. Each of those would move the numbers. The part I'd keep is the trade-off the model made visible: the most profitable site and the right site turned out to be different answers, and a good model shows you both.
+It skipped transmission lines, which can add 15 to 20% to the cost of a wind project, and it ignored inflation and what happens to turbines at the end of their life. It also used onshore power curves for offshore turbines, because those were the curves we could get. Each of those would move the numbers.
+
+## What I took from it
+
+A model optimizes the number you give it. Ours was built to maximize profit, and it did that well, but the decision we were asked to make also had to weigh who the farm would employ and which communities it would serve. The most profitable site and the right site turned out to be different answers, and the useful thing the model did was show us exactly what the right answer would cost.

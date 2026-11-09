@@ -6,17 +6,16 @@ import WorkCard from '../../components/WorkCard.astro';
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 const groups = [
   { key: 'work', title: 'product & engineering', note: 'microsoft, uber, pointclickcare' },
-  { key: 'building', title: 'built on the side', note: 'startups, hackathons & school' },
-  { key: 'community', title: 'community', note: 'teaching & organizing' },
+  { key: 'building', title: 'built on the side', note: 'startups & hackathons' },
 ];
 ---
 
-<Base title="work" description="Case studies from Malak Ali: Quine at Microsoft Research, Recall and Copilot at Microsoft AI, UberX Share at Uber, PointClickCare, Scout, Dots and BridgeTO.">
+<Base title="work" description="Case studies from Malak Ali: Quine at Microsoft Research, Recall and Copilot at Microsoft AI, UberX Share at Uber, PointClickCare, Suelo and Dots.">
   <section class="container case-head">
     <h1>work</h1>
     <p class="lede">
-      Case studies from 6 years of building: foundation models and evals at Microsoft Research, consumer AI on Windows,
-      rider flows and map infrastructure at Uber, healthcare software, a startup, a hackathon win, and a lot of teaching.
+      Case studies from foundation models and evals at Microsoft Research, consumer AI on Windows, rider flows and map
+      infrastructure at Uber, and healthcare software at PointClickCare, plus a startup and a hackathon win.
     </p>
   </section>
   {groups.map((group) => (

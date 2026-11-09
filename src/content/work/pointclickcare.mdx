@@ -6,7 +6,7 @@ role: software engineer
 period: 2021 - 2022
 order: 6
 group: work
-summary: At PointClickCare, which makes healthcare software for senior care, I worked on the provider portal, built its shared UI component library, and made the CI pipelines 30% faster.
+summary: At PointClickCare, which makes healthcare software for senior care, I built the provider portal's shared UI component library and cut the team's CI pipeline time 30%.
 card:
   kind: demo
   name: pcc
@@ -27,17 +27,19 @@ links:
     href: https://pointclickcare.com/
 ---
 
-## Context
+## The problem
 
-PointClickCare builds cloud software for senior care and post-acute providers, which means the people using it are clinicians in the middle of a shift. A slow page or an inconsistent form is time taken away from a patient, so frontend quality isn't cosmetic there.
+PointClickCare builds cloud software for senior care and post-acute providers, so the people using it are clinicians in the middle of a shift. A slow page or an inconsistent form takes time away from a patient, which makes frontend quality part of the product. I was a software engineer on the provider portal, one of PointClickCare's web apps for healthcare providers.
 
-## What I built
+## The calls I made
 
-**The provider portal.** I was a software engineer on PointClickCare's provider portal, one of its web apps for healthcare providers.
+### One component library instead of many copies
 
-**A shared UI library.** I built the portal's UI component library: the buttons, inputs, selects, tables, tabs and badges that every screen is assembled from. Instead of each team rebuilding the same pieces slightly differently, the portal got one set of components that look and behave the same everywhere, and new screens could be assembled from parts that were already tested.
+I built the portal's UI component library, the shared components every screen is assembled from. Instead of each team rebuilding the same pieces slightly differently, the portal got one set of components that look and behave the same everywhere, and new screens start from parts that are already tested.
 
-**CI, 30% faster.** I optimized the CI pipelines and cut their run time **30%**, which shortened the wait between pushing a change and knowing whether it was safe to merge, for every engineer on the team.
+### Treat CI time as product time
+
+Every engineer waits on CI before they know whether a change is safe to merge, so its run time is a tax on everything the team ships. I optimized the CI pipelines and cut their run time **30%**.
 
 ## What I learned
 

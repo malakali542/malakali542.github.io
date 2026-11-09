@@ -2,14 +2,14 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-export const demoNames = ['copilot-diagnostics', 'trusted-answers', 'pcc', 'mapstore', 'bridgeto', 'guided-search', 'ai-stack', 'wind-sim'] as const;
+export const demoNames = ['copilot-diagnostics', 'trusted-answers', 'pcc', 'mapstore', 'guided-search', 'ai-stack', 'wind-sim'] as const;
 
 const media = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('video'),
     src: z.string(),
     poster: z.string().optional(),
-    frame: z.enum(['none', 'laptop', 'phone']).default('none'),
+    frame: z.enum(['none', 'phone']).default('none'),
     fit: z.enum(['cover', 'contain']).default('cover'),
     bg: z.string().optional(),
     start: z.number().optional(),
@@ -45,7 +45,7 @@ const work = defineCollection({
     role: z.string(),
     period: z.coerce.string(),
     order: z.number(),
-    group: z.enum(['work', 'building', 'community']),
+    group: z.enum(['work', 'building']),
     summary: z.string(),
     card: media,
     hero: media.optional(),
