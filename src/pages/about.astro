@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import { site } from '../lib/site';
 
 const experience = [
-  { when: '2026 - now', what: 'Microsoft Research', role: 'research product manager, Quine', href: '/work/quine/', detail: 'Capability roadmap, evals across mid-training and post-training, competitive analysis and strategy for a multimodal world model of biology.' },
+  { when: '2026 - now', what: 'Microsoft Research', role: 'research product manager, Quine', href: '/work/quine/', link: { label: 'researcher profile', href: 'https://www.microsoft.com/en-us/research/people/malakali/' }, detail: 'Capability roadmap, evals across mid-training and post-training, competitive analysis and strategy for a multimodal world model of biology.' },
   { when: '2024 - 2026', what: 'Microsoft AI', role: 'product manager, Recall and Copilot', href: '/work/recall/', detail: 'Recall onboarding and retail demo, Copilot diagnostics with local code execution, trusted sources and evals for commercial Copilot.' },
   { when: '2023', what: 'Enlighted (acquired, Siemens)', role: 'product manager', detail: 'Launched location-intelligence and asset-tracking tags for a B2B IoT platform, across hardware, software and go-to-market.' },
   { when: '2022 - 2023', what: 'Uber', role: 'software engineer, UberX Share', href: '/work/uber/', detail: 'Rider flows that cut confused cancellations, server-driven UI, and a 40% faster MapStore. New York.' },
@@ -23,7 +23,7 @@ const honors = [
 ];
 ---
 
-<Base title="about" description="About Malak Ali: an engineer and product hybrid based in Seattle. Research product manager at Microsoft Research, formerly Microsoft AI, Uber and PointClickCare. University of Waterloo Systems Design Engineering.">
+<Base title="about" description="About Malak Ali: a product and engineer hybrid based in Seattle. Research product manager at Microsoft Research, formerly Microsoft AI, Uber and PointClickCare. University of Waterloo Systems Design Engineering.">
   <section class="container case-head">
     <h1>about</h1>
   </section>
@@ -35,7 +35,7 @@ const honors = [
         scientists and the stakes are experiments that take weeks to run.
       </p>
       <p>
-        I'm an engineer and product hybrid. At PointClickCare and Uber I shipped production code, which is still how I read
+        I'm a product and engineer hybrid. At PointClickCare and Uber I shipped production code, which is still how I read
         a design doc: what breaks, who gets paged, how long it takes to load. At Microsoft AI I moved into product and spent
         almost 2 years on Recall and Copilot, two features that taught me how much of AI product work is earning trust on the
         first run. I still build, now mostly with agents, and <a href="/ai/">here's how</a>.
@@ -63,7 +63,7 @@ const honors = [
       <div class="side-list">
         <h2>built with ai, on the side · <a href="/ai/">my stack</a></h2>
         <ul>
-          <li><a href="/work/suelo/">suelo</a> <span class="tag">[co-founder, startup]</span></li>
+          <li><a href="/work/#suelo">suelo</a> <span class="tag">[co-founder, startup]</span></li>
           <li>quantdesk <span class="tag">[daily investing brief]</span></li>
           <li>my own news digest <span class="tag">[my sources, one page]</span></li>
           <li><a href="https://microsoft.github.io/quine/">the quine website</a> <span class="tag">[microsoft research]</span></li>
@@ -83,7 +83,7 @@ const honors = [
           <span class="when">{item.when}</span>
           <span class="what">
             {item.href ? <a href={item.href}>{item.what}</a> : item.what} <span class="muted" style="font-weight:400">· {item.role}</span>
-            <span class="detail">{item.detail}</span>
+            <span class="detail">{item.detail} {item.link && <a class="detail-link" href={item.link.href}>{item.link.label} ↗</a>}</span>
           </span>
         </li>
       ))}

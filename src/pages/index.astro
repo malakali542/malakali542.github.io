@@ -10,10 +10,19 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 const byGroup = (group: string) => work.filter((entry) => entry.data.group === group);
 const posts = (await getCollection('writing')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const lists = [
+type SideItem = { name: string; href: string; tag: string; sub?: { label: string; href: string } };
+
+const lists: { title: string; items: SideItem[] }[] = [
   {
     title: 'now',
-    items: [{ name: 'microsoft research', href: '/work/quine/', tag: 'research pm · quine' }],
+    items: [
+      {
+        name: 'microsoft research',
+        href: '/work/quine/',
+        tag: 'research pm · quine',
+        sub: { label: 'researcher profile', href: 'https://www.microsoft.com/en-us/research/people/malakali/' },
+      },
+    ],
   },
   {
     title: 'before',
@@ -27,7 +36,7 @@ const lists = [
   {
     title: 'on the side',
     items: [
-      { name: 'suelo', href: '/work/suelo/', tag: 'co-founder' },
+      { name: 'suelo', href: '#suelo', tag: 'co-founder' },
       { name: 'career compass', href: '#career-compass', tag: '~400 monthly users' },
       { name: 'scout', href: '#scout', tag: 'co-founder' },
       { name: 'dots', href: '/work/dots/', tag: 'hackathon winner' },
@@ -46,7 +55,7 @@ const lists = [
   <section class="container hero">
     <div>
       <h1>hi, i'm <em>malak</em>.</h1>
-      <p class="tagline">engineer + product hybrid · uwaterloo alum · seattle</p>
+      <p class="tagline">product + engineer hybrid · uwaterloo alum · seattle</p>
       <p>i'm a research product manager at microsoft research, where i work on <a href="/work/quine/">quine</a>, a world model of biology and the agent harness that lets scientists use it. i decide what the model should learn next, lead the evals that tell us whether it did, and turn those results into a roadmap across mid-training and post-training.</p>
       <p>before that i was a product manager in microsoft ai, shipping <a href="/work/recall/">recall</a> and <a href="/work/copilot-diagnostics/">copilot</a> features to millions of windows pcs. before that i wrote code at <a href="/work/uber/">uber</a> and <a href="/work/pointclickcare/">pointclickcare</a>, and studied systems design engineering at the university of waterloo.</p>
       <p>outside of work i run coding hackathons for toronto kids with <a href="/about/#community">bridgeto and amazon</a>, build my own software with <a href="/ai/">frontier models, local models and agent swarms</a>, and <a href="/writing/">write</a> about ai for science, agents, evals and how well language models speak arabic.</p>
@@ -60,9 +69,10 @@ const lists = [
           <h2>{list.title}</h2>
           <ul>
             {list.items.map((item) => (
-              <li>
+              <li class:list={[{ 'has-sub': item.sub }]}>
                 <a href={item.href}>{item.name}</a>
                 <span class="tag">[{item.tag}]</span>
+                {item.sub && <a class="side-sub" href={item.sub.href}>{item.sub.label} ↗</a>}
               </li>
             ))}
           </ul>
@@ -101,7 +111,7 @@ const lists = [
         <Media media={{ kind: 'demo', name: 'ai-stack' }} label="My AI stack" />
       </div>
       <div class="card-body">
-        <h3 class="card-title"><a href="/ai/">Frontier and local models, agent swarms, self-improving skills</a></h3>
+        <h3 class="card-title"><a href="/ai/">the models, agents and skills i build with</a></h3>
         <div class="card-meta">claude · gpt · qwen · gemma · phi · orca · capy · hermes</div>
         <p class="card-summary">
           I route work between frontier models and local ones, run swarms of coding agents on my own orchestrator built on

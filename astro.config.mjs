@@ -11,6 +11,7 @@ export default defineConfig({
     '/research/arabic-dialects': '/writing/arabic-dialects-benchmark/#method-code-and-data',
     '/work/offshore-wind': '/writing/offshore-wind-newfoundland/',
     '/work/scout': '/work/#scout',
+    '/work/suelo': '/work/#suelo',
     '/work/bridgeto': '/about/#community',
     '/writing/most-people-dont-use-ai-the-way-we-do': '/writing/',
     '/writing/the-model-isnt-the-moat': '/writing/',

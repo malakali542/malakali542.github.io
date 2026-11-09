@@ -69,7 +69,7 @@ metrics:
 ---
 ```
 
-Optional fields: `caseStudy: false` shows the entry as a card only, with no page behind it (Scout and Career Compass work this way), and `badge` adds a short label to the card, like Suelo's "more coming soon".
+Optional fields: `caseStudy: false` shows the entry as a card only, with no page behind it (Suelo, Career Compass and Scout work this way), and `badge` adds a short label to the card, like Suelo's "more coming soon".
 
 MDX bodies can import `VideoBlock`, `Figure`, `DemoBlock`, `FacebookVideo` and `BarChart` from `src/components/`.
 
@@ -94,11 +94,17 @@ Not everything needs a case study. Work that can't clear the bar, and community 
 - **Quine**: the official [Microsoft Research announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) video (YouTube) and figure animations, embedded from microsoft.com rather than re-hosted.
 - **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources. The home card loops a 12-second cut of the Windows video (3.1s to 15.4s, product footage only) as a self-hosted MP4, so YouTube's player overlay never shows.
 - **UberX Share**: Uber's official launch video. The home card loops a 20-second cut (23.5s to 43.8s, from the app close-up to the UberX Share title) the same way.
-- **Suelo**: a scroll recording of Suelo's site, captured frame by frame from the local prototype build, plus screenshots of the site and its workbench. Every project shown is a sample.
+- **Suelo**: a scroll recording of Suelo's site, captured frame by frame from the local prototype build. Every project shown is a sample.
 - **Offshore wind post**: the workflow, profit and power figures come from the team's University of Waterloo report (2024). The animated illustration is built from the report's numbers.
 - **Arabic dialects post**: every example reply is a real model output from `research/arabic-dialects/results/`, and the charts read `summary.json` directly.
 
 YouTube embeds use `youtube-nocookie.com` and only load after a click.
+
+## Look
+
+- Titles, headings and labels render lowercase through one rule in `src/styles/global.css`, so content can be written in normal case. Body text keeps its case.
+- The accent is `#ff5757`, the color on Malak's resume. Small accent text uses `--accent-ink`, the same hue darkened to `#c74444` so it keeps 4.5:1 contrast on the light background, and text on accent fills uses `--on-accent`. Dark mode uses `#ff5757` for both.
+- Display type is Newsreader, body text is Inter, and labels are IBM Plex Mono.
 
 ## Writing style
 

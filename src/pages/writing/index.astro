@@ -6,14 +6,11 @@ import PostList from '../../components/PostList.astro';
 const posts = (await getCollection('writing')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Base title="writing" description="Essays by Malak Ali on agents, evaluation and Arabic language AI.">
+<Base title="writing" description="Essays by Malak Ali on AI for science, agents, evaluation and Arabic language AI.">
   <section class="container case-head">
     <h1>writing</h1>
-    <p class="lede">
-      Notes on agents, evals and language models, mostly written to figure out what I think. {posts.length} so far.
-    </p>
   </section>
-  <section class="container section">
+  <section class="container section" style="padding-top:8px">
     <PostList posts={posts} />
   </section>
 </Base>

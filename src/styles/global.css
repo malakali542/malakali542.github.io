@@ -6,14 +6,16 @@
   --ink-2: #3f3a33;
   --muted: #776d62;
   --line: #e6ddd0;
-  --accent: #2b44c9;
-  --accent-ink: #1e33a6;
-  --accent-soft: #e7eafb;
+  /* #ff5757 is the accent on Malak's resume. --accent-ink darkens the same hue to keep 4.5:1 contrast for small text. */
+  --accent: #ff5757;
+  --accent-ink: #c74444;
+  --accent-soft: #fce5e0;
+  --on-accent: #1d1a16;
   --highlight: #f2c96b;
   --good: #1f7a4d;
   --shadow: 0 1px 2px rgb(29 26 22 / 0.04), 0 8px 24px rgb(29 26 22 / 0.06);
 
-  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-display: 'Newsreader Variable', Newsreader, Georgia, 'Times New Roman', serif;
   --font-body: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -31,9 +33,10 @@
   --ink-2: #d9d1c6;
   --muted: #a1978b;
   --line: #2d2a25;
-  --accent: #9aabff;
-  --accent-ink: #b9c5ff;
-  --accent-soft: #232848;
+  --accent: #ff5757;
+  --accent-ink: #ff5757;
+  --accent-soft: #381c1b;
+  --on-accent: #12110f;
   --highlight: #9c7a2c;
   --good: #5cc48f;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px rgb(0 0 0 / 0.35);
@@ -79,12 +82,12 @@ a {
 }
 
 a:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
   text-decoration-color: var(--accent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -92,6 +95,22 @@ a:hover {
 ::selection {
   background: var(--accent-soft);
   color: var(--ink);
+}
+
+/* Titles, headings and labels read lowercase, whatever case the source uses. Body text keeps its case. */
+:is(h1, h2, h3, h4, h5, h6),
+.card-meta,
+.eyebrow,
+.post-list a.title,
+.case-nav a,
+.facts dt,
+.timeline .what,
+#honors .timeline .detail {
+  text-transform: lowercase;
+}
+
+.timeline .detail {
+  text-transform: none;
 }
 
 h1,
@@ -160,7 +179,7 @@ h4 {
 }
 
 .brand:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .nav {
@@ -177,7 +196,7 @@ h4 {
 }
 
 .nav a[aria-current='page'] {
-  color: var(--accent);
+  color: var(--accent-ink);
   text-decoration: underline;
   text-decoration-color: var(--accent);
 }
@@ -275,7 +294,7 @@ h4 {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 500;
-  color: var(--accent);
+  color: var(--accent-ink);
   text-transform: lowercase;
   letter-spacing: 0.04em;
   margin-bottom: 10px;
@@ -309,6 +328,22 @@ h4 {
   text-align: right;
 }
 
+.side-list li.has-sub {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.side-list li a.side-sub {
+  flex-basis: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.side-list li a.side-sub:hover {
+  color: var(--accent-ink);
+}
+
 /* ---------- sections ---------- */
 .section {
   padding-block: clamp(28px, 5vw, 56px);
@@ -327,7 +362,7 @@ h4 {
 .section-head h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2rem, 3.6vw, 2.6rem);
+  font-size: clamp(1.8rem, 3.2vw, 2.3rem);
   letter-spacing: -0.01em;
 }
 
@@ -430,7 +465,7 @@ h4 {
 .card-meta {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .card-summary {
@@ -448,7 +483,7 @@ h4 {
 }
 
 .card:hover .card-cta {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .card-foot {
@@ -722,14 +757,15 @@ figcaption {
   margin: 22px 0 10px;
   font-family: var(--font-mono);
   font-size: 0.82rem;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .case-head h1 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.4rem, 5.4vw, 3.8rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(2.2rem, 4.6vw, 3.3rem);
+  letter-spacing: -0.015em;
+  line-height: 1.1;
 }
 
 .lede {
@@ -822,7 +858,7 @@ figcaption {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--accent);
+  color: var(--accent-ink);
   margin-bottom: 8px;
 }
 
@@ -883,7 +919,7 @@ figcaption {
 .prose h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 2rem;
+  font-size: 1.8rem;
   letter-spacing: -0.01em;
   margin-top: 2.1em;
 }
@@ -1083,14 +1119,14 @@ figcaption {
 
 .post-list a.title {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   line-height: 1.2;
   color: var(--ink);
   text-decoration: none;
 }
 
 .post-list a.title:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .post-list p {
@@ -1107,8 +1143,9 @@ figcaption {
 .post-head h1 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.4rem, 5.6vw, 3.9rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(2.2rem, 4.8vw, 3.4rem);
+  letter-spacing: -0.015em;
+  line-height: 1.1;
   margin-top: 18px;
 }
 
@@ -1172,6 +1209,12 @@ figcaption {
   color: var(--muted);
   font-size: 0.95rem;
   font-weight: 400;
+}
+
+.timeline .detail-link {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  white-space: nowrap;
 }
 
 /* ---------- footer ---------- */
