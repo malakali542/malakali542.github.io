@@ -26,7 +26,7 @@ git subtree push --prefix=portfolio site main
 
 (`site` is a git remote pointing at the public repo.)
 
-DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to GitHub Pages (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153) and a `CNAME` for `www` pointing to `malakali542.github.io`.
+DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to GitHub Pages (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153), four `AAAA` records for IPv6 (2606:50c0:8000::153 through 2606:50c0:8003::153) and a `CNAME` for `www` pointing to `malakali542.github.io`. GitHub issues and renews the Let's Encrypt certificate for both names, and Enforce HTTPS is on, so `http://` and `www.` both redirect to `https://malak.club`. If the certificate ever stops renewing after a DNS change, remove and re-add the custom domain under Settings → Pages.
 
 ## Where things live
 
