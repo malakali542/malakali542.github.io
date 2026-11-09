@@ -19,7 +19,7 @@ const lists = [
     title: 'before',
     items: [
       { name: 'microsoft ai', href: '/work/recall/', tag: 'pm · recall, copilot' },
-      { name: 'enlighted, a siemens co.', href: '/about/#experience', tag: 'pm intern' },
+      { name: 'enlighted (acquired, siemens)', href: '/about/#experience', tag: 'pm' },
       { name: 'uber', href: '/work/uber/', tag: 'swe · uberx share' },
       { name: 'pointclickcare', href: '/work/pointclickcare/', tag: 'swe · provider portal' },
     ],
@@ -27,6 +27,7 @@ const lists = [
   {
     title: 'on the side',
     items: [
+      { name: 'suelo', href: '/work/suelo/', tag: 'co-founder' },
       { name: 'scout', href: '/work/scout/', tag: 'co-founder' },
       { name: 'dots', href: '/work/dots/', tag: 'hackathon winner' },
     ],
@@ -45,9 +46,10 @@ const lists = [
   <section class="container hero">
     <div>
       <h1>hi, i'm <em>malak</em>.</h1>
+      <p class="tagline">engineer + product hybrid · uwaterloo alum · seattle</p>
       <p>i'm a research product manager at microsoft research, where i work on <a href="/work/quine/">quine</a>, a world model of biology and the agent harness that lets scientists use it. i decide what the model should learn next, lead the evals that tell us whether it did, and turn those results into a roadmap across mid-training and post-training.</p>
       <p>before that i was a product manager in microsoft ai, shipping <a href="/work/recall/">recall</a> and <a href="/work/copilot-diagnostics/">copilot</a> features to millions of windows pcs. before that i wrote code at <a href="/work/uber/">uber</a> and <a href="/work/pointclickcare/">pointclickcare</a>, and studied systems design engineering at the university of waterloo.</p>
-      <p>outside of work i run coding hackathons for toronto kids with <a href="/work/bridgeto/">bridgeto and amazon</a>, build my own software with <a href="/ai/">local models and agents</a>, and <a href="/writing/">write</a> about agents, evals and how well language models speak arabic.</p>
+      <p>outside of work i run coding hackathons for toronto kids with <a href="/work/bridgeto/">bridgeto and amazon</a>, build my own software with <a href="/ai/">frontier models, local models and agent swarms</a>, and <a href="/writing/">write</a> about agents, evals and how well language models speak arabic.</p>
       <div class="links">
         {site.links.map((link) => <a href={link.href}>{link.label} ↗</a>)}
       </div>
@@ -82,7 +84,7 @@ const lists = [
   <section class="container section" id="building">
     <div class="section-head">
       <h2>built on the side</h2>
-      <span class="mono muted">startups &amp; hackathons</span>
+      <span class="mono muted">startups, hackathons &amp; school</span>
     </div>
     <div class="grid">
       {byGroup('building').map((entry) => <WorkCard entry={entry} />)}
@@ -99,12 +101,13 @@ const lists = [
         <Media media={{ kind: 'demo', name: 'ai-stack' }} label="My AI stack" />
       </div>
       <div class="card-body">
-        <h3 class="card-title"><a href="/ai/">Local models, parallel agents, self-improving skills</a></h3>
-        <div class="card-meta">qwen · gemma · phi · orca · capy · hermes</div>
+        <h3 class="card-title"><a href="/ai/">Frontier and local models, agent swarms, self-improving skills</a></h3>
+        <div class="card-meta">claude · gpt · qwen · gemma · phi · orca · capy · hermes</div>
         <p class="card-summary">
-          I run Qwen, Gemma and Phi models locally, coordinate coding agents with my own orchestrator built on Orca, and
-          use Capy and Hermes for recursive self-improvement. With my own skills on top, I've replaced about half of my
-          consumer subscriptions, from a job search pipeline to budgeting apps to our family's daily games.
+          I route work between frontier models and local ones, run swarms of coding agents on my own orchestrator built on
+          Orca, and use Capy and Hermes for recursive self-improvement. With skills I wrote on top, I've replaced about half
+          of my consumer subscriptions, from a job search that submits its own applications to my own news digest,
+          investing desk and budgeting apps.
         </p>
         <span class="card-cta" aria-hidden="true">see how it fits together →</span>
       </div>

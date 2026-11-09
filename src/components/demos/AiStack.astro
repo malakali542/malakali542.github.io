@@ -1,38 +1,318 @@
 ---
-// Illustrative diagram of Malak's personal AI stack, assembling from the bottom up.
+// Diagram of Malak's AI stack: frontier and local models feed a router, an Orca hub runs a swarm of agents,
+// harnesses improve the skills they use, and finished work ships. A wide layout for 16:9 frames and a
+// compact one for phones, switched by the media container's aspect ratio.
+const ch = (text: string, size: number) => text.length * size * 0.6; // IBM Plex Mono advance width
+
+type Item = { text: string; extra?: number };
+const row = (items: Item[], size: number, pad: number, x0: number, gap: number) => {
+  let x = x0;
+  return items.map((item) => {
+    const w = ch(item.text, size) + pad + (item.extra ?? 0);
+    const out = { ...item, x, w };
+    x += w + gap;
+    return out;
+  });
+};
+
+const models = [
+  { name: 'Claude', color: '#e8865f' },
+  { name: 'GPT', color: '#55d6a6' },
+  { name: 'Qwen', color: '#a28bff' },
+  { name: 'Gemma', color: '#63b3ff' },
+  { name: 'Phi', color: '#ffb86b' },
+];
+const agentNames = ['research', 'build', 'review', 'eval', 'test', 'docs'];
+const shipList = [
+  { name: 'job search', sub: 'submitted via CUA' },
+  { name: 'quant desk', sub: 'morning brief' },
+  { name: 'news digest', sub: 'my sources, one page' },
+  { name: 'budgets', sub: 'saved in the browser' },
+  { name: 'daily games', sub: 'for the family' },
+  { name: 'this site', sub: 'built in a worktree' },
+];
+
+// ---------- wide: 1280 x 720 ----------
+const routerIn = { x: 424, y: 276 };
+const wModels = models.map((m, i) => {
+  const y = i < 2 ? 132 + i * 48 : 262 + (i - 2) * 48;
+  return { ...m, y, at: 150 + i * 150, d: `M278 ${y + 20} C 352 ${y + 20}, 350 ${routerIn.y}, ${routerIn.x} ${routerIn.y}` };
+});
+const hub = { cx: 800, cy: 300, r: 58 };
+const angles = [-90, -30, 30, 90, 150, 210];
+const wAgents = agentNames.map((name, i) => {
+  const a = (angles[i] * Math.PI) / 180;
+  return { name, cx: Math.round(hub.cx + 160 * Math.cos(a)), cy: Math.round(hub.cy + 160 * Math.sin(a)), at: 1900 + i * 150, done: 3400 + i * 400 };
+});
+const bus = { x: 1008, top: 137, bottom: 137 + (shipList.length - 1) * 58 };
+const wShips = shipList.map((s, i) => {
+  const y = 112 + i * 58;
+  return { ...s, y, at: 3800 + i * 600, d: `M${hub.cx + hub.r} ${hub.cy} H${bus.x} V${y + 25} H1024` };
+});
+const wHarness = row(
+  [{ text: 'Claude Code' }, { text: 'Codex' }, { text: 'Copilot CLI' }, { text: 'Capy', extra: 22 }, { text: 'Hermes', extra: 22 }],
+  16, 28, 190, 10,
+).map((c, i) => ({ ...c, at: 7200 + i * 150, rsi: Boolean(c.extra) }));
+const wSkills = row(
+  ['user research', 'STE100 voice', 'loops + swarms', 'benchmark sessions', 'resume tailoring', 'malak-style'].map((text) => ({ text })),
+  15, 26, 190, 10,
+).map((c, i) => ({ ...c, at: 8400 + i * 150 }));
+
+// ---------- compact: 720 x 600 ----------
+const cModelItems = models.map((m) => ({ ...m, w: ch(m.name, 22) + 44 }));
+const cTotal = cModelItems.reduce((sum, m) => sum + m.w, 0) + 3 * 10 + 26;
+let cx0 = (720 - cTotal) / 2;
+const cModels = cModelItems.map((m, i) => {
+  const mid = cx0 + m.w / 2;
+  const out = { ...m, x: cx0, at: 150 + i * 150, d: `M${mid} 134 C ${mid} 154, 360 146, 360 166` };
+  cx0 += m.w + (i === 1 ? 26 : 10);
+  return out;
+});
+const cDivider = cModels[1].x + cModels[1].w + 13;
+const cHub = { cx: 360, cy: 318, r: 46 };
+const cAgents = agentNames.map((name, i) => {
+  const left = i < 3;
+  const y = 236 + (i % 3) * 58;
+  return { name, left, x: left ? 24 : 516, y, at: 1400 + i * 150, done: 2800 + i * 400 };
+});
+const cShipRow = (names: string[], y: number, at0: number) => {
+  const items = names.map((name) => ({ name, w: ch(name, 20) + 58 }));
+  const total = items.reduce((sum, item) => sum + item.w, 0) + (items.length - 1) * 12;
+  let x = (720 - total) / 2;
+  return items.map((item, i) => {
+    const out = { ...item, x, y, at: at0 + i * 500 };
+    x += item.w + 12;
+    return out;
+  });
+};
+const cShips = [
+  ...cShipRow(['job search', 'quant desk', 'news digest'], 430, 3400),
+  ...cShipRow(['budgets', 'daily games', 'this site'], 484, 4900),
+];
+const loopIcon = 'M10 3.5a6.5 6.5 0 1 0 6.1 4.3M16.5 3v4.6h-4.6';
 ---
 
-<div class="demo demo-stack" data-seq data-cycle="14000" role="img" aria-label="Illustration: local models at the bottom, an orchestrator running agents in parallel worktrees, Capy and Hermes harnesses with a skill improving from version 1 to 3, personal skills, and the apps they ship.">
-  <div class="layer ships" data-step data-at="8600">
-    <span class="lbl">ships</span>
-    <span class="pill">job search pipeline</span><span class="pill">budgeting apps</span><span class="pill">daily games</span><span class="pill">this site</span>
-  </div>
-  <div class="layer skills" data-step data-at="7200">
-    <span class="lbl">skills</span>
-    <span class="pill">style editor</span><span class="pill">substack writer</span><span class="pill">session memory</span><span class="pill">resume tailor</span>
-  </div>
-  <div class="layer harness" data-step data-at="3400">
-    <span class="lbl">harnesses</span>
-    <span class="pill strong">Capy <em>parallel builds</em></span>
-    <span class="pill strong rsi">Hermes <em>skill</em>
-      <span class="ver"><b class="v1">v1</b><b class="v2" data-step data-at="4600">v2</b><b class="v3" data-step data-at="5800">v3</b></span>
-      <svg class="loop" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-    </span>
-  </div>
-  <div class="layer orch" data-step data-at="1200">
-    <span class="lbl">orchestrator <em>built on Orca</em></span>
-    <div class="lanes">
-      <span class="lane"><i>research</i><b style="--w:82%"></b></span>
-      <span class="lane"><i>build</i><b style="--w:64%"></b></span>
-      <span class="lane"><i>review</i><b style="--w:46%"></b></span>
-      <span class="lane"><i>eval</i><b style="--w:92%"></b></span>
-    </div>
-  </div>
-  <div class="layer models" data-step data-at="200">
-    <span class="lbl">local models</span>
-    <span class="pill chip-q">Qwen</span><span class="pill chip-g">Gemma</span><span class="pill chip-p">Phi</span>
-    <span class="note">on my laptop</span>
-  </div>
+<div
+  class="demo demo-stack"
+  data-seq
+  data-cycle="13000"
+  role="img"
+  aria-label="Diagram: Claude and GPT plus local Qwen, Gemma and Phi models feed a router that picks a model and effort per step. An Orca hub runs a swarm of six agents in their own worktrees. Harnesses (Claude Code, Codex, Copilot CLI, Capy, Hermes) improve their own skills from v1 to v3. Skills include user research, STE100 voice, loops and swarms, and benchmark sessions. What ships: a job search that submits applications, an investing desk, a news digest, budgets, daily games and this site."
+>
+  <svg class="stack-svg wide" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMin meet" aria-hidden="true">
+    <defs>
+      <pattern id="stack-dots-w" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#fff" opacity="0.06"></circle></pattern>
+      <radialGradient id="stack-glow-aw"><stop offset="0" stop-color="#6d7dff" stop-opacity="0.26"></stop><stop offset="1" stop-color="#6d7dff" stop-opacity="0"></stop></radialGradient>
+      <radialGradient id="stack-glow-bw"><stop offset="0" stop-color="#ffb86b" stop-opacity="0.16"></stop><stop offset="1" stop-color="#ffb86b" stop-opacity="0"></stop></radialGradient>
+    </defs>
+    <rect x="-1000" y="-200" width="3280" height="2000" fill="#0a0d15"></rect>
+    <rect x="-1000" y="-200" width="3280" height="2000" fill="url(#stack-dots-w)"></rect>
+    <circle cx="200" cy="600" r="380" fill="url(#stack-glow-aw)"></circle>
+    <circle cx="1150" cy="90" r="330" fill="url(#stack-glow-bw)"></circle>
+
+    <rect x="-1000" y="-200" width="3280" height="252" fill="#0e1220"></rect>
+    <line x1="-1000" y1="52.5" x2="2280" y2="52.5" stroke="#1c2333"></line>
+    <circle cx="28" cy="26" r="6.5" fill="#ff5f57"></circle>
+    <circle cx="50" cy="26" r="6.5" fill="#febc2e"></circle>
+    <circle cx="72" cy="26" r="6.5" fill="#28c840"></circle>
+    <text x="100" y="32" class="t17"><tspan class="s-acc">malak@mbp</tspan><tspan class="s-mut"> ~/stack</tspan></text>
+    <circle class="live" cx="1112" cy="26" r="5"></circle>
+    <text x="1126" y="31" class="t15 s-mut">6 agents live</text>
+
+    <text x="48" y="94" class="lbl">MODELS</text>
+    <text x="424" y="94" class="lbl">ROUTER</text>
+    <text x="620" y="94" class="lbl">SWARM <tspan class="s-dim">· orca worktrees</tspan></text>
+    <text x="1024" y="94" class="lbl">SHIPS</text>
+    <text x="48" y="124" class="t13 s-dim">frontier</text>
+    <text x="48" y="254" class="t13 s-dim">local · on my MacBook</text>
+
+    {wModels.map((m, i) => (
+      <g data-step data-at="900">
+        <path class="flow" stroke={m.color} d={m.d}></path>
+        <circle class="packet" r="3.5" fill={m.color} stroke={m.color}>
+          <animateMotion dur="1.8s" repeatCount="indefinite" begin={`${i * 0.35}s`} path={m.d}></animateMotion>
+        </circle>
+      </g>
+    ))}
+    {wModels.map((m) => (
+      <g data-step data-at={m.at}>
+        <rect class="chip" x="48" y={m.y} width="230" height="40" rx="10"></rect>
+        <circle cx="68" cy={m.y + 20} r="6" fill={m.color}></circle>
+        <text x="86" y={m.y + 26} class="t18">{m.name}</text>
+        <g class="eq" style={`--c:${m.color}`}>
+          <rect x="234" y={m.y + 11} width="5" height="18" rx="1.5"></rect>
+          <rect x="243" y={m.y + 11} width="5" height="18" rx="1.5"></rect>
+          <rect x="252" y={m.y + 11} width="5" height="18" rx="1.5"></rect>
+        </g>
+      </g>
+    ))}
+
+    <g data-step data-at="1100">
+      <rect class="router" x="424" y="196" width="164" height="160" rx="14"></rect>
+      <text x="444" y="230" class="t20 s-acc">router</text>
+      <text x="444" y="252" class="t13 s-dim">lifeos</text>
+      <text x="444" y="290" class="t16">picks model</text>
+      <text x="444" y="312" class="t16">+ effort</text>
+      <text x="444" y="334" class="t16">per step</text>
+    </g>
+
+    {wAgents.map((a) => (
+      <g data-step data-at={a.at}>
+        <line class="flow" stroke="#9aabff" x1={hub.cx} y1={hub.cy} x2={a.cx} y2={a.cy}></line>
+      </g>
+    ))}
+    <g data-step data-at="1400">
+      <path class="flow" stroke="#9aabff" d="M588 276 C 650 276, 680 300, 742 300"></path>
+      <circle class="packet" r="4" fill="#9aabff" stroke="#9aabff">
+        <animateMotion dur="1.4s" repeatCount="indefinite" path="M588 276 C 650 276, 680 300, 742 300"></animateMotion>
+      </circle>
+    </g>
+    <g data-step data-at="3000">
+      <path class="flow" stroke="#4fdc9a" d={`M${hub.cx + hub.r} ${hub.cy} H${bus.x}`}></path>
+      <line class="bus" x1={bus.x} y1={bus.top} x2={bus.x} y2={bus.bottom}></line>
+    </g>
+    <g data-step data-at="1600">
+      <circle class="ring" cx={hub.cx} cy={hub.cy} r="72"></circle>
+      <circle class="hubc" cx={hub.cx} cy={hub.cy} r={hub.r}></circle>
+      <text x={hub.cx} y={hub.cy - 2} text-anchor="middle" class="t22 s-acc">orca</text>
+      <text x={hub.cx} y={hub.cy + 20} text-anchor="middle" class="t13 s-dim">orchestrator</text>
+    </g>
+    {wAgents.map((a) => (
+      <g data-step data-at={a.at}>
+        <rect class="chip" x={a.cx - 58} y={a.cy - 19} width="116" height="38" rx="9"></rect>
+        <text x={a.cx - 46} y={a.cy + 5} class="t15">{a.name}</text>
+        <circle class="working" cx={a.cx + 44} cy={a.cy} r="5"></circle>
+        <g data-step data-at={a.done}>
+          <circle cx={a.cx + 44} cy={a.cy} r="7.5" class="ok"></circle>
+          <path class="tick" d={`M${a.cx + 40.5} ${a.cy + 0.2} l2.6 2.7 l4.6 -5.2`}></path>
+        </g>
+      </g>
+    ))}
+
+    {wShips.map((s, i) => (
+      <g data-step data-at={s.at}>
+        <line class="bus" x1={bus.x} y1={s.y + 25} x2="1024" y2={s.y + 25}></line>
+        <circle class="packet" r="3.5" fill="#4fdc9a" stroke="#4fdc9a">
+          <animateMotion dur="2.2s" repeatCount="indefinite" begin={`${i * 0.37}s`} path={s.d}></animateMotion>
+        </circle>
+        <rect class="chip" x="1024" y={s.y} width="224" height="50" rx="10"></rect>
+        <text x="1040" y={s.y + 22} class="t17">{s.name}</text>
+        <text x="1040" y={s.y + 40} class="t12 s-mut">{s.sub}</text>
+        <circle cx="1226" cy={s.y + 25} r="9" class="ok"></circle>
+        <path class="tick" d={`M1221.5 ${s.y + 25.2} l3 3.1 l5.5 -6.2`}></path>
+      </g>
+    ))}
+
+    <rect class="panel" x="24" y="494" width="1232" height="206" rx="16"></rect>
+    <text x="48" y="539" class="lbl">HARNESSES</text>
+    {wHarness.map((h) => (
+      <g data-step data-at={h.at}>
+        <rect class:list={['chip', { rsi: h.rsi }]} x={h.x} y="514" width={h.w} height="40" rx="10"></rect>
+        <text x={h.x + 14} y="539" class="t16">{h.text}</text>
+        {h.rsi && <path class="mini-loop" transform={`translate(${h.x + h.w - 30} 524) scale(0.95)`} d={loopIcon}></path>}
+      </g>
+    ))}
+    <g data-step data-at="8000">
+      <g transform="translate(804 520)"><path class="loop-icon" d={loopIcon}></path></g>
+      <text x="838" y="539" class="t15">self-improving skills</text>
+      <text x="1052" y="539" class="t16 s-acc">v1</text>
+      <text x="1078" y="539" class="t16 s-dim">→</text>
+      <g data-step data-at="8800"><text x="1104" y="539" class="t16 s-acc">v2</text></g>
+      <text x="1130" y="539" class="t16 s-dim">→</text>
+      <g data-step data-at="9600"><text x="1156" y="539" class="t16 s-acc">v3</text></g>
+    </g>
+    <text x="48" y="601" class="lbl">SKILLS</text>
+    {wSkills.map((s) => (
+      <g data-step data-at={s.at}>
+        <rect class="chip skill" x={s.x} y="576" width={s.w} height="40" rx="10"></rect>
+        <text x={s.x + 13} y="601" class="t15">{s.text}</text>
+      </g>
+    ))}
+    <g data-step data-at="9800">
+      <text x="48" y="666" class="t14 s-dim">frontier for reasoning · local for bulk runs · applications go out only after I approve</text>
+    </g>
+  </svg>
+
+  <svg class="stack-svg compact" viewBox="0 0 720 600" preserveAspectRatio="xMidYMin meet" aria-hidden="true">
+    <defs>
+      <pattern id="stack-dots-c" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#fff" opacity="0.06"></circle></pattern>
+      <radialGradient id="stack-glow-ac"><stop offset="0" stop-color="#6d7dff" stop-opacity="0.26"></stop><stop offset="1" stop-color="#6d7dff" stop-opacity="0"></stop></radialGradient>
+      <radialGradient id="stack-glow-bc"><stop offset="0" stop-color="#ffb86b" stop-opacity="0.16"></stop><stop offset="1" stop-color="#ffb86b" stop-opacity="0"></stop></radialGradient>
+    </defs>
+    <rect x="-1000" y="-200" width="2720" height="2000" fill="#0a0d15"></rect>
+    <rect x="-1000" y="-200" width="2720" height="2000" fill="url(#stack-dots-c)"></rect>
+    <circle cx="110" cy="560" r="300" fill="url(#stack-glow-ac)"></circle>
+    <circle cx="650" cy="60" r="260" fill="url(#stack-glow-bc)"></circle>
+
+    <rect x="-1000" y="-200" width="2720" height="244" fill="#0e1220"></rect>
+    <line x1="-1000" y1="44.5" x2="1720" y2="44.5" stroke="#1c2333"></line>
+    <circle cx="22" cy="22" r="5.5" fill="#ff5f57"></circle>
+    <circle cx="40" cy="22" r="5.5" fill="#febc2e"></circle>
+    <circle cx="58" cy="22" r="5.5" fill="#28c840"></circle>
+    <text x="78" y="28" class="t15"><tspan class="s-acc">malak@mbp</tspan><tspan class="s-mut"> ~/stack</tspan></text>
+    <circle class="live" cx="562" cy="22" r="4.5"></circle>
+    <text x="574" y="27" class="t14 s-mut">6 agents live</text>
+
+    <text x={cModels[0].x} y="78" class="t13 s-dim">frontier</text>
+    <text x={cModels[2].x} y="78" class="t13 s-dim">local · on my MacBook</text>
+    <line x1={cDivider} y1="96" x2={cDivider} y2="126" stroke="#263048" stroke-width="1.5"></line>
+    {cModels.map((m, i) => (
+      <g data-step data-at="900">
+        <path class="flow" stroke={m.color} d={m.d}></path>
+        <circle class="packet" r="3.5" fill={m.color} stroke={m.color}>
+          <animateMotion dur="1.6s" repeatCount="indefinite" begin={`${i * 0.3}s`} path={m.d}></animateMotion>
+        </circle>
+      </g>
+    ))}
+    {cModels.map((m) => (
+      <g data-step data-at={m.at}>
+        <rect class="chip" x={m.x} y="88" width={m.w} height="46" rx="11"></rect>
+        <circle cx={m.x + 18} cy="111" r="6" fill={m.color}></circle>
+        <text x={m.x + 32} y="119" class="t22">{m.name}</text>
+      </g>
+    ))}
+    <g data-step data-at="1100">
+      <rect class="router" x="189" y="166" width="342" height="42" rx="21"></rect>
+      <text x="360" y="193" text-anchor="middle" class="t17"><tspan class="s-acc">router</tspan> · model + effort / step</text>
+    </g>
+    <g data-step data-at="1300">
+      <path class="flow" stroke="#9aabff" d={`M360 208 V${cHub.cy - cHub.r}`}></path>
+    </g>
+    {cAgents.map((a) => (
+      <g data-step data-at={a.at}>
+        <line class="flow" stroke="#9aabff" x1={cHub.cx} y1={cHub.cy} x2={a.left ? a.x + 180 : a.x} y2={a.y + 23}></line>
+      </g>
+    ))}
+    <g data-step data-at="3000">
+      <path class="flow" stroke="#4fdc9a" d={`M360 ${cHub.cy + cHub.r} V430`}></path>
+    </g>
+    <g data-step data-at="1200">
+      <circle class="ring" cx={cHub.cx} cy={cHub.cy} r="56"></circle>
+      <circle class="hubc" cx={cHub.cx} cy={cHub.cy} r={cHub.r}></circle>
+      <text x={cHub.cx} y={cHub.cy + 2} text-anchor="middle" class="t21 s-acc">orca</text>
+      <text x={cHub.cx} y={cHub.cy + 22} text-anchor="middle" class="t12 s-dim">swarm</text>
+    </g>
+    {cAgents.map((a) => (
+      <g data-step data-at={a.at}>
+        <rect class="chip" x={a.x} y={a.y} width="180" height="46" rx="10"></rect>
+        <text x={a.x + 16} y={a.y + 30} class="t21">{a.name}</text>
+        <circle class="working" cx={a.x + 158} cy={a.y + 23} r="6"></circle>
+        <g data-step data-at={a.done}>
+          <circle cx={a.x + 158} cy={a.y + 23} r="9" class="ok"></circle>
+          <path class="tick" d={`M${a.x + 153.5} ${a.y + 23.2} l3 3.1 l5.5 -6.2`}></path>
+        </g>
+      </g>
+    ))}
+    <text x="24" y="420" class="lbl c">SHIPS</text>
+    {cShips.map((s) => (
+      <g data-step data-at={s.at}>
+        <rect class="chip" x={s.x} y={s.y} width={s.w} height="44" rx="10"></rect>
+        <text x={s.x + 14} y={s.y + 29} class="t20">{s.name}</text>
+        <circle cx={s.x + s.w - 22} cy={s.y + 22} r="9" class="ok"></circle>
+        <path class="tick" d={`M${s.x + s.w - 26.5} ${s.y + 22.2} l3 3.1 l5.5 -6.2`}></path>
+      </g>
+    ))}
+  </svg>
   <span class="illustration-tag">diagram</span>
 </div>
 
@@ -41,108 +321,200 @@
     position: relative;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2.2cqh;
-    padding: 5cqh 6cqw 7cqh;
-    font-size: clamp(9px, 1.9cqw, 16px);
-    line-height: 1.25;
-    color: var(--ink);
-    background:
-      radial-gradient(circle at 15% 85%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 45%),
-      radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--highlight) 34%, transparent), transparent 45%),
-      var(--bg-soft);
+    background: #0a0d15;
     overflow: hidden;
   }
 
-  .layer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.45em;
-    padding: 0.7em 0.9em;
-    border-radius: 0.9em;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    box-shadow: var(--shadow);
+  .stack-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
-  .lbl {
-    min-width: 7.5em;
+  .stack-svg.compact {
+    display: none;
+  }
+
+  @container (aspect-ratio < 1.5) or (width < 720px) {
+    .stack-svg.wide {
+      display: none;
+    }
+
+    .stack-svg.compact {
+      display: block;
+    }
+  }
+
+  .stack-svg text {
     font-family: var(--font-mono);
-    font-size: 0.85em;
-    color: var(--accent);
+    fill: #e7eaf3;
   }
 
-  .lbl em,
-  .pill em {
-    font-style: normal;
-    color: var(--muted);
+  .t12 { font-size: 12.5px; }
+  .t13 { font-size: 13px; }
+  .t14 { font-size: 14px; }
+  .t15 { font-size: 15px; }
+  .t16 { font-size: 16px; }
+  .t17 { font-size: 17px; }
+  .t18 { font-size: 18px; }
+  .t20 { font-size: 20px; }
+  .t21 { font-size: 21px; }
+  .t22 { font-size: 22px; }
+
+  .stack-svg .s-acc { fill: #9aabff; }
+  .stack-svg .s-mut { fill: #8a93a8; }
+  .stack-svg .s-dim { fill: #5d6680; }
+
+  .stack-svg .lbl {
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    fill: #5d6680;
   }
 
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    padding: 0.25em 0.75em;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--bg);
-    font-size: 0.92em;
-    white-space: nowrap;
+  .stack-svg .lbl.c {
+    font-size: 13px;
   }
 
-  .pill.strong {
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-    font-weight: 600;
+  .chip {
+    fill: #111727;
+    stroke: #263048;
+    stroke-width: 1.5;
   }
 
-  .pill.strong em {
-    font-weight: 400;
+  .chip.rsi {
+    stroke: #9aabff;
+    stroke-opacity: 0.7;
   }
 
-  .chip-q {
-    border-color: color-mix(in srgb, #615ced 50%, var(--line));
+  .chip.skill {
+    fill: #131a2c;
   }
 
-  .chip-g {
-    border-color: color-mix(in srgb, #3c8cf2 50%, var(--line));
+  .panel {
+    fill: #0e1220;
+    fill-opacity: 0.92;
+    stroke: #1c2333;
+    stroke-width: 1.5;
   }
 
-  .chip-p {
-    border-color: color-mix(in srgb, #2f9e6e 50%, var(--line));
+  .router {
+    fill: #111727;
+    stroke: #9aabff;
+    stroke-opacity: 0.55;
+    stroke-width: 1.5;
   }
 
-  .note {
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: 0.8em;
-    color: var(--muted);
+  .hubc {
+    fill: #141b30;
+    stroke: #9aabff;
+    stroke-width: 2;
   }
 
-  .ver {
-    position: relative;
-    display: inline-grid;
-    min-width: 1.6em;
-    font-family: var(--font-mono);
-    color: var(--accent);
+  .ring {
+    fill: none;
+    stroke: #9aabff;
+    stroke-opacity: 0.4;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 8;
+    transform-box: fill-box;
+    transform-origin: center;
   }
 
-  .ver b {
-    grid-area: 1 / 1;
-    font-weight: 500;
-    background: var(--bg);
+  .flow {
+    fill: none;
+    stroke-width: 2;
+    stroke-dasharray: 5 9;
+    stroke-opacity: 0.6;
   }
 
-  .loop {
-    width: 1em;
-    height: 1em;
-    color: var(--accent);
+  .bus {
+    stroke: #4fdc9a;
+    stroke-opacity: 0.45;
+    stroke-width: 2;
   }
 
-  .demo-stack:global(.seq-on) .loop {
+  .packet {
+    stroke-width: 6;
+    stroke-opacity: 0.25;
+  }
+
+  .ok {
+    fill: #4fdc9a;
+  }
+
+  .tick {
+    fill: none;
+    stroke: #0a0d15;
+    stroke-width: 2.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .working {
+    fill: #ffc861;
+  }
+
+  .live {
+    fill: #4fdc9a;
+  }
+
+  .loop-icon,
+  .mini-loop {
+    fill: none;
+    stroke: #9aabff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .loop-icon {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .eq rect {
+    fill: var(--c);
+    opacity: 0.85;
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scaleY(0.45);
+  }
+
+  .demo-stack:global(.seq-on) .flow {
+    animation: flow 1.1s linear infinite;
+  }
+
+  .demo-stack:global(.seq-on) .ring {
+    animation: spin 16s linear infinite;
+  }
+
+  .demo-stack:global(.seq-on) .loop-icon {
     animation: spin 2.4s linear infinite;
+  }
+
+  .demo-stack:global(.seq-on) .working,
+  .demo-stack:global(.seq-on) .live {
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  .demo-stack:global(.seq-on) .eq rect {
+    animation: eq 0.8s ease-in-out infinite alternate;
+  }
+
+  .demo-stack:global(.seq-on) .eq rect:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+
+  .demo-stack:global(.seq-on) .eq rect:nth-child(3) {
+    animation-delay: -0.55s;
+  }
+
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -28;
+    }
   }
 
   @keyframes spin {
@@ -151,71 +523,24 @@
     }
   }
 
-  .orch {
-    align-items: center;
+  @keyframes blink {
+    50% {
+      opacity: 0.25;
+    }
   }
 
-  .orch .lbl {
-    flex: 0 0 100%;
-  }
-
-  .lanes {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.4em 1em;
-  }
-
-  .lane {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: 0.5em;
-    font-family: var(--font-mono);
-    font-size: 0.82em;
-  }
-
-  .lane i {
-    font-style: normal;
-    color: var(--muted);
-  }
-
-  .lane b {
-    position: relative;
-    height: 0.55em;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
-    overflow: hidden;
-  }
-
-  .lane b::after {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: var(--w);
-    border-radius: inherit;
-    background: var(--accent);
-  }
-
-  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane b::after {
-    animation: fill 2.6s cubic-bezier(0.3, 0.7, 0.2, 1) both;
-  }
-
-  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane:nth-child(2) b::after {
-    animation-delay: 0.3s;
-  }
-
-  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane:nth-child(3) b::after {
-    animation-delay: 0.6s;
-  }
-
-  .demo-stack:global(.seq-on) .orch:global(.is-on) .lane:nth-child(4) b::after {
-    animation-delay: 0.9s;
-  }
-
-  @keyframes fill {
+  @keyframes eq {
     from {
-      width: 0;
+      transform: scaleY(0.25);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .packet {
+      display: none;
     }
   }
 </style>

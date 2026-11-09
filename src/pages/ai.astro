@@ -4,38 +4,48 @@ import Media from '../components/Media.astro';
 
 const skills = [
   {
+    name: 'user research',
+    what: 'Gathers user signals from trusted communities like Reddit, on the products I work on and on ones I’m only curious about, so a product call starts from what people say when nobody is asking them.',
+  },
+  {
+    name: 'loops and swarms',
+    what: 'Splits a big task across a swarm of agents and keeps each one in a loop, working, checking and retrying until its part is done.',
+  },
+  {
+    name: 'benchmark sessions',
+    what: 'Runs my own benchmark sessions: the same prompts across a set of models, scored the same way each time, so a new model gets measured against the old ones on tasks I care about.',
+  },
+  {
+    name: 'ste100 voice',
+    what: 'Inspired by Andrej Karpathy, it has agents explain things in ASD-STE100 Simplified Technical English, the controlled language written for aircraft maintenance manuals, with one meaning per word and short, unambiguous sentences.',
+  },
+  {
+    name: 'resume tailoring',
+    what: 'Tailors my resume to a role from my own accomplishment bank, then sends every claim and the final layout to an independent reviewer before anything goes out.',
+  },
+  {
     name: 'malak-style',
     what: 'An editor that checks my writing for em dashes, buzzwords, hedges, semicolon chains and machine rhythm, then fixes what it can. Every page on this site passed it.',
   },
-  {
-    name: 'substack-writer',
-    what: 'Drafts an essay in my voice from a topic or the day’s Hacker News, runs it through the style gate, and stages it as an unpublished draft for me to edit.',
-  },
-  {
-    name: 'session-memory',
-    what: 'Saves what an agent learned in one session and loads it into the next, so context survives between tools and days.',
-  },
-  {
-    name: 'startup-validator',
-    what: 'Takes an idea from market and competitor research through user validation to a go or no-go call.',
-  },
 ];
+
+const pipeline = ['scout', 'tailor', 'judge', 'i approve', 'agent submits'];
 ---
 
 <Base
   title="how i use ai"
-  description="Malak Ali's personal AI stack: local Qwen, Gemma and Phi models, an orchestrator built on Orca, Capy and Hermes harnesses set up for recursive self-improvement, personal skills, and the software that replaced half her subscriptions."
+  description="Malak Ali's AI stack: Claude and GPT for the hard reasoning, local Qwen, Gemma and Phi models for bulk runs, agent swarms on an orchestrator built on Orca, Capy and Hermes harnesses set up for recursive self-improvement, her own skills, and the software that replaced half her subscriptions."
 >
   <section class="container case-head">
     <p class="eyebrow">how i use ai</p>
     <h1>At work I shape what models learn. At home I put them to work.</h1>
-    <p class="lede">Local models on my laptop, coding agents working in parallel, harnesses that improve their own skills, and a library of skills I wrote myself. I've replaced about half of my consumer subscriptions with software I built this way.</p>
+    <p class="lede">Frontier models for the hard reasoning, local models for bulk runs and private data, swarms of coding agents working in parallel, and harnesses that write and improve their own skills. I’ve replaced about half of my consumer subscriptions with software I built this way, from a job search that submits its own applications to my own news digest.</p>
   </section>
 
   <section class="container">
     <div class="case-hero">
       <div class="hero-frame">
-        <Media media={{ kind: 'demo', name: 'ai-stack' }} label="My AI stack, assembling from local models up to the apps it ships" />
+        <Media media={{ kind: 'demo', name: 'ai-stack' }} label="My AI stack: models, router, agent swarm, harnesses, skills and what ships" />
       </div>
     </div>
   </section>
@@ -44,23 +54,28 @@ const skills = [
     <div class="ai-grid">
       <article class="ai-block">
         <p class="eyebrow">01 · models</p>
-        <h2>Local first</h2>
-        <p>Qwen, Gemma and Microsoft’s Phi models run on my MacBook. Anything private, like budgets and my job search, never leaves the machine, and long jobs run overnight without an API bill. My <a href="/writing/arabic-dialects-benchmark/">Arabic dialects benchmark</a> ran four models through more than 900 prompts each on this laptop.</p>
+        <h2>Frontier and local, routed per step</h2>
+        <p>Claude and GPT do the hard reasoning and most of my coding, through Claude Code, Codex and GitHub Copilot CLI. Qwen, Gemma and Microsoft’s Phi run on my MacBook for bulk runs, evals and anything I’d rather keep off someone else’s server, and long jobs run overnight without an API bill. My <a href="/writing/arabic-dialects-benchmark/">Arabic dialects benchmark</a> ran four models through more than 900 prompts each on this laptop. A router in my pipeline kernel picks the model and the reasoning effort for each step.</p>
       </article>
       <article class="ai-block">
-        <p class="eyebrow">02 · orchestration</p>
-        <h2>My own orchestrator, built on Orca</h2>
-        <p>I run coding agents in parallel with an orchestrator I built on the open-source <a href="https://github.com/stablyai/orca">Orca</a>. Every agent gets its own git worktree and branch, so several can work in one repo without colliding, and I review their branches the way I’d review a team’s pull requests. This site was built in one of those worktrees.</p>
+        <p class="eyebrow">02 · pipelines</p>
+        <h2>One kernel for everything that runs daily</h2>
+        <p><code>lifeos</code> is a small Python kernel with no third-party dependencies that runs my daily pipelines under launchd. Each run pulls its sources in parallel, scores and ranks what it finds, hands the write-up to a model, and delivers a report, with an append-only record so every run can say what changed since the last one. My job search scout and my investing desk share it, along with one trace and eval layer. By default a run can only write local files, and messages are drafted, never sent.</p>
       </article>
       <article class="ai-block">
-        <p class="eyebrow">03 · harnesses</p>
+        <p class="eyebrow">03 · orchestration</p>
+        <h2>Loops and swarms on my own orchestrator</h2>
+        <p>I run coding agents in parallel with an orchestrator I built on the open-source <a href="https://github.com/stablyai/orca">Orca</a>. Every agent gets its own git worktree and branch, so a whole swarm can work in one repo without colliding, and I review their branches the way I’d review a team’s pull requests. For bigger tasks a skill splits the work across agents that each run in a loop, working, checking and retrying until their part is done. This site was built in one of those worktrees.</p>
+      </article>
+      <article class="ai-block">
+        <p class="eyebrow">04 · harnesses</p>
         <h2>The best harnesses, set up for self-improvement</h2>
-        <p>The harness around a model decides as much as the model does, so I use the strongest ones I can find. <a href="https://capy.ai">Capy</a> runs fleets of coding agents, each in its own cloud sandbox. <a href="https://github.com/NousResearch/hermes-agent">Hermes</a>, from Nous Research, writes a skill when it works out how to do something new and refines it the next time a similar task comes up. I run both for recursive self-improvement: agents that write, test and improve the tools they use, so each run starts ahead of the last.</p>
+        <p>The harness around a model decides as much as the model does, so I use the strongest ones I can find. Claude Code, Codex and GitHub Copilot CLI handle my daily work. <a href="https://capy.ai">Capy</a> runs fleets of coding agents, each in its own cloud sandbox. <a href="https://github.com/NousResearch/hermes-agent">Hermes</a>, from Nous Research, writes a skill when it works out how to do something new and refines it the next time a similar task comes up. I run Capy and Hermes for recursive self-improvement: agents that write, test and improve the tools they use, so each run starts ahead of the last.</p>
       </article>
-      <article class="ai-block">
-        <p class="eyebrow">04 · skills</p>
+      <article class="ai-block wide-block">
+        <p class="eyebrow">05 · skills</p>
         <h2>Skills I wrote myself</h2>
-        <p>A skill is a folder of instructions and scripts an agent loads only when it needs them. A few of mine:</p>
+        <p>A skill is a folder of instructions and scripts an agent loads only when it needs them. The ones I reach for most:</p>
         <ul class="skill-list">
           {skills.map((skill) => (
             <li>
@@ -69,6 +84,12 @@ const skills = [
             </li>
           ))}
         </ul>
+        <p class="muted small">Others keep session memory between tools, draft Substack posts in my voice, and take a startup idea from research to a go or no-go call.</p>
+      </article>
+      <article class="ai-block wide-block">
+        <p class="eyebrow">06 · at work</p>
+        <h2>The same habits at work</h2>
+        <p>On <a href="/work/recall/">Recall</a> I prototyped with AI tools, shipped my own interfaces without engineering, and put them in front of users in studies I ran myself. At Microsoft Research I lead the evals that tell us whether <a href="/work/quine/">Quine</a> learned what we wanted it to, across mid-training and post-training, and those results set the roadmap.</p>
       </article>
     </div>
   </section>
@@ -79,11 +100,28 @@ const skills = [
       <span class="mono muted">built for me and my family</span>
     </div>
     <div class="grid">
+      <article class="card wide-card">
+        <div class="card-body">
+          <h3 class="card-title">A job search that applies for me</h3>
+          <div class="card-meta">python · launchd · multi-agent · computer use</div>
+          <ol class="pipeline" aria-label="How an application moves through the pipeline">
+            {pipeline.map((step, i) => <li class:list={{ last: i === pipeline.length - 1 }}>{step}</li>)}
+          </ol>
+          <p class="card-summary">Every morning at 8, a scout checks job boards, funding news and newsletters and writes me a digest. When I pick a role, a multi-agent loop (a role reader, a strategist, a tailor and a recruiter reviewer) tailors my resume, and a separate judge scores every bullet against my own evidence bank, with a rubric and 24 calibration cases. Once I approve, a computer-use agent opens the application in my browser, fills in the employer’s form and submits it, and the pipeline records every attempt and receipt.</p>
+        </div>
+      </article>
       <article class="card">
         <div class="card-body">
-          <h3 class="card-title">A job search that runs itself</h3>
-          <div class="card-meta">python · launchd · multi-agent</div>
-          <p class="card-summary">Every morning at 8, a scout checks job boards, funding news and newsletters and writes me a digest. When I pick a role, a multi-agent loop (a role reader, a strategist, a tailor and a recruiter reviewer) tailors my resume. A separate judge then scores every bullet against my own evidence bank, with a rubric and 24 calibration cases, and any doubt fails the gate. It drafts outreach but never sends it.</p>
+          <h3 class="card-title">An investing desk instead of a terminal</h3>
+          <div class="card-meta">lifeos · SEC filings · daily brief</div>
+          <p class="card-summary">Every morning QuantDesk pulls market data, reads SEC insider filings and checks the macro backdrop, scores each stock on seven factors, and has an AI analyst write a reasoned brief on my watchlist and holdings. It runs on free, public data instead of a research subscription.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">My own news digest</h3>
+          <div class="card-meta">my sources · one page</div>
+          <p class="card-summary">The stories I follow, from sources I pick, summarized in one place, so keeping up with the news doesn’t mean paying for a stack of paywalls.</p>
         </div>
       </article>
       <article class="card">
@@ -91,6 +129,13 @@ const skills = [
           <h3 class="card-title">Budgeting without a budgeting app</h3>
           <div class="card-meta">saved in the browser</div>
           <p class="card-summary">My own budgeting and expense-splitting apps. I import card transactions, review each purchase, and settle up with family at the end. Everything is saved in the browser, not on someone else’s server.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">This site</h3>
+          <div class="card-meta">astro · built in an orca worktree</div>
+          <p class="card-summary">Built with coding agents in one of my worktrees, with every page run through my style skill before it shipped. The benchmark behind the Arabic dialects post ran on my laptop.</p>
         </div>
       </article>
       <article class="card wide-card">
@@ -133,14 +178,16 @@ const skills = [
 
   .skill-list {
     list-style: none;
-    margin: 0;
+    margin: 0 0 1em;
     padding: 0;
     display: grid;
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px clamp(24px, 4vw, 56px);
   }
 
   .skill-list li {
     display: grid;
+    align-content: start;
     gap: 2px;
   }
 
@@ -154,8 +201,57 @@ const skills = [
     font-size: 0.97rem;
   }
 
-  .wide-card {
+  .wide-card,
+  .wide-block {
     grid-column: 1 / -1;
+  }
+
+  .ai-block p > code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--accent);
+  }
+
+  .small {
+    font-size: 0.92rem;
+  }
+
+  .pipeline {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 4px;
+    margin: 10px 0 4px;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .pipeline li {
+    padding: 3px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg-soft);
+    white-space: nowrap;
+  }
+
+  .pipeline li:not(:last-child)::after {
+    content: '→';
+    margin-left: 12px;
+    margin-right: -6px;
+    color: var(--muted);
+  }
+
+  .pipeline li:not(:last-child) {
+    border-color: transparent;
+    background: none;
+    padding-inline: 4px 10px;
+  }
+
+  .pipeline li.last {
+    border-color: color-mix(in srgb, #2f9e6e 55%, var(--line));
+    background: color-mix(in srgb, #2f9e6e 14%, transparent);
   }
 
   .games {
@@ -174,7 +270,8 @@ const skills = [
   }
 
   @media (max-width: 860px) {
-    .ai-grid {
+    .ai-grid,
+    .skill-list {
       grid-template-columns: minmax(0, 1fr);
     }
   }

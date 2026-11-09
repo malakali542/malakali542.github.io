@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content';
 import LoopVideo from './LoopVideo.astro';
 import YouTube from './YouTube.astro';
-import AmbientYouTube from './AmbientYouTube.astro';
 import CopilotDiagnostics from './demos/CopilotDiagnostics.astro';
 import TrustedAnswers from './demos/TrustedAnswers.astro';
 import PccLibrary from './demos/PccLibrary.astro';
@@ -10,6 +9,7 @@ import MapStore from './demos/MapStore.astro';
 import BridgeTO from './demos/BridgeTO.astro';
 import GuidedSearch from './demos/GuidedSearch.astro';
 import AiStack from './demos/AiStack.astro';
+import WindSim from './demos/WindSim.astro';
 
 type MediaSpec = CollectionEntry<'work'>['data']['card'];
 
@@ -28,6 +28,7 @@ const demos = {
   bridgeto: BridgeTO,
   'guided-search': GuidedSearch,
   'ai-stack': AiStack,
+  'wind-sim': WindSim,
 } as const;
 
 const Demo = media.kind === 'demo' ? demos[media.name] : null;
@@ -52,10 +53,7 @@ const Demo = media.kind === 'demo' ? demos[media.name] : null;
       <LoopVideo src={media.src} poster={media.poster} label={label} fit={media.fit} start={media.start} />
     </div>
   )}
-  {media.kind === 'youtube' && media.autoplay && (
-    <AmbientYouTube id={media.id} title={media.title} start={media.start} hd={media.hd} />
-  )}
-  {media.kind === 'youtube' && !media.autoplay && <YouTube id={media.id} title={media.title} start={media.start} hd={media.hd} />}
+  {media.kind === 'youtube' && <YouTube id={media.id} title={media.title} start={media.start} hd={media.hd} />}
   {media.kind === 'image' && <img class="media-fill" src={media.src} alt={media.alt} loading="lazy" decoding="async" />}
   {Demo && <Demo />}
 </div>

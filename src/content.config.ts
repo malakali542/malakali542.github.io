@@ -2,7 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-export const demoNames = ['copilot-diagnostics', 'trusted-answers', 'pcc', 'mapstore', 'bridgeto', 'guided-search', 'ai-stack'] as const;
+export const demoNames = ['copilot-diagnostics', 'trusted-answers', 'pcc', 'mapstore', 'bridgeto', 'guided-search', 'ai-stack', 'wind-sim'] as const;
 
 const media = z.discriminatedUnion('kind', [
   z.object({
@@ -21,7 +21,6 @@ const media = z.discriminatedUnion('kind', [
     title: z.string(),
     start: z.number().optional(),
     hd: z.boolean().default(false),
-    autoplay: z.boolean().default(false),
     caption: z.string().optional(),
   }),
   z.object({

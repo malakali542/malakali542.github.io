@@ -39,10 +39,10 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 | `src/pages/about.astro` | about, experience timeline, community, honors |
 | `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
 | `src/components/Media.astro` | renders a card or hero from `kind: video \| youtube \| demo \| image` |
-| `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, BridgeTO). Each one is labeled "illustration" on the page. |
-| `public/media/` | self-hosted media (Dots and Scout demo videos and posters) |
-| `research/arabic-dialects/` | the benchmark behind the Arabic dialects post: harness, prompts, raw replies and scores |
-| `scripts/sync-research.mjs` | runs before `dev` and `build`, publishing the benchmark files at `/research/arabic-dialects/` (the AraDiCE question text is left out, `fetch_data.py` downloads it) |
+| `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, BridgeTO, the offshore wind simulation) and the AI stack diagram. Each one is labeled "illustration" or "diagram" on the page. |
+| `public/media/` | self-hosted media (Dots and Scout demos, the trimmed Recall and UberX Share card clips, and their posters) |
+| `research/arabic-dialects/` | the benchmark behind the Arabic dialects post: harness, prompts, raw replies and scores. The post's "Method, code and data" section explains it and lists every file (`src/components/ResearchFiles.astro`), and the old `/research/arabic-dialects/` page redirects there |
+| `scripts/sync-research.mjs` | runs before `dev` and `build`, publishing the benchmark files under `/research/arabic-dialects/` (the AraDiCE question text is left out, `fetch_data.py` downloads it) |
 
 ### Adding a case study
 
@@ -75,9 +75,11 @@ MDX bodies can import `VideoBlock`, `Figure`, `DemoBlock`, `FacebookVideo` and `
 
 - **Dots and Scout**: demo videos and screens copied from [ericdachen.com/design](https://ericdachen.com/design), from the projects Malak built with Eric Chen.
 - **Quine**: the official [Microsoft Research announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) video (YouTube) and figure animations, embedded from microsoft.com rather than re-hosted.
-- **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources.
-- **UberX Share**: Uber's official launch video.
+- **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources. The home card loops a 12-second cut of the Windows video (3.1s to 15.4s, product footage only) as a self-hosted MP4, so YouTube's player overlay never shows.
+- **UberX Share**: Uber's official launch video. The home card loops a 20-second cut (23.5s to 43.8s, from the app close-up to the UberX Share title) the same way.
 - **BridgeTO**: BridgeTO's own Facebook video of the Your Voice is Power hackathon.
+- **Suelo**: a scroll recording of Suelo's site, captured frame by frame from the local prototype build, plus screenshots of the site and its workbench. Every project shown is a sample.
+- **Offshore wind simulation**: the workflow, profit and power figures come from the team's University of Waterloo report (2024). The animated card is an illustration built from the report's numbers.
 - **Arabic dialects post**: every example reply is a real model output from `research/arabic-dialects/results/`, and the charts read `summary.json` directly.
 
 YouTube embeds use `youtube-nocookie.com` and only load after a click.

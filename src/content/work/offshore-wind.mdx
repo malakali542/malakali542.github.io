@@ -1,0 +1,69 @@
+---
+title: 'Offshore wind in Newfoundland: why we passed on the most profitable bay'
+short: Offshore wind simulation
+org: University of Waterloo
+role: engineering team project
+period: 2024
+order: 8.5
+group: building
+summary: An agent-based simulation of offshore wind farms in two Newfoundland bays, run one day at a time over a 25-year service life. The model said Conception Bay would earn the most. We recommended Bay of Islands, for the communities around it.
+card:
+  kind: demo
+  name: wind-sim
+hero:
+  kind: demo
+  name: wind-sim
+  caption: An illustration of the simulation. The profit figures and census numbers come from our report.
+metrics:
+  - value: 50 × 8 MW
+    label: turbines in each simulated farm
+  - value: 25 years
+    label: simulated one day at a time
+  - value: $1.8B
+    label: profit from the farm we recommended, about $72M a year
+facts:
+  - label: school
+    value: University of Waterloo, 2024
+  - label: method
+    value: agent-based simulation with random wind and component failures
+  - label: agents
+    value: environment, wind turbine, maintenance
+  - label: client, in the brief
+    value: Government of Newfoundland and Labrador
+---
+
+import Figure from '../../components/Figure.astro';
+
+## The question
+
+Newfoundland and Labrador had signed a memorandum of understanding with the federal government that would make the province the main regulator and beneficiary of offshore wind once Bill C-49 passed, and 16 bays had been identified for development. Our team took two of them, on opposite sides of the island: Conception Bay on the southeast coast and Bay of Islands on the west. The question was which one should host the province's first offshore wind farm, and with which class of turbine.
+
+## The model
+
+We built an agent-based simulation that steps through every day of a turbine's 25-year service life, with three kinds of agents:
+
+- **Environment agent.** Draws each day's wind from historical data for the bay, then adjusts it to hub height with the wind profile equation, using a roughness length of 0.002 for open water.
+- **Wind turbine agent.** Produces power from NREL power curves for IEC Classes 1, 2 and 3, and can break down. Each component, from the blades to the converter to the pitch system, fails at its own published rate, converted to a daily probability.
+- **Maintenance agent.** Fixes broken turbines first, for up to 12 hours a day, and runs maintenance twice a year, in March and September, for up to 8 hours a day. Work that doesn't finish carries over to the next day.
+
+Each farm had 50 turbines rated at 8 MW, and power sold at $143/MWh. Capital, operating and maintenance costs added up to total cost, with maintenance growing by 5% of the capital cost every five years, and power times price gave revenue.
+
+<Figure src="/media/wind/model-workflow.png" alt="Workflow diagram: a wind farm model starts three agents. The environment agent's wind model feeds the turbine agent's power production model. Malfunctions feed the maintenance agent's repairs model, which decides whether a turbine can operate. Power production feeds the revenue model, expenditure models feed the cost model, and revenue and cost combine into profit." caption="How the agents interact, from our report" contain blend />
+
+## What it found
+
+Costs barely differed between the bays: about $3.4 to $3.55 billion over 25 years in every scenario, most of it capital. Power did. Conception Bay produced roughly 1.5 to 2.3 times as much and earned about $4.6 billion in profit with any turbine class. In Bay of Islands profit ranged from about $0.1 billion with Class 1 turbines to $1.8 billion with Class 3.
+
+<Figure src="/media/wind/total-profit.png" alt="Bar chart of total profit in billions of dollars. Conception Bay is about 4.6 for IEC classes 1, 2 and 3. Bay of Islands is about 0.1 for class 1, 1.05 for class 2 and 1.8 for class 3." caption="Total profit over 25 years by bay and IEC class" contain blend />
+
+<Figure src="/media/wind/mean-power.png" alt="Bar chart of mean total power. Conception Bay is between about 55 and 57 for all three IEC classes. Bay of Islands is about 24 for class 1, 32 for class 2 and 37 for class 3." caption="Mean total power by bay and IEC class" contain blend />
+
+## Why we picked the less profitable bay
+
+On profit alone, Conception Bay wins. We recommended a Class 3 farm in Bay of Islands anyway. The communities around it, in the Humber District, had 15.1% unemployment against 12.2% on the Avalon Peninsula, a median employment income of $30,200 against $36,400, and an Indigenous population of 25.6% against 3.1%. The province's own renewable energy plan calls for training residents to work in the industry and for closer work with Indigenous governments and organizations. St. John's, the city on Conception Bay's side of the island, already had the highest income inequality of any municipality in Atlantic Canada, partly because oil jobs pay so much more than everything else.
+
+The Class 3 farm in Bay of Islands still made about $1.8 billion over 25 years in our model, roughly $72 million a year. That's close to half of the $160 million deficit the province reported in its 2023 budget.
+
+## What the model left out
+
+It skipped transmission lines, which can add 15 to 20% to the cost of a wind project, and it ignored inflation and what happens to turbines at the end of their life. It also used onshore power curves for offshore turbines, because those were the curves we could get. Each of those would move the numbers. The part I'd keep is the trade-off the model made visible: the most profitable site and the right site turned out to be different answers, and a good model shows you both.

@@ -8,6 +8,7 @@ tags: [evals, arabic, language models]
 import summary from '../../../research/arabic-dialects/results/summary.json';
 import BarChart from '../../components/BarChart.astro';
 import Exchange from '../../components/Exchange.astro';
+import ResearchFiles from '../../components/ResearchFiles.astro';
 
 export const models = [
   ['qwen2.5:3b', 'Qwen 2.5 3B'],
@@ -28,7 +29,7 @@ Two tests, four open models, one MacBook Air:
 - **Dialect fidelity.** I wrote 12 everyday requests (making dinner, a slow phone, asking a manager for time off) in Egyptian, Levantine, Gulf and Moroccan Arabic, and checked each one with a public dialect classifier. Each request went to each model twice, once as written and once with a system message asking it to reply in my dialect. The same classifier then labeled all 384 replies.
 - **Models.** Qwen 2.5 at 3B and 7B parameters, Cohere's multilingual Aya Expanse 8B, and Cohere's Command R7B Arabic, which was built for Arabic. All of them ran 4-bit quantized at temperature 0.
 
-The code, the prompts and every raw reply are [on the research page](/research/arabic-dialects/).
+The code, the prompts and every raw reply are [at the end of this post](#method-code-and-data).
 
 ## They understand less in dialect
 
@@ -140,10 +141,53 @@ Accuracy benchmarks ask whether a model understood the question. They don't ask 
 
 MSA isn't wrong. It just isn't how people talk, and a model that can't tell the difference will keep answering a friend's text like a legal notice.
 
-## Method notes
+## Method, code and data
+
+Everything behind this post is below: the harness, the 56 dialect prompts, every raw reply and the scores. The source is also [on GitHub](https://github.com/malakali542/malakali542.github.io/tree/main/research/arabic-dialects).
+
+### Setup
+
+- **Hardware:** MacBook Air (M2, 16 GB).
+- **Runtime:** Ollama, with every model in its default Q4_K_M quantization.
+- **Models:** `qwen2.5:3b` (3.1B parameters), `qwen2.5:7b` (7.6B), `aya-expanse:8b` (8.0B, multilingual) and `command-r7b-arabic` (8.0B, built for Arabic).
+- **Decoding:** temperature 0, seed 7 and a 2,048-token context window.
+
+Each model is prompted through its own chat template, so the same system message reaches every model in the format it was trained on. Command R7B Arabic's template adds Cohere's default system preamble whenever a system message is present, so it saw a longer prompt than the other models in the comprehension test and the instructed condition. That's how the model is meant to be run.
+
+### Comprehension
+
+- `fetch_data.py` downloads AraDiCE's four OpenBookQA test sets, aligns them on the 497 questions they share, and samples 200 with seed 7.
+- Each question is asked zero-shot as multiple choice. The system message asks for the letter only, and the first A to D in the reply is scored.
+- `score.py` reports accuracy per variety with 2,000-sample bootstrap 95% intervals, plus the paired drop from MSA to each dialect.
+
+### Dialect fidelity
+
+- `data/dialect_prompts.json` holds the 12 everyday requests in Egyptian, Levantine, Gulf and Moroccan Darija, plus 8 MSA controls.
+- I wrote the prompts myself and screened all 56 with [CAMeLBERT-DID](https://huggingface.co/CAMeL-Lab/bert-base-arabic-camelbert-mix-did-madar-corpus6), trained on the MADAR corpus, before running anything. Two Gulf prompts read as Egyptian on the first pass and were rewritten, and every prompt now classifies as its intended variety.
+- Each prompt is sent twice, plain and with the system message asking for my dialect, and replies are capped at 120 tokens.
+- The same classifier labels every reply. MADAR's city labels map to regions: Cairo to Egyptian, Beirut to Levantine, Doha to Gulf, and Rabat and Tunis to Maghrebi.
+- `score.py` also counts replies containing Chinese or Japanese characters, a script leak that showed up in early runs.
+
+### Caveats
 
 - These are small models, 4-bit quantized, with one run each at temperature 0. Read it as a probe, not a leaderboard.
 - 200 questions per variety gives intervals of about ±6 points on each accuracy, so I lean on the paired drops, where each question is its own control.
-- The classifier, [CAMeLBERT-DID](https://huggingface.co/CAMeL-Lab/bert-base-arabic-camelbert-mix-did-madar-corpus6) trained on the MADAR corpus, labels the variety of a reply, not its quality. Qwen 3B's "Egyptian" answer to my koshary question was my own question echoed back, with a greeting in Latin letters in front and Chinese characters at the end.
-- I wrote the dialect prompts myself and screened them with the same classifier before running anything. Two Gulf prompts read as Egyptian on the first pass and were rewritten.
-- Command R7B Arabic's chat template adds Cohere's default system preamble whenever a system message is present, so it saw a longer prompt than the other models in the comprehension test and the instructed condition. That's how the model is meant to be run.
+- The classifier labels the variety of a reply, not its quality, and it was trained on travel-domain sentences. Qwen 3B's "Egyptian" answer to my koshary question was my own question echoed back, with a greeting in Latin letters in front and Chinese characters at the end.
+- The screen keeps my prompts honest about which dialect they're in, not about how natural they sound.
+
+### Reproduce
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install torch transformers requests
+for m in qwen2.5:3b qwen2.5:7b aya-expanse:8b command-r7b-arabic; do ollama pull $m; done
+.venv/bin/python fetch_data.py
+.venv/bin/python screen_prompts.py
+.venv/bin/python run_bench.py          # resumable, a few hours on an M2 Air
+.venv/bin/python score.py              # writes results/summary.json and summary.md
+```
+
+### Files
+
+<ResearchFiles />
+
+The AraDiCE questions belong to QCRI under a CC BY-NC-SA 4.0 license, so this site doesn't republish their text, and `fetch_data.py` downloads them instead. The prompts, the code and the model replies are mine.

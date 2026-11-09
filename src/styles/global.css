@@ -182,34 +182,82 @@ h4 {
   text-decoration-color: var(--accent);
 }
 
-.theme-toggle {
-  display: inline-grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
   border: 1px solid var(--line);
+  border-radius: 999px;
   background: var(--surface);
   color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
-.theme-toggle:hover {
+.theme-switch:hover {
   border-color: var(--accent);
-  transform: rotate(-12deg);
 }
 
-.theme-toggle .icon-sun {
+.ts-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 52px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+}
+
+.ts-icon {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+  transition: color 0.25s ease;
+}
+
+.ts-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  transition: transform 0.25s cubic-bezier(0.3, 0.7, 0.2, 1), background-color 0.25s ease;
+}
+
+.ts-sun {
+  color: var(--bg);
+}
+
+:root[data-theme='dark'] .ts-knob {
+  transform: translateX(24px);
+}
+
+:root[data-theme='dark'] .ts-sun {
+  color: var(--muted);
+}
+
+:root[data-theme='dark'] .ts-moon {
+  color: var(--bg);
+}
+
+.ts-l-dark,
+:root[data-theme='dark'] .ts-l-light {
   display: none;
 }
 
-:root[data-theme='dark'] .theme-toggle .icon-sun {
-  display: block;
-}
-
-:root[data-theme='dark'] .theme-toggle .icon-moon {
-  display: none;
+:root[data-theme='dark'] .ts-l-dark {
+  display: inline;
 }
 
 /* ---------- hero ---------- */
@@ -231,6 +279,14 @@ h4 {
 .hero h1 em {
   font-style: italic;
   color: var(--accent);
+}
+
+.hero p.tagline {
+  max-width: none;
+  margin: -0.2em 0 1.4em;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--muted);
 }
 
 .hero p {
@@ -422,22 +478,41 @@ h4 {
 
 .ai-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .ai-card .card-media {
-  border-bottom: 0;
-  border-right: 1px solid var(--line);
+  aspect-ratio: 16 / 9;
 }
 
-@media (max-width: 860px) {
-  .ai-card {
-    grid-template-columns: minmax(0, 1fr);
+@media (min-width: 861px) {
+  .ai-card .card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+    padding: 22px 26px 24px;
   }
 
-  .ai-card .card-media {
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
+  .ai-card .card-title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .ai-card .card-meta {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .ai-card .card-summary {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    margin: 0;
+  }
+
+  .ai-card .card-cta {
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 
@@ -566,38 +641,6 @@ h4 {
   width: 100%;
   height: 100%;
   border: 0;
-}
-
-.yt-ambient {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #0d0d0d;
-}
-
-.yt-ambient img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Cover the card like object-fit: cover, then crop YouTube's title overlay off the edges. */
-.yt-ambient iframe {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: max(100cqw, calc(100cqh * 16 / 9));
-  height: max(100cqh, calc(100cqw * 9 / 16));
-  transform: translate(-50%, -50%) scale(1.2);
-  border: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.yt-ambient iframe.is-ready {
-  opacity: 1;
 }
 
 .video-wrap {
@@ -1153,6 +1196,11 @@ figcaption {
   .figure-media.tall:has(.demo),
   .card-media:has(.demo) {
     aspect-ratio: 1 / 1;
+  }
+
+  /* The sun and moon in the track still say what the switch does. */
+  .theme-switch .ts-label {
+    display: none;
   }
 }
 

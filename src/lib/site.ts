@@ -3,7 +3,7 @@ export const site = {
   title: 'malak ali',
   email: 'malakali542@gmail.com',
   description:
-    'Malak Ali is a research product manager at Microsoft Research working on Quine. Before that she shipped Recall and Copilot features at Microsoft AI and was a software engineer at Uber and PointClickCare.',
+    'Malak Ali is an engineer and product hybrid based in Seattle. She is a research product manager at Microsoft Research working on Quine, and before that shipped Recall and Copilot features at Microsoft AI and was a software engineer at Uber and PointClickCare. University of Waterloo alum.',
   links: [
     { label: 'linkedin', href: 'https://www.linkedin.com/in/-malakali/' },
     { label: 'github', href: 'https://github.com/malakali542' },

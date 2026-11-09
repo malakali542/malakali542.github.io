@@ -1,0 +1,100 @@
+---
+// Lists the benchmark files that scripts/sync-research.mjs publishes under /research/arabic-dialects/.
+import { readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+
+const root = 'public/research/arabic-dialects';
+const notes: Record<string, string> = {
+  'README.md': 'setup, tasks and caveats',
+  'fetch_data.py': 'downloads and aligns AraDiCE',
+  'dialect_id.py': 'the CAMeLBERT-DID classifier',
+  'screen_prompts.py': 'checks the dialect of each prompt',
+  'run_bench.py': 'runs both tests through Ollama',
+  'score.py': 'accuracy, intervals and dialect matches',
+  'data/dialect_prompts.json': 'the 56 prompts',
+  'results/prompt_screen.json': 'classifier labels for the prompts',
+  'results/summary.json': 'every number in this post',
+  'results/summary.md': 'the same numbers as tables',
+  'results/gen_labels.jsonl': 'a dialect label for every reply',
+};
+const describe = (name: string) =>
+  notes[name] ?? (name.startsWith('results/mcq_') ? 'raw comprehension replies' : name.startsWith('results/gen_') ? 'raw dialect replies' : '');
+// Pipeline order first, then the raw replies.
+const order = Object.keys(notes);
+const rank = (name: string) => (order.includes(name) ? order.indexOf(name) : name.startsWith('results/gen_') ? 100 : 200);
+
+const walk = (dir: string): string[] =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    return statSync(path).isDirectory() ? walk(path) : [path];
+  });
+
+let files: { href: string; name: string; desc: string; kb: string }[] = [];
+try {
+  files = walk(root)
+    .map((path) => {
+      const name = path.replace(`${root}/`, '');
+      return { href: '/' + path.replace(/^public\//, ''), name, desc: describe(name), kb: (statSync(path).size / 1024).toFixed(1) };
+    })
+    .sort((a, b) => rank(a.name) - rank(b.name) || a.name.localeCompare(b.name));
+} catch {
+  files = [];
+}
+---
+
+<ul class="research-files">
+  {files.map((file) => (
+    <li>
+      <a href={file.href}>{file.name}</a>
+      <span class="desc">{file.desc}</span>
+      <span class="kb">{file.kb} kb</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .research-files {
+    list-style: none;
+    margin: 1.2em 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    font-size: 0.92rem;
+  }
+
+  .research-files li {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 5.5em;
+    gap: 4px 16px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .research-files a {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
+
+  .desc {
+    color: var(--muted);
+  }
+
+  .kb {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  @media (max-width: 560px) {
+    .research-files li {
+      grid-template-columns: minmax(0, 1fr) 5.5em;
+    }
+
+    .desc {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>

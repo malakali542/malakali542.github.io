@@ -6,7 +6,7 @@ import WorkCard from '../../components/WorkCard.astro';
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 const groups = [
   { key: 'work', title: 'product & engineering', note: 'microsoft, uber, pointclickcare' },
-  { key: 'building', title: 'built on the side', note: 'startups & hackathons' },
+  { key: 'building', title: 'built on the side', note: 'startups, hackathons & school' },
   { key: 'community', title: 'community', note: 'teaching & organizing' },
 ];
 ---

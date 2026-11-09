@@ -1,0 +1,482 @@
+---
+// Illustration of Malak's University of Waterloo offshore wind simulation: two bays run for 25 simulated years,
+// turbines break down and get repaired, profit builds up, and the team recommends the less profitable bay.
+// Profit figures ($4.6B and $1.8B) and the census numbers come from the team's report.
+const mono = (text: string, size: number) => text.length * size * 0.6;
+const bladeD = (L: number) => `M0 0 C 3.4 ${-L * 0.26}, 3.8 ${-L * 0.72}, 0 ${-L} C -1.5 ${-L * 0.7}, -2.2 ${-L * 0.3}, 0 0 Z`;
+const waveD = (x0: number, x1: number, y: number) => `M${x0} ${y}` + ' q 15 -5 30 0 t 30 0'.repeat(Math.ceil((x1 - x0) / 60));
+
+type BayIn = {
+  id: string; name: string; sub: string; x: number; y: number; w: number; h: number; horizon: number;
+  rel: number[]; hub: number; base: number; L: number; dur: number; streaks: number; gust: number;
+  fault: { i: number; label: string; at: number }; pill: string; pick: boolean; pillAt: number;
+  fs: { title: number; sub: number; badge: number; pill: number };
+};
+
+const makeBay = (b: BayIn) => {
+  const pillH = Math.round(b.fs.pill * 2.1);
+  const badgeH = Math.round(b.fs.badge * 1.85);
+  const badgeText = `⚠ ${b.fault.label}`;
+  const fixedText = '✓ repaired';
+  return {
+    ...b,
+    clipId: `wind-clip-${b.id}`,
+    blade: bladeD(b.L),
+    nacR: Math.max(3.5, b.L * 0.075),
+    title: { x: b.x + 20, y: b.y + b.fs.title + 12 },
+    subPos: { x: b.x + 20, y: b.y + b.fs.title + b.fs.sub + 22 },
+    streakLines: Array.from({ length: b.streaks }, (_, i) => ({
+      y: Math.round(b.y + 70 + (i * (b.horizon - b.y - 100)) / Math.max(1, b.streaks - 1)),
+      style: `--d:${b.gust}s;--delay:${(-i * b.gust * 0.61).toFixed(2)}s;--dx:${b.w + 160}px`,
+    })),
+    waves: [waveD(b.x - 60, b.x + b.w + 60, b.horizon + 24), waveD(b.x - 90, b.x + b.w + 60, b.horizon + 62)],
+    turbines: b.rel.map((r, i) => {
+      const x = b.x + r;
+      const fault = i === b.fault.i;
+      const bw = mono(badgeText, b.fs.badge) + 20;
+      const fw = mono(fixedText, b.fs.badge) + 20;
+      const by = b.hub - b.L - badgeH - 10;
+      return {
+        x,
+        tower: `${x - 3.4},${b.base} ${x + 3.4},${b.base} ${x + 1.7},${b.hub + 5} ${x - 1.7},${b.hub + 5}`,
+        begin: `${(-i * 0.37).toFixed(2)}s`,
+        fault: fault
+          ? {
+              at: b.fault.at,
+              fixedAt: b.fault.at + 1500,
+              clearAt: b.fault.at + 3200,
+              boatAt: b.fault.at + 300,
+              bad: { x: x - bw / 2, y: by, w: bw, h: badgeH, text: badgeText },
+              good: { x: x - fw / 2, y: by, w: fw, h: badgeH, text: fixedText },
+              boat: { x: x + b.L * 0.6, y: b.base + 16 },
+              haloR: b.L * 0.32,
+            }
+          : undefined,
+      };
+    }),
+    pillBox: { x: b.x + 18, y: b.y + b.h - pillH - 16, w: mono(b.pill, b.fs.pill) + 28, h: pillH },
+  };
+};
+
+const layouts = [
+  {
+    cls: 'wide',
+    vb: '0 0 1280 720',
+    header: { x: 40, y: 46, size: 17, text: 'agent-based simulation · 50 turbines × 8 MW per bay' },
+    year: { lx: 900, rx: 1196, x: 962, w: 222, y: 39, h: 8, ty: 47, size: 14 },
+    bays: [
+      makeBay({ id: 'wa', name: 'Conception Bay', sub: 'southeast coast', x: 40, y: 70, w: 590, h: 370, horizon: 306, rel: [140, 232, 324, 416, 508], hub: 210, base: 344, L: 60, dur: 1.6, streaks: 6, gust: 1.7, fault: { i: 2, label: 'converter fault', at: 2000 }, pill: 'most profitable', pick: false, pillAt: 6600, fs: { title: 26, sub: 15, badge: 13.5, pill: 15 } }),
+      makeBay({ id: 'wb', name: 'Bay of Islands', sub: 'west coast', x: 650, y: 70, w: 590, h: 370, horizon: 306, rel: [140, 232, 324, 416, 508], hub: 210, base: 344, L: 60, dur: 2.8, streaks: 3, gust: 3.4, fault: { i: 3, label: 'pitch system fault', at: 2900 }, pill: 'our recommendation', pick: true, pillAt: 7600, fs: { title: 26, sub: 15, badge: 13.5, pill: 15 } }),
+    ],
+    bars: {
+      label: { x: 40, y: 488, size: 15 },
+      x: 300, max: 759, rowSize: 19, valSize: 17,
+      rows: [
+        { label: 'Conception Bay', y: 502, h: 38, w: 759, cls: 'a', value: '$4.6B, any class' },
+        { label: 'Bay of Islands', y: 554, h: 38, w: 297, cls: 'b', value: '$1.8B, class 3' },
+      ],
+    },
+    foot: { x: 40, y: 640, size: 20, lh: 28, lines: ['We recommended Bay of Islands: 15.1% unemployment, 25.6% Indigenous, and still about $72M a year.'] },
+  },
+  {
+    cls: 'compact',
+    vb: '0 0 720 600',
+    header: { x: 24, y: 32, size: 15, text: 'agent-based simulation' },
+    year: { lx: 420, rx: 690, x: 476, w: 186, y: 26, h: 7, ty: 33, size: 13 },
+    bays: [
+      makeBay({ id: 'ca', name: 'Conception Bay', sub: 'southeast coast', x: 24, y: 50, w: 330, h: 282, horizon: 236, rel: [84, 170, 256], hub: 170, base: 262, L: 46, dur: 1.6, streaks: 4, gust: 1.5, fault: { i: 2, label: 'converter', at: 2000 }, pill: 'most profitable', pick: false, pillAt: 6600, fs: { title: 20, sub: 12, badge: 12, pill: 12.5 } }),
+      makeBay({ id: 'cb', name: 'Bay of Islands', sub: 'west coast', x: 366, y: 50, w: 330, h: 282, horizon: 236, rel: [84, 170, 256], hub: 170, base: 262, L: 46, dur: 2.8, streaks: 2, gust: 3, fault: { i: 1, label: 'pitch system', at: 2900 }, pill: 'our recommendation', pick: true, pillAt: 7600, fs: { title: 20, sub: 12, badge: 12, pill: 12.5 } }),
+    ],
+    bars: {
+      label: { x: 24, y: 364, size: 13 },
+      x: 176, max: 386, rowSize: 17, valSize: 15,
+      rows: [
+        { label: 'Conception Bay', y: 376, h: 32, w: 386, cls: 'a', value: '$4.6B' },
+        { label: 'Bay of Islands', y: 420, h: 32, w: 151, cls: 'b', value: '$1.8B, class 3' },
+      ],
+    },
+    foot: { x: 24, y: 490, size: 17, lh: 24, lines: ['We recommended Bay of Islands:', '15.1% unemployment, 25.6% Indigenous, about $72M a year.'] },
+  },
+];
+---
+
+<div
+  class="demo demo-wind"
+  data-seq
+  data-cycle="11500"
+  role="img"
+  aria-label="Illustration: wind farms in Conception Bay and Bay of Islands run for 25 simulated years. Turbines break down and a crew boat repairs them. Conception Bay earns about $4.6 billion with any turbine class and Bay of Islands about $1.8 billion with Class 3, and the team recommends Bay of Islands for its 15.1% unemployment and 25.6% Indigenous population."
+>
+  {layouts.map((L) => (
+    <svg class:list={['wind-svg', L.cls]} viewBox={L.vb} preserveAspectRatio="xMidYMin meet" aria-hidden="true">
+      <defs>
+        {L.bays.map((b) => (
+          <clipPath id={b.clipId}><rect x={b.x} y={b.y} width={b.w} height={b.h} rx="16"></rect></clipPath>
+        ))}
+        <linearGradient id={`wind-sky-${L.cls}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sky-top"></stop><stop offset="1" class="sky-bot"></stop></linearGradient>
+        <linearGradient id={`wind-sea-${L.cls}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sea-top"></stop><stop offset="1" class="sea-bot"></stop></linearGradient>
+      </defs>
+      <rect x="-1000" y="-200" width="3000" height="2000" class="bg"></rect>
+
+      <text x={L.header.x} y={L.header.y} class="hdr" font-size={L.header.size}>{L.header.text}</text>
+      <text x={L.year.lx} y={L.year.ty} class="lab" font-size={L.year.size}>year 1</text>
+      <rect class="track" x={L.year.x} y={L.year.y} width={L.year.w} height={L.year.h} rx={L.year.h / 2}></rect>
+      <g data-step data-at="900" class="grow">
+        <rect class="yfill" x={L.year.x} y={L.year.y} width={L.year.w} height={L.year.h} rx={L.year.h / 2}></rect>
+      </g>
+      <text x={L.year.rx} y={L.year.ty} class="lab" font-size={L.year.size} text-anchor="end">25</text>
+
+      {L.bays.map((b) => (
+        <g class="bay">
+          <g clip-path={`url(#${b.clipId})`}>
+            <rect x={b.x} y={b.y} width={b.w} height={b.horizon - b.y} fill={`url(#wind-sky-${L.cls})`}></rect>
+            <rect x={b.x} y={b.horizon} width={b.w} height={b.y + b.h - b.horizon} fill={`url(#wind-sea-${L.cls})`}></rect>
+            {b.streakLines.map((s) => <line class="streak" x1={b.x - 110} y1={s.y} x2={b.x - 30} y2={s.y} style={s.style}></line>)}
+            {b.waves.map((d) => <path class="wave" d={d}></path>)}
+            {b.turbines.map((t) => (
+              <g class="turbine">
+                <polygon class="tw" points={t.tower}></polygon>
+                <g transform={`translate(${t.x} ${b.hub})`}>
+                  <g class="spin">
+                    <g>
+                      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur={`${b.dur}s`} begin={t.begin} repeatCount="indefinite"></animateTransform>
+                      <path class="bl" d={b.blade}></path>
+                      <path class="bl" d={b.blade} transform="rotate(120)"></path>
+                      <path class="bl" d={b.blade} transform="rotate(240)"></path>
+                    </g>
+                  </g>
+                  <g class="still" transform="rotate(32)">
+                    <path class="bl" d={b.blade}></path>
+                    <path class="bl" d={b.blade} transform="rotate(120)"></path>
+                    <path class="bl" d={b.blade} transform="rotate(240)"></path>
+                  </g>
+                  <circle class="nac" r={b.nacR}></circle>
+                </g>
+                {t.fault && (
+                  <Fragment>
+                    <g data-step data-at={t.fault.at} class="fault">
+                      <circle class="halo" cx={t.x} cy={b.hub} r={t.fault.haloR}></circle>
+                      <rect class="badge bad" x={t.fault.bad.x} y={t.fault.bad.y} width={t.fault.bad.w} height={t.fault.bad.h} rx={t.fault.bad.h / 2}></rect>
+                      <text class="bt" x={t.x} y={t.fault.bad.y + t.fault.bad.h * 0.69} text-anchor="middle" font-size={b.fs.badge}>{t.fault.bad.text}</text>
+                    </g>
+                    <g data-step data-at={t.fault.fixedAt} class="fixed">
+                      <rect class="badge good" x={t.fault.good.x} y={t.fault.good.y} width={t.fault.good.w} height={t.fault.good.h} rx={t.fault.good.h / 2}></rect>
+                      <text class="bt" x={t.x} y={t.fault.good.y + t.fault.good.h * 0.69} text-anchor="middle" font-size={b.fs.badge}>{t.fault.good.text}</text>
+                    </g>
+                    <g data-step data-at={t.fault.clearAt} class="clear"></g>
+                    <g data-step data-at={t.fault.boatAt} class="boat-g">
+                      <g transform={`translate(${t.fault.boat.x} ${t.fault.boat.y})`}>
+                        <path class="wake" d="M-34 6 h-16 M-30 1 h-12"></path>
+                        <rect class="cabin" x="-9" y="-11" width="16" height="11" rx="2"></rect>
+                        <path class="hull" d="M-21 0 h42 l-7 9 h-28 z"></path>
+                      </g>
+                    </g>
+                  </Fragment>
+                )}
+              </g>
+            ))}
+          </g>
+          <rect class="frame" x={b.x} y={b.y} width={b.w} height={b.h} rx="16"></rect>
+          <text class="title" x={b.title.x} y={b.title.y} font-size={b.fs.title}>{b.name}</text>
+          <text class="lab" x={b.subPos.x} y={b.subPos.y} font-size={b.fs.sub}>{b.sub}</text>
+          <g data-step data-at={b.pillAt}>
+            {b.pick && <rect class="ring" x={b.x - 6} y={b.y - 6} width={b.w + 12} height={b.h + 12} rx="21"></rect>}
+            <rect class:list={['pill', { pick: b.pick }]} x={b.pillBox.x} y={b.pillBox.y} width={b.pillBox.w} height={b.pillBox.h} rx={b.pillBox.h / 2}></rect>
+            <text class:list={['pt', { 'on-pick': b.pick }]} x={b.pillBox.x + 14} y={b.pillBox.y + b.pillBox.h * 0.68} font-size={b.fs.pill}>{b.pill}</text>
+          </g>
+        </g>
+      ))}
+
+      <text class="lab" x={L.bars.label.x} y={L.bars.label.y} font-size={L.bars.label.size}>profit over 25 years</text>
+      {L.bars.rows.map((r) => (
+        <Fragment>
+          <text class="rowlab" x={L.bars.label.x} y={r.y + r.h * 0.66} font-size={L.bars.rowSize}>{r.label}</text>
+          <rect class="track" x={L.bars.x} y={r.y} width={L.bars.max} height={r.h} rx="8"></rect>
+          <g data-step data-at="900" class="grow">
+            <rect class:list={['bar', r.cls]} x={L.bars.x} y={r.y} width={r.w} height={r.h} rx="8"></rect>
+          </g>
+          <g data-step data-at="6000">
+            <text class="val" x={L.bars.x + r.w + 12} y={r.y + r.h * 0.66} font-size={L.bars.valSize}>{r.value}</text>
+          </g>
+        </Fragment>
+      ))}
+      <g data-step data-at="8400">
+        {L.foot.lines.map((line, i) => (
+          <text class="foot" x={L.foot.x} y={L.foot.y + i * L.foot.lh} font-size={L.foot.size}>{line}</text>
+        ))}
+      </g>
+    </svg>
+  ))}
+  <span class="illustration-tag">illustration</span>
+</div>
+
+<style>
+  .demo-wind {
+    --sky-top: #d6e5f2;
+    --sky-bot: #f2f7fb;
+    --sea-top: #4a87bb;
+    --sea-bot: #2b5f91;
+    --tower: #ffffff;
+    --tower-line: #8ea4ba;
+    --blade-line: #8ea4ba;
+    --streak: rgb(54 96 140 / 0.3);
+    --wave: rgb(255 255 255 / 0.32);
+    --bar-a: #8b95a7;
+    --pick: #e2702b;
+    --track: color-mix(in srgb, var(--ink) 7%, transparent);
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-soft);
+    overflow: hidden;
+  }
+
+  :global(:root[data-theme='dark']) .demo-wind {
+    --sky-top: #0d1a2b;
+    --sky-bot: #1b2f49;
+    --sea-top: #21507d;
+    --sea-bot: #123150;
+    --tower: #e3eaf3;
+    --tower-line: #e3eaf3;
+    --blade-line: #b9c7d6;
+    --streak: rgb(205 225 255 / 0.3);
+    --wave: rgb(255 255 255 / 0.16);
+    --bar-a: #6f7a8f;
+  }
+
+  .wind-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .wind-svg.compact {
+    display: none;
+  }
+
+  @container (aspect-ratio < 1.5) or (width < 640px) {
+    .wind-svg.wide {
+      display: none;
+    }
+
+    .wind-svg.compact {
+      display: block;
+    }
+  }
+
+  .bg {
+    fill: var(--bg-soft);
+  }
+
+  .sky-top { stop-color: var(--sky-top); }
+  .sky-bot { stop-color: var(--sky-bot); }
+  .sea-top { stop-color: var(--sea-top); }
+  .sea-bot { stop-color: var(--sea-bot); }
+
+  .wind-svg text {
+    font-family: var(--font-mono);
+    fill: var(--ink);
+  }
+
+  .wind-svg .lab,
+  .wind-svg .hdr {
+    fill: var(--muted);
+  }
+
+  .wind-svg .title,
+  .wind-svg .rowlab {
+    font-family: var(--font-body);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .wind-svg .foot {
+    font-family: var(--font-body);
+  }
+
+  .wind-svg .bt,
+  .wind-svg .pt.on-pick {
+    fill: #fff;
+  }
+
+  .wind-svg .pt {
+    fill: var(--bg);
+  }
+
+  .frame {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1.5;
+  }
+
+  .tw,
+  .nac {
+    fill: var(--tower);
+    stroke: var(--tower-line);
+    stroke-width: 1;
+  }
+
+  .bl {
+    fill: var(--tower);
+    stroke: var(--blade-line);
+    stroke-width: 0.8;
+  }
+
+  .still {
+    opacity: 0;
+  }
+
+  .streak {
+    stroke: var(--streak);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .wave {
+    fill: none;
+    stroke: var(--wave);
+    stroke-width: 2;
+  }
+
+  .badge.bad {
+    fill: #d93d3d;
+  }
+
+  .badge.good {
+    fill: #2f9e6e;
+  }
+
+  .halo {
+    fill: none;
+    stroke: #d93d3d;
+    stroke-width: 2.5;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .hull {
+    fill: #f7f7f5;
+    stroke: #556b80;
+    stroke-width: 1.2;
+  }
+
+  .cabin {
+    fill: var(--pick);
+  }
+
+  .wake {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.6);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .pill {
+    fill: var(--ink);
+  }
+
+  .pill.pick {
+    fill: var(--pick);
+  }
+
+  .ring {
+    fill: none;
+    stroke: var(--pick);
+    stroke-width: 3;
+  }
+
+  .track {
+    fill: var(--track);
+  }
+
+  .bar.a {
+    fill: var(--bar-a);
+  }
+
+  .bar.b,
+  .yfill {
+    fill: var(--pick);
+  }
+
+  .bar,
+  .yfill {
+    transform-box: fill-box;
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+
+  .demo-wind:global(.seq-on) .streak {
+    animation: gust var(--d) linear infinite;
+    animation-delay: var(--delay);
+  }
+
+  .demo-wind:global(.seq-on) .wave {
+    animation: drift 3.2s linear infinite;
+  }
+
+  .demo-wind:global(.seq-on) .halo {
+    animation: pulse 1.1s ease-out infinite;
+  }
+
+  @keyframes gust {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(var(--dx));
+    }
+  }
+
+  @keyframes drift {
+    to {
+      transform: translateX(-60px);
+    }
+  }
+
+  @keyframes pulse {
+    from {
+      opacity: 0.9;
+      transform: scale(0.7);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }
+
+  /* State driven by the sequence: bars grow over the 25 simulated years, a broken turbine stops until it is repaired. */
+  :global(.demo-wind .grow.is-on .bar),
+  :global(.demo-wind .grow.is-on .yfill),
+  :global(.demo-wind:not(.seq-on) .bar),
+  :global(.demo-wind:not(.seq-on) .yfill) {
+    transform: scaleX(1);
+  }
+
+  :global(.demo-wind.seq-on .grow.is-on .bar),
+  :global(.demo-wind.seq-on .grow.is-on .yfill) {
+    transition: transform 5s cubic-bezier(0.35, 0.1, 0.35, 1);
+  }
+
+  :global(.demo-wind .turbine:has(.fault.is-on):not(:has(.fixed.is-on)) .spin) {
+    opacity: 0;
+  }
+
+  :global(.demo-wind .turbine:has(.fault.is-on):not(:has(.fixed.is-on)) .still) {
+    opacity: 1;
+  }
+
+  :global(.demo-wind .turbine:has(.fixed.is-on) .fault),
+  :global(.demo-wind .turbine:has(.clear.is-on) .fixed) {
+    opacity: 0;
+  }
+
+  :global(.demo-wind .bay .boat-g) {
+    transition: opacity 0.5s ease, transform 1.8s cubic-bezier(0.3, 0.7, 0.2, 1);
+  }
+
+  :global(.demo-wind.seq-on .bay .boat-g:not(.is-on)) {
+    transform: translateX(-170px);
+  }
+</style>
