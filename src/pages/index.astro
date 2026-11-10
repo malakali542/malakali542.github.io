@@ -1,36 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import WorkTile from '../components/WorkTile.astro';
+import Tiles from '../components/Tiles.astro';
 
-const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
-
-// Mixed tile shapes stagger the two columns. Illustrations get 4:3 so they never squeeze.
-const ratios: Record<string, string> = {
-  quine: '16 / 9',
-  'copilot-diagnostics': '4 / 3',
-  'copilot-trusted-answers': '1 / 1',
-  pointclickcare: '4 / 3',
-  multiplayer: '1 / 1',
-  scout: '4 / 3',
-  dots: '1 / 1',
-};
-
-// The featured project gets a full-width tile at the top of its section.
-const featureId = 'quine';
-
-const sections = [
-  { id: 'work', group: 'work', title: 'work', note: 'microsoft research, microsoft ai, uber, pointclickcare' },
-  { id: 'side', group: 'building', title: 'on the side', note: 'startups, tools and hackathons' },
-].map((section) => {
-  const inGroup = work.filter((entry) => entry.data.group === section.group);
-  const feature = inGroup.find((entry) => entry.id === featureId);
-  const entries = inGroup.filter((entry) => entry !== feature).map((entry, index) => ({ entry, index }));
-  return { ...section, feature, columns: [0, 1].map((side) => entries.filter(({ index }) => index % 2 === side)) };
-});
+const work = (await getCollection('work', (entry) => entry.data.group === 'work')).sort((a, b) => a.data.order - b.data.order);
+// Side projects used to live on this page, so old links to them land on /side/ instead.
+const moved = ['side', ...(await getCollection('work', (entry) => entry.data.group === 'building')).map((entry) => entry.id)];
+const redirect = `(() => { let id = location.hash.slice(1); try { id = decodeURIComponent(id); } catch {} if (${JSON.stringify(moved)}.includes(id)) location.replace(id === 'side' ? '/side/' : '/side/#' + id); })();`;
 ---
 
 <Base>
+  <script is:inline slot="head" set:html={redirect} />
   <section class="intro">
     <h1 class="statement"><em>malak ali</em> is a <span class="keep">product + engineer hybrid</span> working on ai for science and collaboration.</h1>
     <dl class="now-then">
@@ -45,20 +25,11 @@ const sections = [
     </dl>
   </section>
 
-  {sections.map((section) => (
-    <section class="home-section" id={section.id} aria-labelledby={`${section.id}-title`}>
-      <div class="section-head">
-        <h2 id={`${section.id}-title`}>{section.title}</h2>
-        <span class="section-note">{section.note}</span>
-      </div>
-      {section.feature && <WorkTile entry={section.feature} index={0} ratio={ratios[section.feature.id]} feature />}
-      <div class="tiles">
-        {section.columns.map((column) => (
-          <div class="tiles-col">
-            {column.map(({ entry, index }) => <WorkTile entry={entry} index={index} ratio={ratios[entry.id]} />)}
-          </div>
-        ))}
-      </div>
-    </section>
-  ))}
+  <section class="home-section" aria-labelledby="work-title">
+    <div class="section-head">
+      <h2 id="work-title">work</h2>
+      <span class="section-note">microsoft research, microsoft ai, uber, pointclickcare</span>
+    </div>
+    <Tiles entries={work} feature="quine" />
+  </section>
 </Base>

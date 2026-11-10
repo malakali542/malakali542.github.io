@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Tiles from '../components/Tiles.astro';
+
+const side = (await getCollection('work', (entry) => entry.data.group === 'building')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="on the side" description="What Malak Ali builds on the side: Suelo and Scout, two startups she co-founded, Career Compass for newcomers to Ontario, and Dots, which won the UXL 2024 hackathon.">
+  <h1 class="page-title">on the side</h1>
+  <div style="margin-top:36px">
+    <Tiles entries={side} />
+  </div>
+</Base>

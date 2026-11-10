@@ -464,14 +464,6 @@ h4 {
   line-height: 1.5;
 }
 
-.home-section {
-  scroll-margin-top: 28px;
-}
-
-.home-section + .home-section {
-  margin-top: clamp(72px, 9vw, 120px);
-}
-
 .home-section .section-head {
   margin-bottom: 28px;
   padding-bottom: 14px;
@@ -1825,14 +1817,18 @@ figcaption,
 
   .topbar {
     display: block;
-    padding: 18px 64px 16px 20px;
+    padding: 18px 58px 16px 20px;
     border-bottom: 1px solid var(--line);
   }
 
+  /* The five tabs spread across one row, with gaps from about 23px on tablets down to 13px on small phones.
+     Only the narrowest phones wrap. */
   .topbar nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 22px;
+    justify-content: space-between;
+    gap: 6px 12px;
+    max-width: 320px;
   }
 
   .topbar a {

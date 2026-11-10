@@ -32,14 +32,16 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 
 | path | what |
 |---|---|
-| `src/content/work/*.mdx` | case studies. Frontmatter drives the home page tiles, metrics and facts. The body is MDX. |
+| `src/content/work/*.mdx` | case studies. Frontmatter drives the tiles, metrics and facts. The body is MDX. |
 | `src/content/writing/*.mdx` | blog posts (`title`, `dek`, `date`, `tags`). The date is what the site shows. |
 | `src/content.config.ts` | the schema for both collections |
-| `src/pages/index.astro` | the home page, which is also the work page: the statement, currently and previously, then two tile grids, **work** (`group: work`) and **on the side** (`group: building`). The entry named by `featureId` (Quine) gets a full-width tile at the top of its section, with the first sentence of its summary and its metrics. `/work/` redirects here. |
+| `src/pages/index.astro` | the home page, which is also the work page: the statement, currently and previously, then the tiles for `group: work`. Quine gets a full-width tile at the top, with the first sentence of its summary and its metrics. `/work/` redirects here, and old `/#side` links forward to `/side/`. |
+| `src/pages/side.astro` | **on the side**, the tiles for `group: building` (startups, tools and hackathons) |
+| `src/components/Tiles.astro` | the two-column tile grid both pages use, with each tile's shape (`ratios`) and the optional featured tile |
 | `src/pages/about.astro` | about, experience timeline, community, honors |
 | `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
 | `src/components/Header.astro`, `Footer.astro`, `StatusBar.astro` | the left rail (nav, or a breadcrumb and table of contents on case studies and posts), the mobile top bar, the say-hi line, and the bottom bar with the Seattle clock |
-| `src/components/WorkTile.astro` | one tile on the home grid: media, then `name / role year`, plus the summary for entries with no case study |
+| `src/components/WorkTile.astro` | one tile in that grid: media, then `name / role year`, plus the summary for entries with no case study |
 | `src/components/Ask.astro`, `src/data/llmalak.ts`, `src/lib/llmalak.ts` | LLMalak, the chat in the bottom bar: the panel, the answers, and the matcher (see below) |
 | `src/components/Cursor.astro` | the pink square cursor |
 | `src/components/Media.astro` | renders a tile or hero from `kind: video \| youtube \| demo \| image` |
@@ -59,8 +61,8 @@ short: Project
 org: Company
 role: product manager
 period: 2025 - 2026
-order: 10            # position on the home grid, which alternates left and right columns
-group: work          # work, or building to show it under "on the side"
+order: 10            # position in its grid, which alternates left and right columns
+group: work          # work, or building to put it on the "on the side" page
 summary: One or two sentences for the page lede, and for the tile when there's no case study.
 card:
   kind: youtube      # or video (src, poster, frame: none|phone, fit, start), demo (name), image (src, alt)
@@ -109,7 +111,7 @@ YouTube embeds use `youtube-nocookie.com` and only load after a click.
 ## Look
 
 - The layout borrows from [rachelchen.tech](https://www.rachelchen.tech): a fixed left rail where a pink square marks the current page, grained paper, a serif statement on the home page, square media tiles captioned `name / role year`, a table of contents on case studies and posts that follows your scroll, and a bottom bar with the time in Seattle. Under 900px the rail becomes a top bar.
-- The pink square in the rail is one element (`.rail-dot`) that glides to the current item. Within a page it follows `aria-current`, which the scrollspy in `Base.astro` moves as you scroll, and straight away when you click. On the home page, "work" scrolls back up instead of reloading. Between pages the square moves through a cross-document view transition (`@view-transition` in `global.css`) while the page crossfades. Browsers without view transitions, and anyone who prefers reduced motion, get an instant switch. The contents list on case studies and posts has its own transition name, so its square fades in instead of gliding over from the menu.
+- The pink square in the rail is one element (`.rail-dot`) that glides to the current item. On case studies and posts it follows `aria-current` in the contents list, which the scrollspy in `Base.astro` moves as you read, and straight away when you click. Between pages the square moves through a cross-document view transition (`@view-transition` in `global.css`) while the page crossfades. Browsers without view transitions, and anyone who prefers reduced motion, get an instant switch. The contents list on case studies and posts has its own transition name, so its square fades in instead of gliding over from the menu.
 - The pre-redesign site is tagged `portfolio-v1-classic` (source) and `site-v1-classic` (deployed). To restore it, run `git checkout portfolio-v1-classic -- portfolio`, commit, and deploy.
 - Titles, headings and labels render lowercase through one rule in `src/styles/global.css`, so content can be written in normal case. Body text keeps its case.
 - The accent is `#ff5757`, the color on Malak's resume. Small accent text uses `--accent-ink`, the same hue darkened to `#ba3a3a` so it keeps 4.5:1 contrast on the grained paper, and text on accent fills uses `--on-accent`. Dark mode uses `#ff5757` for both.

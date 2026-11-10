@@ -31,7 +31,7 @@ const uber = { label: 'uberx share', href: '/work/uber/' };
 const pcc = { label: 'pointclickcare', href: '/work/pointclickcare/' };
 const about = { label: 'about', href: '/about/' };
 const ai = { label: 'how i use ai', href: '/ai/' };
-const side = { label: 'on the side', href: '/#side' };
+const side = { label: 'on the side', href: '/side/' };
 const arabic = { label: 'arabic dialects benchmark', href: '/writing/arabic-dialects-benchmark/' };
 const science = { label: 'ai for science', href: '/writing/why-every-ai-lab-is-betting-on-science/' };
 const multiplayer = { label: 'multiplayer ai', href: '/work/multiplayer/' };
@@ -185,7 +185,7 @@ export const answers: Answer[] = [
     id: 'built',
     ask: "what do you build on the side?",
     keys: ['side project', 'side projects', 'on the side', 'side', 'startup', 'founder', 'cofounder', 'co founder', 'hackathon', 'build', 'built', 'building', 'project', 'projects', 'entrepreneur'],
-    text: "I co-founded [Suelo](/#suelo), which builds agents that research candidate sites for real estate developers, and before that [Scout](/#scout), a search engine for your personal data. I built [Career Compass](/#career-compass) for newcomers to Ontario, which about 400 people use each month, and won the UXL 2024 hackathon with [Dots](/work/dots/).",
+    text: "I co-founded [Suelo](/side/#suelo), which builds agents that research candidate sites for real estate developers, and before that [Scout](/side/#scout), a search engine for your personal data. I built [Career Compass](/side/#career-compass) for newcomers to Ontario, which about 400 people use each month, and won the UXL 2024 hackathon with [Dots](/work/dots/).",
     sources: [side],
     next: ['suelo', 'career-compass', 'dots'],
   },
@@ -194,7 +194,7 @@ export const answers: Answer[] = [
     ask: "what is suelo?",
     keys: ['!suelo', '!swiftzone', 'swift zone', 'real estate', 'land', 'land acquisition', 'site selection', 'zoning', 'diligence', 'property'],
     text: "Suelo builds agents that research candidate sites for real estate developers and prepare the next round of diligence. I co-founded it as SwiftZone, and we've since narrowed it to the first decision in development, whether a site is worth pursuing. More is coming soon.",
-    sources: [{ label: 'suelo', href: '/#suelo' }],
+    sources: [{ label: 'suelo', href: '/side/#suelo' }],
     next: ['built', 'scout', 'ai-stack'],
   },
   {
@@ -202,7 +202,7 @@ export const answers: Answer[] = [
     ask: "what is career compass?",
     keys: ['!career compass', 'compass', 'immigrant', 'immigration', 'newcomer', 'ontario', 'guelph', 'settlement', 'municipal', 'municipality', 'pathway', 'licensing', 'credential', 'mau', 'monthly users'],
     text: "I built Career Compass with Immigrant Services Guelph-Wellington so immigrant services in Ontario municipalities have a first line of support for newcomers. It translates international experience into local terms, maps local demand and salary, and lays out next steps like licensing with their cost and time. About 400 people use it each month.",
-    sources: [{ label: 'career compass', href: '/#career-compass' }],
+    sources: [{ label: 'career compass', href: '/side/#career-compass' }],
     next: ['built', 'community', 'suelo'],
   },
   {
@@ -210,7 +210,7 @@ export const answers: Answer[] = [
     ask: "what was scout?",
     keys: ['!scout', 'personal search', 'personal data', 'search engine', 'y combinator', 'yc', 'antler', 'pear', 'neo', 'accelerator', 'investor', 'vc', 'fundraise', 'fundraising'],
     text: "Scout was our startup, a unified search engine for personal data with a home screen that pulls your calendar, focus timer and news into one place. We took it from idea to MVP and interviewed with Y Combinator, Neo, Pear VC and Antler.",
-    sources: [{ label: 'scout', href: '/#scout' }],
+    sources: [{ label: 'scout', href: '/side/#scout' }],
     next: ['suelo', 'dots', 'built'],
   },
   {

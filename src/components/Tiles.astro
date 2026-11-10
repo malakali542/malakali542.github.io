@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WorkTile from './WorkTile.astro';
+
+interface Props {
+  entries: CollectionEntry<'work'>[];
+  // This entry gets a full-width tile above the grid, with its first summary sentence and its metrics.
+  feature?: string;
+}
+
+const { entries, feature: featureId } = Astro.props;
+
+// Mixed tile shapes stagger the two columns. Illustrations get 4:3 so they never squeeze.
+const ratios: Record<string, string> = {
+  quine: '16 / 9',
+  'copilot-diagnostics': '4 / 3',
+  'copilot-trusted-answers': '1 / 1',
+  pointclickcare: '4 / 3',
+  multiplayer: '1 / 1',
+  scout: '4 / 3',
+  dots: '1 / 1',
+};
+
+const feature = entries.find((entry) => entry.id === featureId);
+const rest = entries.filter((entry) => entry !== feature).map((entry, index) => ({ entry, index }));
+const columns = [0, 1].map((side) => rest.filter(({ index }) => index % 2 === side));
+---
+
+{feature && <WorkTile entry={feature} index={0} ratio={ratios[feature.id]} feature />}
+<div class="tiles">
+  {columns.map((column) => (
+    <div class="tiles-col">
+      {column.map(({ entry, index }) => <WorkTile entry={entry} index={index} ratio={ratios[entry.id]} />)}
+    </div>
+  ))}
+</div>

@@ -24,9 +24,11 @@ const { Content, headings } = await render(entry);
 const data = entry.data;
 const hero = data.hero ?? data.card;
 const facts = [{ label: 'role', value: data.role }, ...data.facts];
+// The breadcrumb, and the tab marked current, follow the page the project's tile is on.
+const tab = data.group === 'building' ? { href: '/side/', label: 'on the side' } : { href: '/', label: 'work' };
 ---
 
-<Base title={data.short} description={data.summary} type="article" crumb={{ href: '/', label: 'work', current: data.short }} toc={headings}>
+<Base title={data.short} description={data.summary} type="article" crumb={{ ...tab, current: data.short }} toc={headings}>
   <article>
     <header class="detail-head" id="overview">
       <p class="eyebrow">{data.org} · {data.period}{data.badge && ` · ${data.badge}`}</p>

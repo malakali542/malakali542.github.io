@@ -17,16 +17,15 @@ interface Props {
 }
 
 const { crumb, toc = [] } = Astro.props;
-const path = Astro.url.pathname;
-const home = path === '/';
-// On the home page the first two items follow the scroll between the work and on-the-side sections.
+// A page belongs to the tab its breadcrumb points to, so a case study marks work or on the side and a post marks writing.
+const section = (crumb?.href ?? Astro.url.pathname).replace(/\/?$/, '/');
 const items = [
-  { href: '/', label: 'work', current: home || path.startsWith('/work/'), spy: home ? 'work' : undefined },
-  { href: '/#side', label: 'on the side', current: false, spy: home ? 'side' : undefined, railOnly: true },
-  { href: '/writing/', label: 'writing', current: path.startsWith('/writing/') },
-  { href: '/ai/', label: 'ai', current: path.startsWith('/ai/') },
-  { href: '/about/', label: 'about', current: path.startsWith('/about/') },
-];
+  { href: '/', label: 'work' },
+  { href: '/side/', label: 'on the side' },
+  { href: '/writing/', label: 'writing' },
+  { href: '/ai/', label: 'ai' },
+  { href: '/about/', label: 'about' },
+].map((item) => ({ ...item, current: item.href === '/' ? section === '/' : section.startsWith(item.href) }));
 const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
 // The dot starts on the current item so the first paint is already right. The script below takes over after that.
 const currentIndex = items.findIndex((item) => item.current);
@@ -61,7 +60,7 @@ const dotStyle = `--i: ${currentIndex}`;
     <nav class="rail-nav" aria-label="primary">
       <ul>
         {items.map((item) => (
-          <li><a href={item.href} aria-current={item.current ? 'page' : undefined} data-toc={item.spy}>{item.label}</a></li>
+          <li><a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a></li>
         ))}
       </ul>
       {currentIndex >= 0 && <span class="rail-dot" style={dotStyle} aria-hidden="true"></span>}
@@ -69,10 +68,10 @@ const dotStyle = `--i: ${currentIndex}`;
   )}
   <script is:inline>
     // One dot marks the current item. It is placed before the first paint, then glides whenever
-    // aria-current moves (the scrollspy in Base sets it as you scroll).
+    // aria-current moves (on case studies and posts, the scrollspy in Base sets it as you read).
     (() => {
-      // Arriving on a link to a section (like /#side) jumps straight there. Smooth scrolling is for
-      // clicks within a page, and here it would scroll the whole page past the dot on load.
+      // Arriving on a link to a section (like /work/quine/#the-calls-i-made) jumps straight there.
+      // Smooth scrolling is for clicks within a page, and here it would scroll the whole page past the dot on load.
       if (location.hash) {
         const root = document.documentElement;
         root.style.scrollBehavior = 'auto';
@@ -98,7 +97,7 @@ const dotStyle = `--i: ${currentIndex}`;
           dot.style.transition = '';
         }
       };
-      // A link straight to a section, like /#side, starts the dot on that section.
+      // A link straight to a section starts the dot on that section.
       let id = location.hash.slice(1);
       try {
         id = decodeURIComponent(id);
@@ -117,7 +116,7 @@ const dotStyle = `--i: ${currentIndex}`;
 
 <header class="topbar" id="topbar">
   <nav aria-label="primary">
-    {items.filter((item) => !item.railOnly).map((item) => (
+    {items.map((item) => (
       <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
     ))}
   </nav>
