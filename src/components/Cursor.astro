@@ -1,0 +1,61 @@
+<div class="cursor" aria-hidden="true" data-cursor><span class="cursor-label"></span></div>
+
+<script>
+  // A pink square that follows the mouse. It turns into a diamond on links, a pill over tiles and
+  // videos, and a caret in text fields. Touch screens keep their own behavior.
+  const cursor = document.querySelector<HTMLElement>('[data-cursor]');
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  if (cursor && fine.matches) {
+    const label = cursor.querySelector<HTMLElement>('.cursor-label')!;
+    const root = document.documentElement;
+    let x = 0;
+    let y = 0;
+    let frame = 0;
+
+    const modeFor = (target: Element | null): [string, string] => {
+      if (!target || target.closest('iframe')) return ['hidden', ''];
+      if (target.closest('input, textarea, [contenteditable="true"]')) return ['text', ''];
+      if (target.closest('[data-yt]')) return ['label', 'play'];
+      if (target.closest('.tile')?.querySelector('.tile-cap a')) return ['label', 'read →'];
+      if (target.closest('a, button, summary, label, select, [role="button"]')) return ['link', ''];
+      return ['', ''];
+    };
+
+    const apply = (target: Element | null) => {
+      const [mode, text] = modeFor(target);
+      if (cursor.dataset.mode !== mode) cursor.dataset.mode = mode;
+      if (text && label.textContent !== text) label.textContent = text;
+    };
+
+    const render = () => {
+      frame = 0;
+      cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    };
+
+    window.addEventListener(
+      'pointermove',
+      (event) => {
+        if (event.pointerType !== 'mouse') return;
+        x = event.clientX;
+        y = event.clientY;
+        root.classList.add('has-cursor');
+        cursor.classList.add('is-on');
+        apply(event.target as Element);
+        frame ||= requestAnimationFrame(render);
+      },
+      { passive: true },
+    );
+    document.addEventListener('pointerover', (event) => event.pointerType === 'mouse' && apply(event.target as Element));
+    // Scrolling moves the page under a still mouse, so check what's underneath again.
+    window.addEventListener(
+      'scroll',
+      () => cursor.classList.contains('is-on') && requestAnimationFrame(() => apply(document.elementFromPoint(x, y))),
+      { passive: true },
+    );
+    document.addEventListener('pointerdown', () => cursor.classList.add('is-down'));
+    document.addEventListener('pointerup', () => cursor.classList.remove('is-down'));
+    root.addEventListener('pointerleave', () => cursor.classList.remove('is-on'));
+    window.addEventListener('blur', () => cursor.classList.remove('is-on'));
+  }
+</script>

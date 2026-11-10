@@ -18,8 +18,11 @@ interface Props {
 
 const { crumb, toc = [] } = Astro.props;
 const path = Astro.url.pathname;
+const home = path === '/';
+// On the home page the first two items follow the scroll between the work and on-the-side sections.
 const items = [
-  { href: '/', label: 'work', current: path === '/' || path.startsWith('/work/') },
+  { href: '/', label: 'work', current: home || path.startsWith('/work/'), spy: home ? 'work' : undefined },
+  { href: '/#side', label: 'on the side', current: false, spy: home ? 'side' : undefined, railOnly: true },
   { href: '/writing/', label: 'writing', current: path.startsWith('/writing/') },
   { href: '/ai/', label: 'ai', current: path.startsWith('/ai/') },
   { href: '/about/', label: 'about', current: path.startsWith('/about/') },
@@ -54,7 +57,7 @@ const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
     <nav class="rail-nav" aria-label="primary">
       <ul>
         {items.map((item) => (
-          <li><a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a></li>
+          <li><a href={item.href} aria-current={item.current ? 'page' : undefined} data-toc={item.spy}>{item.label}</a></li>
         ))}
       </ul>
     </nav>
@@ -63,7 +66,7 @@ const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
 
 <header class="topbar">
   <nav aria-label="primary">
-    {items.map((item) => (
+    {items.filter((item) => !item.railOnly).map((item) => (
       <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
     ))}
   </nav>

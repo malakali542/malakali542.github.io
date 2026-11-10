@@ -4,7 +4,14 @@ import { site } from '../lib/site';
 
 <div class="statusbar">
   <p class="status"><span class="sq" aria-hidden="true"></span>seattle <span class="clock" data-clock></span></p>
-  <nav class="status-links" aria-label="elsewhere">
-    {site.links.map((link) => <a href={link.href}>{link.label}</a>)}
-  </nav>
+  <div class="status-right">
+    <nav class="status-links" aria-label="elsewhere">
+      {site.links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+    <button class="ask-trigger" type="button" aria-expanded="false" aria-controls="ask" data-ask-open>
+      <span class="ask-sq" aria-hidden="true"></span>
+      <span>ask <b>LLM</b>alak</span>
+      <kbd aria-hidden="true">/</kbd>
+    </button>
+  </div>
 </div>

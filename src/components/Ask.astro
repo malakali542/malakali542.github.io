@@ -1,0 +1,264 @@
+---
+import { answers, starters } from '../data/llmalak';
+
+const chips = starters.flatMap((id) => answers.filter((answer) => answer.id === id));
+---
+
+<section class="ask" id="ask" role="dialog" aria-modal="false" aria-labelledby="ask-title" hidden data-ask>
+  <header class="ask-head">
+    <div>
+      <p class="ask-title" id="ask-title"><b>LLM</b>alak</p>
+      <p class="ask-sub">Ask about my work. I answer from this site and link my sources.</p>
+    </div>
+    <button class="ask-close" type="button" aria-label="close LLMalak" data-ask-close>
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1 1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+    </button>
+  </header>
+  <div class="ask-log" role="log" aria-live="polite" data-ask-log>
+    <div class="msg bot">
+      <p>Hi! I'm Malak, or the version of me that lives on this site. Ask me anything about my work, or start with one of these.</p>
+    </div>
+  </div>
+  <div class="ask-chips" data-ask-chips>
+    {chips.map((answer) => <button type="button" class="chip" data-id={answer.id}>{answer.ask}</button>)}
+  </div>
+  <form class="ask-form" data-ask-form>
+    <label class="sr-only" for="ask-input">ask LLMalak a question</label>
+    <input id="ask-input" type="text" autocomplete="off" maxlength="200" enterkeyhint="send" placeholder="ask me anything about my work" />
+    <button type="submit" aria-label="send">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 12V2M2.5 6.5 7 2l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+  </form>
+  <p class="ask-note">LLMalak doesn't call a model. It matches your question to answers written from this site, so it never makes things up.</p>
+</section>
+
+<script>
+  import type { Reply } from '../lib/llmalak';
+
+  const trigger = document.querySelector<HTMLButtonElement>('[data-ask-open]');
+  const panel = document.querySelector<HTMLElement>('[data-ask]');
+
+  if (trigger && panel) {
+    const log = panel.querySelector<HTMLElement>('[data-ask-log]')!;
+    const chips = panel.querySelector<HTMLElement>('[data-ask-chips]')!;
+    const form = panel.querySelector<HTMLFormElement>('[data-ask-form]')!;
+    const input = form.querySelector<HTMLInputElement>('input')!;
+    const close = panel.querySelector<HTMLButtonElement>('[data-ask-close]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // On phones the panel covers the screen, so the page behind it goes inert.
+    const full = window.matchMedia('(max-width: 560px)');
+    const STORE = 'llmalak';
+
+    type Saved = { me?: string; id?: string; next?: string[] };
+    let engine: Promise<typeof import('../lib/llmalak')> | undefined;
+    const load = () => (engine ??= import('../lib/llmalak'));
+    let isOpen = false;
+    let hideTimer = 0;
+    let busy = false;
+    let last: string | undefined;
+    let restoring: Promise<void> | undefined;
+
+    const read = (): Saved[] => {
+      try {
+        return JSON.parse(sessionStorage.getItem(STORE) ?? '[]');
+      } catch {
+        return [];
+      }
+    };
+    const save = (item: Saved) => {
+      try {
+        sessionStorage.setItem(STORE, JSON.stringify([...read(), item].slice(-24)));
+      } catch {
+        // Private browsing can refuse storage. The chat still works, it just won't carry over.
+      }
+    };
+    const behind = () => document.querySelectorAll<HTMLElement>('.skip, .rail, .topbar, .theme-toggle, .crumbs-inline, .page, .statusbar');
+    const setInert = (on: boolean) => {
+      behind().forEach((el) => (el.inert = on));
+      document.documentElement.classList.toggle('ask-lock', on);
+    };
+
+    const addWords = (target: HTMLElement, text: string, start: number, animate: boolean) => {
+      let i = start;
+      for (const part of text.split(/(\s+)/)) {
+        if (!part) continue;
+        if (!animate || /^\s+$/.test(part)) {
+          target.append(part);
+          continue;
+        }
+        const span = document.createElement('span');
+        span.className = 'w';
+        span.style.setProperty('--i', String(i++));
+        span.textContent = part;
+        target.append(span);
+      }
+      return i;
+    };
+
+    const addMe = (text: string) => {
+      const message = document.createElement('div');
+      message.className = 'msg me';
+      const p = document.createElement('p');
+      p.textContent = text;
+      message.append(p);
+      log.append(message);
+    };
+
+    const addBot = (reply: Reply, animate: boolean) => {
+      const message = document.createElement('div');
+      message.className = 'msg bot';
+      message.dataset.answer = reply.id;
+      if (reply.ar) {
+        const ar = document.createElement('p');
+        ar.className = 'ar';
+        ar.lang = 'ar';
+        ar.dir = 'rtl';
+        ar.textContent = reply.ar;
+        message.append(ar);
+      }
+      const p = document.createElement('p');
+      let count = 0;
+      for (const part of reply.text.split(/(\[[^\]]+\]\([^)]+\))/g)) {
+        const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (link) {
+          const a = document.createElement('a');
+          a.href = link[2];
+          count = addWords(a, link[1], count, animate);
+          p.append(a);
+        } else {
+          count = addWords(p, part, count, animate);
+        }
+      }
+      message.append(p);
+      if (reply.sources.length) {
+        const sources = document.createElement('p');
+        sources.className = 'msg-sources';
+        sources.append('sources: ');
+        reply.sources.forEach((source, k) => {
+          if (k) sources.append(' · ');
+          const a = document.createElement('a');
+          a.href = source.href;
+          a.textContent = source.label;
+          sources.append(a);
+        });
+        if (animate) {
+          sources.classList.add('w');
+          sources.style.setProperty('--i', String(count));
+        }
+        message.append(sources);
+      }
+      log.append(message);
+      return message;
+    };
+
+    const setChips = (next: Reply['next']) => {
+      chips.replaceChildren(
+        ...next.map(({ id, ask }) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'chip';
+          button.dataset.id = id;
+          button.textContent = ask;
+          return button;
+        }),
+      );
+    };
+
+    // Show the start of a long answer rather than its end.
+    const reveal = (message: HTMLElement) => {
+      log.scrollTop = message.offsetHeight > log.clientHeight - 32 ? message.offsetTop - 16 : log.scrollHeight;
+    };
+
+    const restore = async () => {
+      const saved = read();
+      if (!saved.length) return;
+      const { replyFor } = await load();
+      let lastNext: Reply['next'] | undefined;
+      for (const item of saved) {
+        if (item.me) addMe(item.me);
+        else if (item.id) {
+          const reply = replyFor(item.id, item.next);
+          if (!reply) continue;
+          addBot(reply, false);
+          last = reply.id;
+          lastNext = reply.next;
+        }
+      }
+      if (lastNext) setChips(lastNext);
+      log.scrollTop = log.scrollHeight;
+    };
+
+    const ask = async (question: string, id?: string) => {
+      const q = question.trim().slice(0, 200);
+      if (!q || busy) return;
+      busy = true;
+      await restoring;
+      addMe(q);
+      save({ me: q });
+      chips.replaceChildren();
+      const typing = document.createElement('div');
+      typing.className = 'msg bot typing';
+      typing.setAttribute('aria-hidden', 'true');
+      typing.append(document.createElement('span'), document.createElement('span'), document.createElement('span'));
+      log.append(typing);
+      log.scrollTop = log.scrollHeight;
+      const { reply, replyFor } = await load();
+      const result = (id && replyFor(id)) || reply(q, last);
+      await new Promise((resolve) => setTimeout(resolve, reduce ? 0 : 380 + Math.min(420, result.text.length)));
+      typing.remove();
+      reveal(addBot(result, !reduce));
+      last = result.id;
+      save({ id: result.id, next: result.next.map((n) => n.id) });
+      setChips(result.next);
+      busy = false;
+    };
+
+    const open = () => {
+      if (isOpen) return;
+      isOpen = true;
+      window.clearTimeout(hideTimer);
+      panel.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add('is-open')));
+      if (full.matches) setInert(true);
+      restoring ??= restore();
+      input.focus({ preventScroll: true });
+    };
+
+    const shut = () => {
+      if (!isOpen) return;
+      isOpen = false;
+      panel.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      setInert(false);
+      hideTimer = window.setTimeout(() => (panel.hidden = true), reduce ? 0 : 220);
+      trigger.focus({ preventScroll: true });
+    };
+
+    trigger.addEventListener('click', () => (isOpen ? shut() : open()));
+    trigger.addEventListener('pointerenter', () => load(), { once: true });
+    close.addEventListener('click', shut);
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const q = input.value;
+      input.value = '';
+      ask(q);
+    });
+    chips.addEventListener('click', (event) => {
+      const chip = (event.target as Element).closest<HTMLButtonElement>('button[data-id]');
+      if (chip) ask(chip.textContent ?? '', chip.dataset.id);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isOpen) {
+        event.preventDefault();
+        shut();
+      } else if (event.key === '/' && !isOpen && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        const target = event.target as Element | null;
+        if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+        event.preventDefault();
+        open();
+      }
+    });
+    full.addEventListener('change', () => isOpen && setInert(full.matches));
+  }
+</script>

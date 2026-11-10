@@ -1,6 +1,7 @@
 ---
-import '@fontsource/instrument-serif/400.css';
-import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import frauncesRoman from '@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2?url';
 import '@fontsource-variable/inter';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
@@ -8,6 +9,8 @@ import '../styles/global.css';
 import Header, { type Crumb, type TocItem } from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import StatusBar from '../components/StatusBar.astro';
+import Ask from '../components/Ask.astro';
+import Cursor from '../components/Cursor.astro';
 import { site } from '../lib/site';
 
 interface Props {
@@ -35,6 +38,7 @@ const ogImage = new URL(image, Astro.site);
     <meta name="description" content={description} />
     <meta name="author" content={site.name} />
     <link rel="canonical" href={canonical} />
+    <link rel="preload" href={frauncesRoman} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -66,6 +70,8 @@ const ogImage = new URL(image, Astro.site);
       <Footer />
     </div>
     <StatusBar />
+    <Ask />
+    <Cursor />
     <script>
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

@@ -19,11 +19,11 @@ const href = `/work/${entry.id}/`;
   <div class="tile-media">
     <Media media={card} label={`${short}: preview`} />
   </div>
-  <h2 class="tile-cap">
+  <h3 class="tile-cap">
     {caseStudy ? <a href={href}>{short}</a> : <span>{short}</span>}
     <span class="tile-sep" aria-hidden="true">/</span>
     <span class="tile-meta">{role} {year}</span>
     {badge && <span class="tile-badge">{badge}</span>}
-  </h2>
+  </h3>
   {!caseStudy && <p class="tile-summary">{summary}</p>}
 </article>

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Run Malak's style rules (malak-style skill) over every piece of visible prose on the site.
 
-Checks MDX bodies, the human-readable frontmatter fields, and the copy in .astro pages.
+Checks MDX bodies, the human-readable frontmatter fields, the copy in .astro pages, and the
+"text" and "ask" strings in data modules under src/data (LLMalak's answers).
 URLs, imports, code and component markup are stripped first so only reader-facing text is judged.
 
-Usage: python3 scripts/style_gate.py [paths...]   (defaults to src/content and src/pages)
+Usage: python3 scripts/style_gate.py [paths...]   (defaults to src/content, src/pages, src/components, src/data)
 Set MALAK_STYLE_CHECK to point at style_check.py if it is not in the default skill location.
 """
 from __future__ import annotations
@@ -80,16 +81,27 @@ def astro_prose(raw: str) -> str:
     return strip_urls("\n".join(lines))
 
 
+def ts_prose(raw: str) -> str:
+    """Reader-facing strings in a data module, one per line, so each answer is judged on its own rhythm."""
+    lines = [m.group(1).replace('\\"', '"') for m in re.finditer(r'\b(?:text|ask|ar)\s*:\s*"((?:[^"\\]|\\.)*)"', raw)]
+    return strip_urls("\n".join(lines))
+
+
 def main() -> int:
     checker = load_checker()
-    targets = [Path(p) for p in sys.argv[1:]] or [ROOT / "src/content", ROOT / "src/pages", ROOT / "src/components"]
+    targets = [Path(p) for p in sys.argv[1:]] or [ROOT / "src/content", ROOT / "src/pages", ROOT / "src/components", ROOT / "src/data"]
     files = []
     for target in targets:
-        files.extend(sorted(target.rglob("*.mdx")) + sorted(target.rglob("*.md")) + sorted(target.rglob("*.astro")) if target.is_dir() else [target])
+        if target.is_dir():
+            files.extend(sorted(target.rglob("*.mdx")) + sorted(target.rglob("*.md")) + sorted(target.rglob("*.astro")))
+            if target.name == "data":
+                files.extend(sorted(target.rglob("*.ts")))
+        else:
+            files.append(target)
     failed = 0
     for path in files:
         raw = path.read_text(encoding="utf-8")
-        prose = astro_prose(raw) if path.suffix == ".astro" else mdx_prose(raw)
+        prose = astro_prose(raw) if path.suffix == ".astro" else ts_prose(raw) if path.suffix == ".ts" else mdx_prose(raw)
         if not prose.strip():
             continue
         problems = checker.violations(prose)

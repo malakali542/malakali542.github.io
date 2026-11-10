@@ -14,12 +14,19 @@ const ratios: Record<string, string> = {
   scout: '4 / 3',
   dots: '1 / 1',
 };
-const columns = [0, 1].map((side) => work.map((entry, index) => ({ entry, index })).filter(({ index }) => index % 2 === side));
+
+const sections = [
+  { id: 'work', group: 'work', title: 'work', note: 'microsoft research, microsoft ai, uber, pointclickcare' },
+  { id: 'side', group: 'building', title: 'on the side', note: 'startups, tools and hackathons' },
+].map((section) => {
+  const entries = work.filter((entry) => entry.data.group === section.group).map((entry, index) => ({ entry, index }));
+  return { ...section, columns: [0, 1].map((side) => entries.filter(({ index }) => index % 2 === side)) };
+});
 ---
 
 <Base>
   <section class="intro">
-    <h1 class="statement"><em>malak ali</em> is a <span class="keep">product + engineer</span> hybrid working on ai for science.</h1>
+    <h1 class="statement"><em>malak ali</em> is a <span class="keep">product + engineer hybrid</span> working on ai for science and collaboration.</h1>
     <dl class="now-then">
       <div>
         <dt>currently</dt>
@@ -32,11 +39,19 @@ const columns = [0, 1].map((side) => work.map((entry, index) => ({ entry, index 
     </dl>
   </section>
 
-  <section class="tiles" aria-label="work">
-    {columns.map((column) => (
-      <div class="tiles-col">
-        {column.map(({ entry, index }) => <WorkTile entry={entry} index={index} ratio={ratios[entry.id]} />)}
+  {sections.map((section) => (
+    <section class="home-section" id={section.id} aria-labelledby={`${section.id}-title`}>
+      <div class="section-head">
+        <h2 id={`${section.id}-title`}>{section.title}</h2>
+        <span class="section-note">{section.note}</span>
       </div>
-    ))}
-  </section>
+      <div class="tiles">
+        {section.columns.map((column) => (
+          <div class="tiles-col">
+            {column.map(({ entry, index }) => <WorkTile entry={entry} index={index} ratio={ratios[entry.id]} />)}
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
 </Base>
