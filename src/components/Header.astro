@@ -1,23 +1,87 @@
 ---
+export interface Crumb {
+  href: string;
+  label: string;
+  current?: string;
+}
+
+export interface TocItem {
+  slug: string;
+  text: string;
+  depth: number;
+}
+
+interface Props {
+  crumb?: Crumb;
+  toc?: TocItem[];
+}
+
+const { crumb, toc = [] } = Astro.props;
 const path = Astro.url.pathname;
 const items = [
-  { href: '/work/', label: 'work' },
-  { href: '/writing/', label: 'writing' },
-  { href: '/ai/', label: 'ai' },
-  { href: '/about/', label: 'about' },
+  { href: '/', label: 'work', current: path === '/' || path.startsWith('/work/') },
+  { href: '/writing/', label: 'writing', current: path.startsWith('/writing/') },
+  { href: '/ai/', label: 'ai', current: path.startsWith('/ai/') },
+  { href: '/about/', label: 'about', current: path.startsWith('/about/') },
 ];
-const isCurrent = (href: string) => path === href || path.startsWith(href);
+const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
 ---
 
-<header class="container site-header">
-  <a class="brand" href="/" aria-label="malak ali, home">malak ali</a>
-  <nav class="nav" aria-label="primary">
+<header class="rail">
+  {crumb ? (
+    <nav class="crumbs" aria-label="breadcrumb">
+      <a href={crumb.href}><span aria-hidden="true">← </span>{crumb.label}</a>
+      {crumb.current && (
+        <>
+          <span class="sep" aria-hidden="true">/</span>
+          <span aria-current="page">{crumb.current}</span>
+        </>
+      )}
+    </nav>
+  ) : (
+    <a class="brand" href="/">malak ali</a>
+  )}
+  {sections.length > 0 ? (
+    <nav class="rail-nav toc" aria-label="on this page">
+      <ul>
+        <li class="d2"><a href="#overview" data-toc="overview">overview</a></li>
+        {sections.map((item) => (
+          <li class={`d${item.depth}`}><a href={`#${item.slug}`} data-toc={item.slug}>{item.text}</a></li>
+        ))}
+      </ul>
+    </nav>
+  ) : (
+    <nav class="rail-nav" aria-label="primary">
+      <ul>
+        {items.map((item) => (
+          <li><a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  )}
+</header>
+
+<header class="topbar">
+  <nav aria-label="primary">
     {items.map((item) => (
-      <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+      <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
     ))}
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="toggle dark mode">
-      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
-      <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"></path></g></svg>
-    </button>
   </nav>
 </header>
+
+<button class="theme-toggle" type="button" data-theme-toggle aria-label="toggle dark mode">
+  <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+  <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"></path></g></svg>
+</button>
+
+{crumb && (
+  <nav class="crumbs crumbs-inline" aria-label="breadcrumb">
+    <a href={crumb.href}><span aria-hidden="true">← </span>{crumb.label}</a>
+    {crumb.current && (
+      <>
+        <span class="sep" aria-hidden="true">/</span>
+        <span aria-current="page">{crumb.current}</span>
+      </>
+    )}
+  </nav>
+)}

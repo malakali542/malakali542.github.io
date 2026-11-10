@@ -1,0 +1,10 @@
+---
+import { site } from '../lib/site';
+---
+
+<div class="statusbar">
+  <p class="status"><span class="sq" aria-hidden="true"></span>seattle <span class="clock" data-clock></span></p>
+  <nav class="status-links" aria-label="elsewhere">
+    {site.links.map((link) => <a href={link.href}>{link.label}</a>)}
+  </nav>
+</div>

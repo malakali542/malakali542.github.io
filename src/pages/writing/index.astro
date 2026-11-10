@@ -7,10 +7,8 @@ const posts = (await getCollection('writing')).sort((a, b) => b.data.date.valueO
 ---
 
 <Base title="writing" description="Essays by Malak Ali on AI for science, agents, evaluation and Arabic language AI.">
-  <section class="container case-head">
-    <h1>writing</h1>
-  </section>
-  <section class="container section" style="padding-top:8px">
+  <h1 class="page-title">writing</h1>
+  <div style="margin-top:36px">
     <PostList posts={posts} />
-  </section>
+  </div>
 </Base>

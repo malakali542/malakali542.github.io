@@ -32,13 +32,15 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 
 | path | what |
 |---|---|
-| `src/content/work/*.mdx` | case studies. Frontmatter drives the cards, metrics and facts. The body is MDX. |
+| `src/content/work/*.mdx` | case studies. Frontmatter drives the home page tiles, metrics and facts. The body is MDX. |
 | `src/content/writing/*.mdx` | blog posts (`title`, `dek`, `date`, `tags`). The date is what the site shows. |
 | `src/content.config.ts` | the schema for both collections |
-| `src/pages/index.astro` | home page copy and the experience lists |
+| `src/pages/index.astro` | the home page, which is also the work page: the statement, currently and previously, and the tile grid. `/work/` redirects here. |
 | `src/pages/about.astro` | about, experience timeline, community, honors |
 | `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
-| `src/components/Media.astro` | renders a card or hero from `kind: video \| youtube \| demo \| image` |
+| `src/components/Header.astro`, `Footer.astro`, `StatusBar.astro` | the left rail (nav, or a breadcrumb and table of contents on case studies and posts), the mobile top bar, the say-hi line, and the bottom bar with the Seattle clock |
+| `src/components/WorkTile.astro` | one tile on the home grid: media, then `name / role year`, plus the summary for entries with no case study |
+| `src/components/Media.astro` | renders a tile or hero from `kind: video \| youtube \| demo \| image` |
 | `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, the offshore wind simulation) and the AI stack diagram. Each one is labeled "illustration" or "diagram" on the page. |
 | `public/media/` | self-hosted media (the Dots and Scout demos, the Suelo site recording, the Career Compass clip, the trimmed Recall and UberX Share card clips, the offshore wind report figures, and their posters) |
 | `research/arabic-dialects/` | the benchmark behind the Arabic dialects post: harness, prompts, raw replies and scores. The post's "Method, code and data" section explains it and lists every file (`src/components/ResearchFiles.astro`), and the old `/research/arabic-dialects/` page redirects there |
@@ -55,9 +57,9 @@ short: Project
 org: Company
 role: product manager
 period: 2025 - 2026
-order: 10            # position on the home page
+order: 10            # position on the home grid, which alternates left and right columns
 group: work          # work | building | community
-summary: One or two sentences for the card and the page lede.
+summary: One or two sentences for the page lede, and for the tile when there's no case study.
 card:
   kind: youtube      # or video (src, poster, frame: none|phone, fit, start), demo (name), image (src, alt)
   id: VIDEO_ID
@@ -69,7 +71,7 @@ metrics:
 ---
 ```
 
-Optional fields: `caseStudy: false` shows the entry as a card only, with no page behind it (Suelo, Career Compass and Scout work this way), and `badge` adds a short label to the card, like Suelo's "more coming soon".
+Optional fields: `caseStudy: false` shows the entry as a tile only, with its summary underneath and no page behind it (Suelo, Career Compass and Scout work this way), and `badge` adds a short label to the tile, like Suelo's "more coming soon". Tile shapes live in the `ratios` map in `src/pages/index.astro`: mixing 16:10, 4:3 and 1:1 staggers the two columns, and illustrations always get 4:3 or taller.
 
 MDX bodies can import `VideoBlock`, `Figure`, `DemoBlock`, `FacebookVideo` and `BarChart` from `src/components/`.
 
@@ -102,9 +104,11 @@ YouTube embeds use `youtube-nocookie.com` and only load after a click.
 
 ## Look
 
+- The layout borrows from [rachelchen.tech](https://www.rachelchen.tech): a fixed left rail where a pink square marks the current page, grained paper, a serif statement on the home page, square media tiles captioned `name / role year`, a table of contents on case studies and posts that follows your scroll, and a bottom bar with the time in Seattle. Under 900px the rail becomes a top bar.
+- The pre-redesign site is tagged `portfolio-v1-classic` (source) and `site-v1-classic` (deployed). To restore it, run `git checkout portfolio-v1-classic -- portfolio`, commit, and deploy.
 - Titles, headings and labels render lowercase through one rule in `src/styles/global.css`, so content can be written in normal case. Body text keeps its case.
-- The accent is `#ff5757`, the color on Malak's resume. Small accent text uses `--accent-ink`, the same hue darkened to `#c74444` so it keeps 4.5:1 contrast on the light background, and text on accent fills uses `--on-accent`. Dark mode uses `#ff5757` for both.
-- Display type is Instrument Serif, body text is Inter, and labels are IBM Plex Mono.
+- The accent is `#ff5757`, the color on Malak's resume. Small accent text uses `--accent-ink`, the same hue darkened to `#ba3a3a` so it keeps 4.5:1 contrast on the grained paper, and text on accent fills uses `--on-accent`. Dark mode uses `#ff5757` for both.
+- Display type is Instrument Serif and everything else is Inter. IBM Plex Mono is only for code and the small labels inside illustrations.
 - The site icon is `public/favicon.svg`. `favicon.ico` and `apple-touch-icon.png` are rendered from it for older browsers and iOS home screens. When the icon changes, regenerate both and bump the `?v=` on its link in `Base.astro`, because browsers cache favicons for a long time.
 
 ## Writing style

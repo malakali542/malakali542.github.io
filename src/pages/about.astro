@@ -24,103 +24,106 @@ const honors = [
 ---
 
 <Base title="about" description="About Malak Ali: a product and engineer hybrid based in Seattle. Research product manager at Microsoft Research, formerly Microsoft AI, Uber and PointClickCare. University of Waterloo Systems Design Engineering.">
-  <section class="container case-head">
-    <h1>about</h1>
-  </section>
-  <section class="container two-col">
-    <div class="prose">
-      <p>
-        I'm Malak. I work at the point where a model becomes a product: figuring out what it can do, proving it with evals,
-        and putting it in front of the people who need it. Right now that's Quine at Microsoft Research, where the users are
-        scientists and the stakes are experiments that take weeks to run.
-      </p>
-      <p>
-        I'm a product and engineer hybrid. At PointClickCare and Uber I shipped production code, which is still how I read
-        a design doc: what breaks, who gets paged, how long it takes to load. At Microsoft AI I moved into product and spent
-        almost 2 years on Recall and Copilot, two features that taught me how much of AI product work is earning trust on the
-        first run. I still build, now mostly with agents, and <a href="/ai/">here's how</a>.
-      </p>
-      <p>
-        I studied Systems Design Engineering at the University of Waterloo, with minors in management science and
-        computing. Since 2020 I've also been teaching kids to code with BridgeTO, which has made me better at explaining
-        things than anything else I've done.
-      </p>
-      <p>
-        I'm based in Seattle. The fastest way to reach me is <a href={`mailto:${site.email}`}>{site.email}</a>, and I'm
-        also on <a href="https://www.linkedin.com/in/-malakali/">LinkedIn</a>.
-      </p>
-    </div>
-    <div>
-      <div class="side-list" style="margin-bottom:28px">
-        <h2>things i'm into</h2>
-        <ul>
-          <li>evals that predict what users will feel <span class="tag">[work]</span></li>
-          <li>agents that ask before they act <span class="tag">[work]</span></li>
-          <li><a href="/writing/arabic-dialects-benchmark/">arabic dialects and the models that miss them</a> <span class="tag">[writing]</span></li>
-          <li>teaching python through music <span class="tag">[bridgeto]</span></li>
-        </ul>
-      </div>
-      <div class="side-list">
-        <h2>built with ai, on the side · <a href="/ai/">my stack</a></h2>
-        <ul>
-          <li><a href="/work/#suelo">suelo</a> <span class="tag">[co-founder, startup]</span></li>
-          <li>quantdesk <span class="tag">[daily investing brief]</span></li>
-          <li>my own news digest <span class="tag">[my sources, one page]</span></li>
-          <li><a href="https://microsoft.github.io/quine/">the quine website</a> <span class="tag">[microsoft research]</span></li>
-          <li>tiny voyages <span class="tag">[daily geography game]</span></li>
-          <li>skyward <span class="tag">[daily trivia game]</span></li>
-          <li><a href="/work/#career-compass">career compass</a> <span class="tag">[~400 monthly users]</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
+  <h1 class="page-title">about</h1>
+  <div class="bio" style="margin-top:36px">
+    <p>
+      I'm Malak. I work at the point where a model becomes a product: figuring out what it can do, proving it with evals,
+      and putting it in front of the people who need it. Right now that's Quine at Microsoft Research, where the users are
+      scientists and the stakes are experiments that take weeks to run.
+    </p>
+    <p>
+      I'm a product and engineer hybrid. At PointClickCare and Uber I shipped production code, which is still how I read
+      a design doc: what breaks, who gets paged, how long it takes to load. At Microsoft AI I moved into product and spent
+      almost 2 years on Recall and Copilot, two features that taught me how much of AI product work is earning trust on the
+      first run. I still build, now mostly with agents, and <a href="/ai/">here's how</a>.
+    </p>
+    <p>
+      I studied Systems Design Engineering at the University of Waterloo, with minors in management science and
+      computing. Since 2020 I've also been teaching kids to code with BridgeTO, which has made me better at explaining
+      things than anything else I've done.
+    </p>
+    <p>
+      I'm based in Seattle. The fastest way to reach me is <a href={`mailto:${site.email}`}>{site.email}</a>, and I'm
+      also on <a href="https://www.linkedin.com/in/-malakali/">LinkedIn</a>.
+    </p>
+  </div>
 
-  <section class="container section" id="experience">
-    <div class="section-head"><h2>experience</h2></div>
+  <section class="about-section" id="experience">
+    <h2 class="label-head">experience</h2>
     <ul class="timeline">
       {experience.map((item) => (
-        <li>
+        <li class:list={[{ 'is-now': item.when.includes('now') }]}>
           <span class="when">{item.when}</span>
-          <span class="what">
-            {item.href ? <a href={item.href}>{item.what}</a> : item.what} <span class="muted" style="font-weight:400">· {item.role}</span>
+          <div>
+            <span class="what">{item.href ? <a href={item.href}>{item.what}</a> : item.what}</span>
+            <span class="role">{item.role}</span>
             <span class="detail">{item.detail} {item.link && <a class="detail-link" href={item.link.href}>{item.link.label} ↗</a>}</span>
-          </span>
+          </div>
         </li>
       ))}
       <li>
         <span class="when">education</span>
-        <span class="what">
-          University of Waterloo <span class="muted" style="font-weight:400">· BASc, Systems Design Engineering</span>
+        <div>
+          <span class="what">University of Waterloo</span>
+          <span class="role">BASc, Systems Design Engineering</span>
           <span class="detail">Minors in management science and computing.</span>
-        </span>
+        </div>
       </li>
     </ul>
   </section>
 
-  <section class="container section" id="community">
-    <div class="section-head"><h2>community</h2></div>
+  <section class="about-section" id="community">
+    <h2 class="label-head">community</h2>
     <ul class="timeline">
       {community.map((item) => (
-        <li>
+        <li class:list={[{ 'is-now': item.when.includes('now') }]}>
           <span class="when">{item.when}</span>
-          <span class="what">
-            {item.href ? <a href={item.href}>{item.what}</a> : item.what} <span class="muted" style="font-weight:400">· {item.role}</span>
+          <div>
+            <span class="what">{item.href ? <a href={item.href}>{item.what}</a> : item.what}</span>
+            <span class="role">{item.role}</span>
             <span class="detail">{item.detail}</span>
-          </span>
+          </div>
         </li>
       ))}
     </ul>
   </section>
 
-  <section class="container section" id="honors">
-    <div class="section-head"><h2>honors</h2></div>
+  <section class="about-section" id="honors">
+    <h2 class="label-head">honors</h2>
     <ul class="timeline">
       {honors.map((item) => (
         <li>
           <span class="when">{item.when}</span>
-          <span class="what">{item.what}<span class="detail">{item.detail}</span></span>
+          <div>
+            <span class="what">{item.what}</span>
+            <span class="detail">{item.detail}</span>
+          </div>
         </li>
       ))}
     </ul>
+  </section>
+
+  <section class="about-section about-lists">
+    <div class="side-list">
+      <h2 class="label-head">things i'm into</h2>
+      <ul>
+        <li>evals that predict what users will feel <span class="tag">work</span></li>
+        <li>agents that ask before they act <span class="tag">work</span></li>
+        <li><a href="/writing/arabic-dialects-benchmark/">arabic dialects and the models that miss them</a> <span class="tag">writing</span></li>
+        <li>teaching python through music <span class="tag">bridgeto</span></li>
+      </ul>
+    </div>
+    <div class="side-list">
+      <h2 class="label-head">built with ai, on the side · <a href="/ai/">my stack</a></h2>
+      <ul>
+        <li><a href="/#suelo">suelo</a> <span class="tag">co-founder, startup</span></li>
+        <li>quantdesk <span class="tag">daily investing brief</span></li>
+        <li>my own news digest <span class="tag">my sources, one page</span></li>
+        <li><a href="https://microsoft.github.io/quine/">the quine website</a> <span class="tag">microsoft research</span></li>
+        <li>tiny voyages <span class="tag">daily geography game</span></li>
+        <li>skyward <span class="tag">daily trivia game</span></li>
+        <li><a href="/#career-compass">career compass</a> <span class="tag">~400 monthly users</span></li>
+      </ul>
+    </div>
   </section>
 </Base>

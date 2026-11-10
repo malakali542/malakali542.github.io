@@ -14,17 +14,16 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const minutes = readingMinutes(post.body ?? '');
 const others = (await getCollection('writing'))
   .filter((p) => p.id !== post.id)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<Base title={post.data.title} description={post.data.dek} type="article" published={post.data.date}>
-  <article class="container">
-    <header class="post-head">
-      <a class="back" href="/writing/">← all writing</a>
+<Base title={post.data.title} description={post.data.dek} type="article" published={post.data.date} crumb={{ href: '/writing/', label: 'writing' }} toc={headings}>
+  <article>
+    <header class="post-head" id="overview">
       <h1>{post.data.title}</h1>
       <p class="dek">{post.data.dek}</p>
       <div class="post-meta">

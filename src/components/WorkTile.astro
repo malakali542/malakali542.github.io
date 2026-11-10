@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Media from './Media.astro';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  // Position in reading order. On one-column screens the tiles are re-sorted by it.
+  index: number;
+  ratio?: string;
+}
+
+const { entry, index, ratio = '16 / 10' } = Astro.props;
+const { short, role, period, summary, card, caseStudy, badge } = entry.data;
+const year = period.split('-')[0].trim();
+const href = `/work/${entry.id}/`;
+---
+
+<article class="tile" id={entry.id} style={`--ratio: ${ratio}; --i: ${index}`}>
+  <div class="tile-media">
+    <Media media={card} label={`${short}: preview`} />
+  </div>
+  <h2 class="tile-cap">
+    {caseStudy ? <a href={href}>{short}</a> : <span>{short}</span>}
+    <span class="tile-sep" aria-hidden="true">/</span>
+    <span class="tile-meta">{role} {year}</span>
+    {badge && <span class="tile-badge">{badge}</span>}
+  </h2>
+  {!caseStudy && <p class="tile-summary">{summary}</p>}
+</article>
