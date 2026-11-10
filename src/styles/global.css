@@ -1585,7 +1585,7 @@ figcaption,
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 10px 18px 0;
+  margin: 10px 18px 16px;
   padding: 4px 4px 4px 12px;
   border: 1px solid var(--line);
   background: var(--bg);
@@ -1621,13 +1621,6 @@ figcaption,
   background: var(--accent);
   color: var(--on-accent);
   cursor: pointer;
-}
-
-.ask-note {
-  margin: 8px 18px 14px;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--muted);
 }
 
 /* ---------- cursor ---------- */
