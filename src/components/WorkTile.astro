@@ -7,15 +7,20 @@ interface Props {
   // Position in reading order. On one-column screens the tiles are re-sorted by it.
   index: number;
   ratio?: string;
+  // A full-width tile with a one-line description and the headline metrics.
+  feature?: boolean;
 }
 
-const { entry, index, ratio = '16 / 10' } = Astro.props;
-const { short, role, period, summary, card, caseStudy, badge } = entry.data;
+const { entry, index, ratio = '16 / 10', feature = false } = Astro.props;
+const { short, role, period, summary, card, caseStudy, badge, metrics } = entry.data;
 const year = period.split('-')[0].trim();
 const href = `/work/${entry.id}/`;
+const phoneRatio = ratio === '1 / 1' ? '1 / 1' : '4 / 3';
+// A featured tile opens with the summary's first sentence, which says what the project is.
+const dek = feature ? summary.split(/(?<=\.)\s/)[0] : '';
 ---
 
-<article class="tile" id={entry.id} style={`--ratio: ${ratio}; --i: ${index}`}>
+<article class:list={['tile', { 'tile-feature': feature }]} id={entry.id} style={`--ratio: ${ratio}; --ratio-phone: ${phoneRatio}; --i: ${index}`}>
   <div class="tile-media">
     <Media media={card} label={`${short}: preview`} />
   </div>
@@ -25,5 +30,16 @@ const href = `/work/${entry.id}/`;
     <span class="tile-meta">{role} {year}</span>
     {badge && <span class="tile-badge">{badge}</span>}
   </h3>
+  {feature && <p class="tile-dek">{dek}</p>}
+  {feature && metrics.length > 0 && (
+    <ul class="tile-stats">
+      {metrics.map((metric) => (
+        <li>
+          <span class="value">{metric.value}</span>
+          <span class="label">{metric.label}</span>
+        </li>
+      ))}
+    </ul>
+  )}
   {!caseStudy && <p class="tile-summary">{summary}</p>}
 </article>

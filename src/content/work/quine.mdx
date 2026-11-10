@@ -1,12 +1,12 @@
 ---
-title: 'Quine: deciding what a world model of biology should learn next'
+title: 'Quine: a world model of biology that learns from where it fails'
 short: Quine
 org: Microsoft Research
 role: research product manager
 period: 2026 - now
 order: 1
 group: work
-summary: I decide what Quine's model should learn next and lead the evals that show whether it did, across mid-training and RL. Turning partner failures into training data raised benchmark pass rates 15% over three model iterations.
+summary: Quine is Microsoft Research's AI research system for biology. I decide what its model learns next and lead the evals that show whether it did. Turning partner failures into training data raised benchmark pass rates 15% over three model iterations, and scientists now get from a research question to an experimental plan in 30% less time.
 card:
   kind: video
   src: https://www.microsoft.com/en-us/research/wp-content/uploads/2026/09/QUINE-Visual1_Lite_FinalComp_V2_FIG-1.mp4
@@ -39,7 +39,7 @@ facts:
   - label: users
     value: scientists, research labs, enterprise partners
 links:
-  - label: Quine (project site, which I built with Codex)
+  - label: Quine project site
     href: https://microsoft.github.io/quine/
   - label: 'Introducing Quine, Microsoft Research blog (Sept 29, 2026)'
     href: https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/
@@ -50,6 +50,7 @@ links:
 ---
 
 import VideoBlock from '../../components/VideoBlock.astro';
+import DemoBlock from '../../components/DemoBlock.astro';
 
 ## The problem
 
@@ -72,7 +73,13 @@ The [public announcement](https://www.microsoft.com/en-us/research/blog/introduc
 
 The model is a large language model post-trained across five biological modalities, with mid-training followed by reinforcement learning with verifiable rewards (RLVR). I own the decisions that sit around the training runs: which capabilities matter, how we'll know the model has them, what data and compute that takes, and when a checkpoint is ready for scientists. That covers the capability roadmap, the evals, acquisition of 40+ internal and external datasets, 50,000+ GPU-hours of compute, the research workbench scientists use, and biosafety.
 
+Alongside Quine, I'm defining how teams work with AI together, through a [multiplayer, self-improving system](/work/multiplayer/) that now runs across 5+ teams and 300+ people in the org.
+
 ## The calls I made
+
+Most of them come back to one loop: find where the model fails in real work, turn that failure into training data, and ship a better checkpoint to the people who found it.
+
+<DemoBlock name="quine-loop" caption="How a failure in the field becomes what Quine learns next. A diagram, with numbers from this page." />
 
 ### Write evals from what scientists actually do
 

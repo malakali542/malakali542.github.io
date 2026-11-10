@@ -7,20 +7,26 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 
 // Mixed tile shapes stagger the two columns. Illustrations get 4:3 so they never squeeze.
 const ratios: Record<string, string> = {
-  quine: '4 / 3',
+  quine: '16 / 9',
   'copilot-diagnostics': '4 / 3',
-  'copilot-trusted-answers': '4 / 3',
+  'copilot-trusted-answers': '1 / 1',
   pointclickcare: '4 / 3',
+  multiplayer: '1 / 1',
   scout: '4 / 3',
   dots: '1 / 1',
 };
+
+// The featured project gets a full-width tile at the top of its section.
+const featureId = 'quine';
 
 const sections = [
   { id: 'work', group: 'work', title: 'work', note: 'microsoft research, microsoft ai, uber, pointclickcare' },
   { id: 'side', group: 'building', title: 'on the side', note: 'startups, tools and hackathons' },
 ].map((section) => {
-  const entries = work.filter((entry) => entry.data.group === section.group).map((entry, index) => ({ entry, index }));
-  return { ...section, columns: [0, 1].map((side) => entries.filter(({ index }) => index % 2 === side)) };
+  const inGroup = work.filter((entry) => entry.data.group === section.group);
+  const feature = inGroup.find((entry) => entry.id === featureId);
+  const entries = inGroup.filter((entry) => entry !== feature).map((entry, index) => ({ entry, index }));
+  return { ...section, feature, columns: [0, 1].map((side) => entries.filter(({ index }) => index % 2 === side)) };
 });
 ---
 
@@ -30,7 +36,7 @@ const sections = [
     <dl class="now-then">
       <div>
         <dt>currently</dt>
-        <dd>research product manager @ <a href="https://www.microsoft.com/en-us/research/people/malakali/">microsoft research</a> on <a href="/work/quine/">quine</a>, in seattle</dd>
+        <dd>research product manager @ <a href="https://www.microsoft.com/en-us/research/people/malakali/">microsoft research</a> on <a href="/work/quine/">quine</a> and <a href="/work/multiplayer/">multiplayer ai</a>, in seattle</dd>
       </div>
       <div>
         <dt>previously</dt>
@@ -45,6 +51,7 @@ const sections = [
         <h2 id={`${section.id}-title`}>{section.title}</h2>
         <span class="section-note">{section.note}</span>
       </div>
+      {section.feature && <WorkTile entry={section.feature} index={0} ratio={ratios[section.feature.id]} feature />}
       <div class="tiles">
         {section.columns.map((column) => (
           <div class="tiles-col">

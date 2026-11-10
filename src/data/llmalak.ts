@@ -34,15 +34,24 @@ const ai = { label: 'how i use ai', href: '/ai/' };
 const side = { label: 'on the side', href: '/#side' };
 const arabic = { label: 'arabic dialects benchmark', href: '/writing/arabic-dialects-benchmark/' };
 const science = { label: 'ai for science', href: '/writing/why-every-ai-lab-is-betting-on-science/' };
+const multiplayer = { label: 'multiplayer ai', href: '/work/multiplayer/' };
 
 export const answers: Answer[] = [
   {
     id: 'now',
     ask: "what are you working on?",
     keys: ['now', 'current', 'currently', 'today', 'these days', 'lately', 'working on', 'work on', 'job', 'role', 'position', 'title', 'day job', 'what do you do', 'focus', 'collaboration', 'ai for science and collaboration'],
-    text: "I'm working on AI for science and collaboration. At Microsoft Research I'm the research product manager on [Quine](/work/quine/), a world model of biology plus a harness that connects it to scientific tools, the literature, the wet lab and the scientists using it. I decide what the model should learn next, lead the evals that show whether it did, and turn those results into a roadmap across mid-training and RL.",
-    sources: [quine],
-    next: ['quine-metrics', 'evals', 'ai-for-science'],
+    text: "I'm working on AI for science and collaboration at Microsoft Research. For science, I'm the research product manager on [Quine](/work/quine/), a world model of biology plus a harness that connects it to scientific tools, the literature and the wet lab, and I decide what the model learns next. For collaboration, I'm defining a [multiplayer, self-improving system](/work/multiplayer/) that teams build together, now used by 300+ people across 5+ teams.",
+    sources: [quine, multiplayer],
+    next: ['multiplayer', 'quine-metrics', 'evals'],
+  },
+  {
+    id: 'multiplayer',
+    ask: "what's the multiplayer ai system?",
+    keys: ['!multiplayer', 'multi player', 'self improving', 'self improve', 'recursive', 'recursively', '!collaboration', 'team', 'teams', 'teammate', 'teammates', 'teamwork', 'session', 'sessions', 'shared', 'share', 'org wide', 'org', 'adoption', 'adopt', '300', 'platform', 'workspace', 'ai era', 'work as a team', 'together', 'code base', 'codebase'],
+    text: "Most AI tools are single-player, so I'm defining a multiplayer, self-improving system for teams. Teammates see each other's sessions and build on each other's work, anyone who uses it can change its code, and the system learns recursively. It started as one team's project and now runs across 5+ teams and 300+ people in the org, and I design its product features and set the vision for where it goes.",
+    sources: [multiplayer],
+    next: ['now', 'ai-stack', 'quine'],
   },
   {
     id: 'quine',
@@ -88,7 +97,7 @@ export const answers: Answer[] = [
     id: 'microsoft-ai',
     ask: "what did you do at microsoft ai?",
     keys: ['!microsoft', 'microsoft ai', 'mai', 'windows ai'],
-    text: "I've been at Microsoft since 2024. Today I'm the research product manager on [Quine](/work/quine/) at Microsoft Research, and before that I spent almost 2 years as a product manager at Microsoft AI. There I led [Recall](/work/recall/)'s onboarding and retail launch, owned [Copilot diagnostics](/work/copilot-diagnostics/), and grounded [commercial Copilot](/work/copilot-trusted-answers/) in trusted sources with evals that decided when an answer was ready to ship.",
+    text: "I've been at Microsoft since 2024. Today I'm a research product manager at Microsoft Research on [Quine](/work/quine/) and [multiplayer AI](/work/multiplayer/), and before that I spent almost 2 years as a product manager at Microsoft AI. There I led [Recall](/work/recall/)'s onboarding and retail launch, owned [Copilot diagnostics](/work/copilot-diagnostics/), and grounded [commercial Copilot](/work/copilot-trusted-answers/) in trusted sources with evals that decided when an answer was ready to ship.",
     sources: [recall, diagnostics, trusted],
     next: ['recall', 'diagnostics', 'trusted'],
   },
@@ -344,9 +353,9 @@ export const answers: Answer[] = [
     id: 'about',
     ask: "who are you?",
     keys: ['who are you', 'who is malak', 'about you', 'about yourself', 'yourself', 'introduce', 'introduction', 'bio', 'background', 'summary', 'tldr', 'tl dr', 'elevator pitch', 'malak', 'malak ali'],
-    text: "I'm a product + engineer hybrid in Seattle, and I work on AI for science and collaboration as the research product manager on [Quine](/work/quine/) at Microsoft Research. Before that I was a product manager at Microsoft AI on [Recall](/work/recall/) and [Copilot](/work/copilot-diagnostics/), a product manager at Enlighted, which Siemens acquired, and a software engineer at [Uber](/work/uber/) and [PointClickCare](/work/pointclickcare/). I studied Systems Design Engineering at the University of Waterloo.",
+    text: "I'm a product + engineer hybrid in Seattle working on AI for science and collaboration: I'm the research product manager on [Quine](/work/quine/) at Microsoft Research, and I'm defining a [multiplayer, self-improving system](/work/multiplayer/) for teams. Before that I was a product manager at Microsoft AI on [Recall](/work/recall/) and [Copilot](/work/copilot-diagnostics/), a product manager at Enlighted, which Siemens acquired, and a software engineer at [Uber](/work/uber/) and [PointClickCare](/work/pointclickcare/). I studied Systems Design Engineering at the University of Waterloo.",
     sources: [about],
-    next: ['now', 'hybrid', 'built'],
+    next: ['now', 'multiplayer', 'hybrid'],
   },
 ];
 
@@ -393,4 +402,4 @@ export const more: Answer = {
   text: "Pick a thread below and I'll keep going.",
 };
 
-export const starters = ['now', 'hybrid', 'recall', 'ai-stack', 'arabic', 'built'];
+export const starters = ['now', 'multiplayer', 'hybrid', 'ai-stack', 'arabic', 'built'];

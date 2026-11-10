@@ -542,6 +542,78 @@ h4 {
   font-size: 0.88rem;
 }
 
+/* The featured tile keeps its video at 16:9 so the frame fills the box exactly, with the stats beside it on wide
+   screens and below it on narrow ones. */
+.tile-feature {
+  margin-bottom: 52px;
+}
+
+.tile-feature .tile-media {
+  aspect-ratio: 16 / 9;
+}
+
+@media (min-width: 1180px) {
+  .tile-feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 32px;
+  }
+
+  .tile-feature .tile-media {
+    grid-column: 1;
+    grid-row: 1 / 4;
+  }
+
+  .tile-feature .tile-cap {
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  .tile-feature .tile-dek,
+  .tile-feature .tile-stats {
+    grid-column: 2;
+  }
+
+  .tile-feature .tile-stats {
+    align-self: end;
+  }
+}
+
+.tile-dek {
+  margin: 4px 0 0;
+  max-width: 62ch;
+  color: var(--ink-2);
+}
+
+.tile-stats {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 28px;
+  margin: 18px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.tile-stats .value {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-size: 2rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.tile-stats .label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .tile-summary {
   margin: 6px 0 0;
   color: var(--muted);
@@ -1818,6 +1890,10 @@ figcaption,
   .about-lists {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .tile-feature {
+    margin-bottom: 36px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1843,9 +1919,12 @@ figcaption,
 
   /* Illustrations stack more content than a short frame fits on a phone. */
   .case-hero .hero-frame:has(.demo),
-  .figure-media.tall:has(.demo),
-  .tile-media:has(.demo) {
+  .figure-media.tall:has(.demo) {
     aspect-ratio: 4 / 3;
+  }
+
+  .tile-media:has(.demo) {
+    aspect-ratio: var(--ratio-phone, 4 / 3);
   }
 
   .post-list li,

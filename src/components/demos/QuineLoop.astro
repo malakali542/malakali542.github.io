@@ -1,0 +1,257 @@
+---
+// Diagram of Quine's learning loop. Every number on it comes from the Quine case study.
+// One lap of the pink square is one model iteration: scientists use Quine, evals find where it fails,
+// failures become training data, a better checkpoint ships. A wide layout for 16:10 frames and a
+// compact one for phones, switched by the media container's width.
+const LAP = 3000;
+const T0 = 1700;
+
+const steps = [
+  { label: 'scientists use quine', sub: '100+ scientists across four labs', short: 'scientists use it' },
+  { label: 'evals find where it fails', sub: 'written from partner workflows', short: 'evals find failures' },
+  { label: 'failures become training data', sub: 'new mid-training data or an RL task', short: 'failures become data' },
+  { label: 'a better checkpoint ships', sub: 'gates agreed by 30+ researchers', short: 'a better model ships' },
+];
+
+const point = (cx: number, cy: number, r: number, deg: number) => {
+  const a = (deg * Math.PI) / 180;
+  return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a) };
+};
+
+const resultText = ['partner benchmark pass rate,', 'over three model iterations'];
+
+// pips.x is where the three iteration squares start. pips.label is the font size of the "iteration" label in
+// front of them, or 0 to leave it out.
+const layouts = [
+  { name: 'wide', w: 800, h: 500, cx: 215, cy: 272, r: 140, node: 22, num: 20, core: 44, coreSub: 16, note: { x: 40, y: 52, size: 18 },
+    list: { x: 430, y0: 150, gap: 82, label: 20, sub: 15, mark: 26 }, pips: { x: 205, y: 462, size: 14, label: 16, labelX: 120 },
+    result: { x: 430, y: 478, big: 46, labelX: 548, label: 15 } },
+  { name: 'compact', w: 560, h: 420, cx: 140, cy: 200, r: 94, node: 22, num: 20, core: 34, coreSub: 0, note: { x: 24, y: 40, size: 20 },
+    list: { x: 278, y0: 128, gap: 60, label: 21, sub: 0, mark: 24 }, pips: { x: 352, y: 25, size: 16, label: 0, labelX: 0 },
+    result: { x: 24, y: 400, big: 44, labelX: 134, label: 17 } },
+].map((l) => ({
+  ...l,
+  nodes: [0, 90, 180, 270].map((deg) => point(l.cx, l.cy, l.r, deg)),
+  arrows: [45, 135, 225, 315].map((deg) => ({ ...point(l.cx, l.cy, l.r, deg), deg })),
+  items: steps.map((s, i) => ({ ...s, y: l.list.y0 + i * l.list.gap, text: l.list.sub ? s.label : s.short })),
+}));
+---
+
+<div
+  class="demo demo-loop"
+  data-seq
+  data-cycle="15500"
+  role="img"
+  aria-label="Diagram of Quine's learning loop. Scientists use Quine, evals find where it fails, failures become new training data, and a better checkpoint ships. Three laps of that loop raised partner benchmark pass rates 15%."
+>
+  {layouts.map((l) => (
+    <svg class={`loop-svg ${l.name}`} viewBox={`0 0 ${l.w} ${l.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <text class="note" x={l.note.x} y={l.note.y} font-size={l.note.size}>one lap is one model iteration</text>
+
+      <g data-step data-at="200">
+        <circle class="ring" cx={l.cx} cy={l.cy} r={l.r} />
+        {l.arrows.map((a) => (
+          <path class="arrow" d="M -5 -5.5 L 6 0 L -5 5.5 Z" transform={`translate(${a.x} ${a.y}) rotate(${a.deg})`} />
+        ))}
+        <text class="core" x={l.cx} y={l.cy + (l.coreSub ? 4 : 12)} font-size={l.core} text-anchor="middle">quine</text>
+        {l.coreSub > 0 && (
+          <text class="core-sub" x={l.cx} y={l.cy + 34} font-size={l.coreSub} text-anchor="middle">50,000+ GPU-hours</text>
+        )}
+      </g>
+
+      {l.nodes.map((n, i) => (
+        <g data-step data-at={400 + i * 220}>
+          <circle class={`node node-${i + 1}`} cx={n.x} cy={n.y} r={l.node} />
+          <text class="num" x={n.x} y={n.y + l.num * 0.36} font-size={l.num} text-anchor="middle">{i + 1}</text>
+        </g>
+      ))}
+
+      <g class="orbit" style={`transform-origin: ${l.cx}px ${l.cy}px`}>
+        <rect class="packet" x={l.cx - 7} y={l.cy - l.r - 7} width="14" height="14" />
+      </g>
+
+      {l.items.map((item, i) => (
+        <g class={`item item-${i + 1}`} data-step data-at={500 + i * 220}>
+          <rect class="mark" x={l.list.x} y={item.y - l.list.mark + 4} width={l.list.mark} height={l.list.mark} />
+          <text class="mark-num" x={l.list.x + l.list.mark / 2} y={item.y - 4} font-size={l.list.mark * 0.62} text-anchor="middle">{i + 1}</text>
+          <text class="label" x={l.list.x + l.list.mark + 14} y={item.y} font-size={l.list.label}>{item.text}</text>
+          {l.list.sub > 0 && <text class="sub" x={l.list.x + l.list.mark + 14} y={item.y + 24} font-size={l.list.sub}>{item.sub}</text>}
+        </g>
+      ))}
+
+      <g data-step data-at="1300">
+        {l.pips.label > 0 && (
+          <text class="pip-label" x={l.pips.labelX} y={l.pips.y + l.pips.size * 0.8} font-size={l.pips.label}>iteration</text>
+        )}
+        {[0, 1, 2].map((k) => (
+          <rect class="pip" x={l.pips.x + k * (l.pips.size + 9)} y={l.pips.y} width={l.pips.size} height={l.pips.size} />
+        ))}
+      </g>
+      {[0, 1, 2].map((k) => (
+        <rect class="pip-fill" data-step data-at={T0 + k * LAP} x={l.pips.x + k * (l.pips.size + 9)} y={l.pips.y} width={l.pips.size} height={l.pips.size} />
+      ))}
+
+      <g class="result" data-step data-at={T0 + 3 * LAP}>
+        <text class="big" x={l.result.x} y={l.result.y} font-size={l.result.big}>+15%</text>
+        <text class="result-label" x={l.result.labelX} y={l.result.y - l.result.label * 1.35} font-size={l.result.label}>{resultText[0]}</text>
+        <text class="result-label" x={l.result.labelX} y={l.result.y} font-size={l.result.label}>{resultText[1]}</text>
+      </g>
+    </svg>
+  ))}
+  <span class="go" data-step data-at={T0} aria-hidden="true"></span>
+  <span class="illustration-tag">diagram</span>
+</div>
+
+<style is:global>
+  .demo-loop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 2.5cqh 3cqw;
+    background:
+      radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 45%),
+      radial-gradient(circle at 92% 88%, color-mix(in srgb, var(--highlight) 30%, transparent), transparent 45%),
+      var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .demo-loop .loop-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .demo-loop .loop-svg.compact {
+    display: none;
+  }
+
+  @container (width < 520px) {
+    .demo-loop .loop-svg.wide {
+      display: none;
+    }
+
+    .demo-loop .loop-svg.compact {
+      display: block;
+    }
+  }
+
+  .demo-loop text {
+    font-family: var(--font-body);
+    fill: var(--ink);
+  }
+
+  .demo-loop .note,
+  .demo-loop .sub,
+  .demo-loop .core-sub,
+  .demo-loop .pip-label,
+  .demo-loop .result-label {
+    fill: var(--muted);
+  }
+
+  .demo-loop .core,
+  .demo-loop .big {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: -0.02em;
+  }
+
+  .demo-loop .core {
+    font-style: italic;
+    fill: var(--accent);
+  }
+
+  .demo-loop .ring {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 2;
+    stroke-dasharray: 2 7;
+    stroke-linecap: round;
+  }
+
+  .demo-loop .arrow {
+    fill: var(--muted);
+  }
+
+  .demo-loop .node {
+    fill: var(--surface);
+    stroke: var(--line);
+    stroke-width: 2;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .demo-loop .num,
+  .demo-loop .mark-num {
+    font-weight: 600;
+  }
+
+  .demo-loop .mark {
+    fill: var(--surface);
+    stroke: var(--line);
+    stroke-width: 1.5;
+  }
+
+  .demo-loop .packet {
+    fill: var(--accent);
+    opacity: 0;
+  }
+
+  .demo-loop .pip {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+
+  .demo-loop .pip-fill {
+    fill: var(--accent);
+  }
+
+  /* The loop runs once the "go" step turns on: three laps, nodes and list items lighting as the square passes. */
+  .demo-loop:has(.go.is-on) .packet {
+    opacity: 1;
+  }
+
+  .demo-loop:has(.go.is-on) .orbit {
+    animation: loop-orbit 3000ms linear 3;
+  }
+
+  .demo-loop:has(.go.is-on) .node,
+  .demo-loop:has(.go.is-on) .item .mark {
+    animation: loop-hit 3000ms linear 3;
+  }
+
+  .demo-loop:has(.go.is-on) .node-2,
+  .demo-loop:has(.go.is-on) .item-2 .mark {
+    animation-delay: 750ms;
+  }
+
+  .demo-loop:has(.go.is-on) .node-3,
+  .demo-loop:has(.go.is-on) .item-3 .mark {
+    animation-delay: 1500ms;
+  }
+
+  .demo-loop:has(.go.is-on) .node-4,
+  .demo-loop:has(.go.is-on) .item-4 .mark {
+    animation-delay: 2250ms;
+  }
+
+  @keyframes loop-orbit {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes loop-hit {
+    0%,
+    12% {
+      fill: var(--accent);
+      stroke: var(--accent);
+    }
+    30%,
+    100% {
+      fill: var(--surface);
+      stroke: var(--line);
+    }
+  }
+</style>

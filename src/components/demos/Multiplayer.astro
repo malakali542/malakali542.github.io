@@ -1,0 +1,295 @@
+---
+// Illustration of the multiplayer, self-improving system: teammates see each other's sessions and build on
+// them, anyone can change the system's code, and the system learns from every session. Not the internal UI.
+// A wide layout for 16:9 frames and a square one for tiles and phones, switched by the container's shape.
+type Card = { id: string; x: number; y: number; color: string };
+const colors = { a: '#e8865f', b: '#5b9bd5', c: '#6aa36f', d: '#a28bff' };
+
+const layouts = [
+  {
+    name: 'wide', w: 800, h: 470, cw: 230, ch: 116, name_size: 15, label: 16, chip: 13, footSize: 16,
+    cards: [
+      { id: 'a', x: 50, y: 36 }, { id: 'b', x: 520, y: 36 }, { id: 'c', x: 50, y: 318 }, { id: 'd', x: 520, y: 318 },
+    ],
+    core: { x: 315, y: 170, w: 170, h: 120, title: 26, sub: 13 },
+    build: { x1: 280, x2: 520, y: 94, labelX: 400, labelY: 80 },
+    edit: { labelX: 50, labelY: 304 },
+    learn: { labelX: 400, labelY: 318 },
+    foot: { x: 400, y: 462, anchor: 'middle' },
+  },
+  {
+    name: 'square', w: 600, h: 600, cw: 240, ch: 124, name_size: 18, label: 18, chip: 15, footSize: 18,
+    cards: [
+      { id: 'a', x: 24, y: 64 }, { id: 'b', x: 336, y: 64 }, { id: 'c', x: 24, y: 412 }, { id: 'd', x: 336, y: 412 },
+    ],
+    core: { x: 215, y: 250, w: 170, h: 112, title: 28, sub: 14 },
+    build: { x1: 264, x2: 336, y: 126, labelX: 300, labelY: 40 },
+    edit: { labelX: 24, labelY: 398 },
+    learn: { labelX: 300, labelY: 238 },
+    // Left-aligned so the line clears the illustration tag in the bottom-right corner.
+    foot: { x: 24, y: 580, anchor: 'start' },
+  },
+].map((l) => {
+  const cx = l.core.x + l.core.w / 2;
+  const cy = l.core.y + l.core.h / 2;
+  const cards = l.cards.map((c) => {
+    const right = c.x < cx;
+    const top = c.y < cy;
+    // The card corner that faces the core, where its connector starts.
+    const hx = right ? c.x + l.cw : c.x;
+    const hy = top ? c.y + l.ch : c.y;
+    return { ...c, color: colors[c.id as keyof typeof colors], hx, hy } as Card & { hx: number; hy: number };
+  });
+  return { ...l, cx, cy, cards };
+});
+
+const T = { cards: 200, core: 900, build: 1800, mini: 3000, edit: 4300, editMove: 5000, learn: 6200, spread: 6700, checks: 7800, foot: 8900 };
+---
+
+<div
+  class="demo demo-mp"
+  data-seq
+  data-cycle="13500"
+  role="img"
+  aria-label="Illustration of a multiplayer, self-improving AI system. Four teammates' sessions sit around a shared system. B builds on A's session, C changes the system's code, the system learns from it, and every session gets better. One team's project now runs across 5+ teams and 300+ people."
+>
+  {layouts.map((l) => (
+    <svg class={`mp-svg ${l.name}`} viewBox={`0 0 ${l.w} ${l.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      {l.cards.map((c, i) => (
+        <line class="link" x1={c.hx} y1={c.hy} x2={l.cx} y2={l.cy} data-step data-at={T.core + i * 80} />
+      ))}
+
+      <g data-step data-at={T.core}>
+        <rect class="core" x={l.core.x} y={l.core.y} width={l.core.w} height={l.core.h} rx="12" />
+        <text class="core-title" x={l.cx} y={l.cy + 2} font-size={l.core.title} text-anchor="middle">the system</text>
+        <text class="core-sub minor" x={l.cx} y={l.cy + l.core.title * 0.95} font-size={l.core.sub} text-anchor="middle">shared by the team</text>
+      </g>
+      <rect class="core-pulse" x={l.core.x} y={l.core.y} width={l.core.w} height={l.core.h} rx="12" data-step data-at={T.learn} />
+
+      {l.cards.map((c, i) => (
+        <g data-step data-at={T.cards + i * 150}>
+          <rect class="card" x={c.x} y={c.y} width={l.cw} height={l.ch} rx="10" />
+          <circle cx={c.x + 30} cy={c.y + 32} r="15" fill={c.color} />
+          <text class="initial" x={c.x + 30} y={c.y + 37} font-size="15" text-anchor="middle">{c.id}</text>
+          <text class="name minor" x={c.x + 56} y={c.y + 38} font-size={l.name_size}>{c.id}'s session</text>
+          <rect class="skel" x={c.x + 20} y={c.y + 62} width={l.cw * 0.7} height="7" rx="3.5" />
+          <rect class="skel" x={c.x + 20} y={c.y + 80} width={l.cw * 0.55} height="7" rx="3.5" />
+          <rect class="skel" x={c.x + 20} y={c.y + 98} width={l.cw * 0.38} height="7" rx="3.5" />
+        </g>
+      ))}
+
+      <g data-step data-at={T.build}>
+        <line class="build" x1={l.build.x1 + 6} y1={l.build.y} x2={l.build.x2 - 10} y2={l.build.y} />
+        <path class="build-head" d={`M ${l.build.x2 - 16} ${l.build.y - 6} L ${l.build.x2 - 8} ${l.build.y} L ${l.build.x2 - 16} ${l.build.y + 6}`} />
+        <text class="label" x={l.build.labelX} y={l.build.labelY} font-size={l.label} text-anchor="middle">b builds on a's session</text>
+      </g>
+      <rect class="packet" data-step data-at={T.build + 150} x={l.build.x1 - 7} y={l.build.y - 7} width="14" height="14" style={`--dx: ${l.build.x2 - l.build.x1}px; --dy: 0px`} />
+      <g data-step data-at={T.mini}>
+        <circle cx={l.cards[1].x + 46} cy={l.cards[1].y + 44} r="10" fill={l.cards[0].color} stroke="var(--surface)" stroke-width="2.5" />
+        <text class="initial" x={l.cards[1].x + 46} y={l.cards[1].y + 48} font-size="11" text-anchor="middle">a</text>
+      </g>
+
+      <g data-step data-at={T.edit}>
+        <rect class="chip" x={l.cards[2].x + 20} y={l.cards[2].y + 56} width={l.chip * 10.6} height={l.chip * 1.9} rx="4" />
+        <text class="chip-text" x={l.cards[2].x + 20 + l.chip * 0.7} y={l.cards[2].y + 56 + l.chip * 1.32} font-size={l.chip}>edits the code</text>
+        <text class="label" x={l.edit.labelX} y={l.edit.labelY} font-size={l.label}>c changes the code</text>
+      </g>
+      <rect class="packet" data-step data-at={T.editMove} x={l.cards[2].hx - 7} y={l.cards[2].hy - 7} width="14" height="14" style={`--dx: ${l.cx - l.cards[2].hx}px; --dy: ${l.cy - l.cards[2].hy}px`} />
+
+      <text class="label learn" data-step data-at={T.learn} x={l.learn.labelX} y={l.learn.labelY} font-size={l.label} text-anchor="middle">the system learns</text>
+      {l.cards.map((c) => (
+        <rect class="packet" data-step data-at={T.spread} x={l.cx - 7} y={l.cy - 7} width="14" height="14" style={`--dx: ${c.hx - l.cx}px; --dy: ${c.hy - l.cy}px`} />
+      ))}
+      {l.cards.map((c, i) => (
+        <g data-step data-at={T.checks + i * 90}>
+          <rect class="check" x={c.x + l.cw - 30} y={c.y + 14} width="18" height="18" rx="3" />
+          <path class="check-mark" d={`M ${c.x + l.cw - 26} ${c.y + 23} l 4 4 l 7 -8`} />
+        </g>
+      ))}
+
+      <g data-step data-at={T.foot}>
+        <text class="foot foot-long" x={l.foot.x} y={l.foot.y} font-size={l.footSize} text-anchor={l.foot.anchor}>one team's project, now 5+ teams and 300+ people</text>
+        <text class="foot foot-short" x={l.foot.x} y={l.foot.y} text-anchor={l.foot.anchor}>1 team → 5+ teams · 300+ people</text>
+      </g>
+    </svg>
+  ))}
+  <span class="illustration-tag">illustration</span>
+</div>
+
+<style is:global>
+  .demo-mp {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 2.5cqh 3cqw;
+    background:
+      radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 45%),
+      radial-gradient(circle at 10% 90%, color-mix(in srgb, var(--highlight) 30%, transparent), transparent 45%),
+      var(--bg-soft);
+    overflow: hidden;
+  }
+
+  .demo-mp .mp-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .demo-mp .mp-svg.square {
+    display: none;
+  }
+
+  @container (aspect-ratio < 1.45) {
+    .demo-mp .mp-svg.wide {
+      display: none;
+    }
+
+    .demo-mp .mp-svg.square {
+      display: block;
+    }
+  }
+
+  .demo-mp .foot-short {
+    display: none;
+    font-size: 26px;
+  }
+
+  /* Small tiles on phones drop the small print and enlarge the three labels that tell the story. */
+  @container (width < 420px) {
+    .demo-mp .minor {
+      display: none;
+    }
+
+    .demo-mp .label {
+      font-size: 26px;
+    }
+
+    .demo-mp .foot-long {
+      display: none;
+    }
+
+    .demo-mp .foot-short {
+      display: inline;
+    }
+  }
+
+  .demo-mp text {
+    font-family: var(--font-body);
+    fill: var(--ink);
+  }
+
+  .demo-mp .core-title {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+
+  .demo-mp .core-sub,
+  .demo-mp .foot {
+    fill: var(--muted);
+  }
+
+  .demo-mp .label {
+    fill: var(--accent-ink);
+  }
+
+  .demo-mp .initial {
+    fill: #fff;
+    font-weight: 600;
+  }
+
+  .demo-mp .card,
+  .demo-mp .core {
+    fill: var(--surface);
+    stroke: var(--line);
+    stroke-width: 1.5;
+  }
+
+  .demo-mp .skel {
+    fill: var(--line);
+  }
+
+  .demo-mp .link {
+    stroke: var(--line);
+    stroke-width: 2;
+    stroke-dasharray: 2 6;
+    stroke-linecap: round;
+  }
+
+  .demo-mp .build,
+  .demo-mp .build-head {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .demo-mp .chip {
+    fill: var(--accent-soft);
+    stroke: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .demo-mp .chip-text {
+    font-family: var(--font-mono);
+  }
+
+  .demo-mp .packet {
+    fill: var(--accent);
+  }
+
+  .demo-mp .packet.is-on {
+    animation: mp-travel 1100ms ease-in-out forwards;
+  }
+
+  .demo-mp .core-pulse {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2.5;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .demo-mp .core-pulse.is-on {
+    animation: mp-pulse 1400ms ease-out 2;
+  }
+
+  .demo-mp .check {
+    fill: var(--accent);
+  }
+
+  .demo-mp .check-mark {
+    fill: none;
+    stroke: var(--on-accent);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @keyframes mp-travel {
+    from {
+      transform: translate(0, 0);
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    to {
+      transform: translate(var(--dx), var(--dy));
+      opacity: 0;
+    }
+  }
+
+  @keyframes mp-pulse {
+    from {
+      transform: scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+</style>

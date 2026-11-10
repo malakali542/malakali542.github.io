@@ -35,7 +35,7 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 | `src/content/work/*.mdx` | case studies. Frontmatter drives the home page tiles, metrics and facts. The body is MDX. |
 | `src/content/writing/*.mdx` | blog posts (`title`, `dek`, `date`, `tags`). The date is what the site shows. |
 | `src/content.config.ts` | the schema for both collections |
-| `src/pages/index.astro` | the home page, which is also the work page: the statement, currently and previously, then two tile grids, **work** (`group: work`) and **on the side** (`group: building`). `/work/` redirects here. |
+| `src/pages/index.astro` | the home page, which is also the work page: the statement, currently and previously, then two tile grids, **work** (`group: work`) and **on the side** (`group: building`). The entry named by `featureId` (Quine) gets a full-width tile at the top of its section, with the first sentence of its summary and its metrics. `/work/` redirects here. |
 | `src/pages/about.astro` | about, experience timeline, community, honors |
 | `src/pages/ai.astro` | how I use AI: models, orchestration, harnesses, skills, and what I built with them |
 | `src/components/Header.astro`, `Footer.astro`, `StatusBar.astro` | the left rail (nav, or a breadcrumb and table of contents on case studies and posts), the mobile top bar, the say-hi line, and the bottom bar with the Seattle clock |
@@ -43,7 +43,7 @@ DNS for malak.club is managed at GoDaddy: four `A` records for `@` pointing to G
 | `src/components/Ask.astro`, `src/data/llmalak.ts`, `src/lib/llmalak.ts` | LLMalak, the chat in the bottom bar: the panel, the answers, and the matcher (see below) |
 | `src/components/Cursor.astro` | the pink square cursor |
 | `src/components/Media.astro` | renders a tile or hero from `kind: video \| youtube \| demo \| image` |
-| `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, the offshore wind simulation) and the AI stack diagram. Each one is labeled "illustration" or "diagram" on the page. |
+| `src/components/demos/` | animated illustrations for work with no public footage (Copilot, PointClickCare, MapStore, the multiplayer system, the offshore wind simulation) and two diagrams: Quine's learning loop and the AI stack. Each one is labeled "illustration" or "diagram" on the page, and each has a wide layout and a compact one for phones. |
 | `public/media/` | self-hosted media (the Dots and Scout demos, the Suelo site recording, the Career Compass clip, the trimmed Recall and UberX Share card clips, the offshore wind report figures, and their posters) |
 | `research/arabic-dialects/` | the benchmark behind the Arabic dialects post: harness, prompts, raw replies and scores. The post's "Method, code and data" section explains it and lists every file (`src/components/ResearchFiles.astro`), and the old `/research/arabic-dialects/` page redirects there |
 | `scripts/sync-research.mjs` | runs before `dev` and `build`, publishing the benchmark files under `/research/arabic-dialects/` (the AraDiCE question text is left out, `fetch_data.py` downloads it) |
@@ -99,6 +99,8 @@ Not everything needs a case study. Work that can't clear the bar, and community 
 - **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources. The home card loops a 12-second cut of the Windows video (3.1s to 15.4s, product footage only) as a self-hosted MP4, so YouTube's player overlay never shows.
 - **UberX Share**: Uber's official launch video. The home card loops a 20-second cut (23.5s to 43.8s, from the app close-up to the UberX Share title) the same way.
 - **Suelo**: a scroll recording of Suelo's site, captured frame by frame from the local prototype build. Every project shown is a sample.
+- **Multiplayer AI**: an illustration of how the system works, not its interface. The team's sessions, code and screens aren't shown.
+- **Quine's learning loop**: a diagram built from the numbers in the Quine case study.
 - **Offshore wind post**: the workflow, profit and power figures come from the team's University of Waterloo report (2024). The animated illustration is built from the report's numbers.
 - **Arabic dialects post**: every example reply is a real model output from `research/arabic-dialects/results/`, and the charts read `summary.json` directly.
 

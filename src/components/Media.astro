@@ -9,6 +9,8 @@ import MapStore from './demos/MapStore.astro';
 import GuidedSearch from './demos/GuidedSearch.astro';
 import AiStack from './demos/AiStack.astro';
 import WindSim from './demos/WindSim.astro';
+import QuineLoop from './demos/QuineLoop.astro';
+import Multiplayer from './demos/Multiplayer.astro';
 
 type MediaSpec = CollectionEntry<'work'>['data']['card'];
 
@@ -27,6 +29,8 @@ const demos = {
   'guided-search': GuidedSearch,
   'ai-stack': AiStack,
   'wind-sim': WindSim,
+  'quine-loop': QuineLoop,
+  multiplayer: Multiplayer,
 } as const;
 
 const Demo = media.kind === 'demo' ? demos[media.name] : null;
