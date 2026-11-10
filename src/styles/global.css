@@ -15,7 +15,7 @@
   --good: #1f7a4d;
   --shadow: 0 1px 2px rgb(29 26 22 / 0.04), 0 8px 24px rgb(29 26 22 / 0.06);
 
-  --font-display: 'Newsreader Variable', Newsreader, Georgia, 'Times New Roman', serif;
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -362,7 +362,7 @@ h4 {
 .section-head h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.8rem, 3.2vw, 2.3rem);
+  font-size: clamp(2rem, 3.6vw, 2.6rem);
   letter-spacing: -0.01em;
 }
 
@@ -763,9 +763,8 @@ figcaption {
 .case-head h1 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.2rem, 4.6vw, 3.3rem);
-  letter-spacing: -0.015em;
-  line-height: 1.1;
+  font-size: clamp(2.4rem, 5.4vw, 3.8rem);
+  letter-spacing: -0.02em;
 }
 
 .lede {
@@ -919,7 +918,7 @@ figcaption {
 .prose h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 1.8rem;
+  font-size: 2rem;
   letter-spacing: -0.01em;
   margin-top: 2.1em;
 }
@@ -1119,7 +1118,7 @@ figcaption {
 
 .post-list a.title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   line-height: 1.2;
   color: var(--ink);
   text-decoration: none;
@@ -1143,9 +1142,8 @@ figcaption {
 .post-head h1 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.2rem, 4.8vw, 3.4rem);
-  letter-spacing: -0.015em;
-  line-height: 1.1;
+  font-size: clamp(2.4rem, 5.6vw, 3.9rem);
+  letter-spacing: -0.02em;
   margin-top: 18px;
 }
 

@@ -104,7 +104,8 @@ YouTube embeds use `youtube-nocookie.com` and only load after a click.
 
 - Titles, headings and labels render lowercase through one rule in `src/styles/global.css`, so content can be written in normal case. Body text keeps its case.
 - The accent is `#ff5757`, the color on Malak's resume. Small accent text uses `--accent-ink`, the same hue darkened to `#c74444` so it keeps 4.5:1 contrast on the light background, and text on accent fills uses `--on-accent`. Dark mode uses `#ff5757` for both.
-- Display type is Newsreader, body text is Inter, and labels are IBM Plex Mono.
+- Display type is Instrument Serif, body text is Inter, and labels are IBM Plex Mono.
+- The site icon is `public/favicon.svg`. `favicon.ico` and `apple-touch-icon.png` are rendered from it for older browsers and iOS home screens. When the icon changes, regenerate both and bump the `?v=` on its link in `Base.astro`, because browsers cache favicons for a long time.
 
 ## Writing style
 
