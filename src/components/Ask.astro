@@ -206,10 +206,12 @@ const chips = starters.flatMap((id) => answers.filter((answer) => answer.id === 
       const result = (id && replyFor(id)) || reply(q, last);
       await new Promise((resolve) => setTimeout(resolve, reduce ? 0 : 380 + Math.min(420, result.text.length)));
       typing.remove();
-      reveal(addBot(result, !reduce));
+      const message = addBot(result, !reduce);
+      // Chips first: they change the log's height, and the scroll should account for that.
+      setChips(result.next);
+      reveal(message);
       last = result.id;
       save({ id: result.id, next: result.next.map((n) => n.id) });
-      setChips(result.next);
       busy = false;
     };
 
