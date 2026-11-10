@@ -35,7 +35,7 @@ const dotStyle = `--i: ${currentIndex}`;
 <header class="rail">
   {crumb ? (
     <nav class="crumbs" aria-label="breadcrumb">
-      <a href={crumb.href}><span aria-hidden="true">← </span>{crumb.label}</a>
+      <a href={crumb.href}><span class="nudge-l" aria-hidden="true">←</span> {crumb.label}</a>
       {crumb.current && (
         <>
           <span class="sep" aria-hidden="true">/</span>
@@ -129,7 +129,7 @@ const dotStyle = `--i: ${currentIndex}`;
 
 {crumb && (
   <nav class="crumbs crumbs-inline" aria-label="breadcrumb">
-    <a href={crumb.href}><span aria-hidden="true">← </span>{crumb.label}</a>
+    <a href={crumb.href}><span class="nudge-l" aria-hidden="true">←</span> {crumb.label}</a>
     {crumb.current && (
       <>
         <span class="sep" aria-hidden="true">/</span>

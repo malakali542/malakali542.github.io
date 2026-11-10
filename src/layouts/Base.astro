@@ -56,6 +56,8 @@ const ogImage = new URL(image, Astro.site);
     <slot name="head" />
     <script is:inline>
       (() => {
+        // Tiles and metrics wait for the first time they scroll into view (see the motion section of global.css).
+        if ('IntersectionObserver' in window) document.documentElement.classList.add('reveal');
         const stored = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.dataset.theme = stored ?? (prefersDark ? 'dark' : 'light');
@@ -76,20 +78,86 @@ const ogImage = new URL(image, Astro.site);
     <Cursor />
     <script>
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const root = document.documentElement;
 
-      document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
-        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-        document.documentElement.dataset.theme = next;
-        localStorage.setItem('theme', next);
+      // Tiles rise in and metrics count up the first time each one scrolls into view.
+      const arrivals = document.querySelectorAll('.tile, .odo');
+      if (arrivals.length && root.classList.contains('reveal')) {
+        const seen = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-in');
+              seen.unobserve(entry.target);
+            }),
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        arrivals.forEach((el) => seen.observe(el));
+      }
+
+      // The new theme spreads out in a circle from the toggle, and its icon spins in.
+      const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+      toggle?.addEventListener('click', () => {
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        const apply = () => {
+          root.dataset.theme = next;
+          localStorage.setItem('theme', next);
+          toggle.classList.remove('spin');
+          void toggle.offsetWidth;
+          toggle.classList.add('spin');
+        };
+        if (reduceMotion || !document.startViewTransition) return apply();
+        const box = toggle.getBoundingClientRect();
+        const x = box.left + box.width / 2;
+        const y = box.top + box.height / 2;
+        const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+        root.classList.add('theme-switch');
+        const switching = document.startViewTransition(apply);
+        switching.ready
+          .then(() =>
+            root.animate(
+              { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+              { duration: 700, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', pseudoElement: '::view-transition-new(root)' },
+            ),
+          )
+          .catch(() => {});
+        switching.finished.finally(() => root.classList.remove('theme-switch'));
       });
+      toggle?.addEventListener('animationend', () => toggle.classList.remove('spin'));
 
-      // Local time in Seattle for the status bar.
+      // Local time in Seattle for the status bar. On the minute, the digits that changed roll up and the
+      // square beside the city turns once.
       const clock = document.querySelector<HTMLElement>('[data-clock]');
       if (clock) {
         const format = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit' });
-        const tick = () => (clock.textContent = format.format(new Date()).toLowerCase());
+        const square = document.querySelector<HTMLElement>('.status .sq');
+        let shown = '';
+        const tick = () => {
+          const text = format.format(new Date()).toLowerCase();
+          if (text === shown) return;
+          const said = document.createElement('span');
+          said.className = 'sr-only';
+          said.textContent = text;
+          const seen = document.createElement('span');
+          seen.setAttribute('aria-hidden', 'true');
+          [...text].forEach((ch, i) => {
+            const span = document.createElement('span');
+            span.textContent = ch;
+            if (shown && !reduceMotion && ch.trim() && ch !== shown[i]) span.className = 'roll';
+            seen.append(span);
+          });
+          clock.replaceChildren(said, seen);
+          if (shown && square) {
+            square.classList.remove('tick');
+            void square.offsetWidth;
+            square.classList.add('tick');
+          }
+          shown = text;
+        };
+        const schedule = () => window.setTimeout(() => (tick(), schedule()), 60000 - (Date.now() % 60000) + 50);
         tick();
-        window.setInterval(tick, 20000);
+        schedule();
+        document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && tick());
       }
 
       // Table of contents: mark the section currently at the top of the screen. The rail dot follows

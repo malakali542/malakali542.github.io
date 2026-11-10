@@ -1,0 +1,23 @@
+---
+interface Props {
+  value: string;
+}
+
+const { value } = Astro.props;
+
+// Each digit becomes a column that shows a strip of numbers (drawn by CSS, see the motion section of
+// global.css) and spins up to the digit once the metric scrolls into view. --n is how many rows the strip
+// travels. Digits further right turn more, the way a counter does. At rest, or without JavaScript, the
+// strip sits on the real digit. Screen readers get the plain value.
+const escape = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+let digits = 0;
+const run = [...value]
+  .map((ch, k) => {
+    if (!/\d/.test(ch)) return `<span>${escape(ch)}</span>`;
+    const rows = Math.min(2, digits++) * 10 + Number(ch);
+    return `<span class="odo-col" style="--n:${rows};--k:${k}">${ch}</span>`;
+  })
+  .join('');
+---
+
+<span class="odo"><span class="sr-only">{value}</span><span class="odo-run" aria-hidden="true" set:html={run} /></span>

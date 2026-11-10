@@ -28,6 +28,8 @@
   --rail: 240px;
   --top: clamp(120px, 26vh, 232px);
   --content: 920px;
+  /* One easing for everything that arrives or moves: quick to start, long soft landing. */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: light;
 }
 
@@ -236,6 +238,7 @@ h4 {
 }
 
 .rail-nav a {
+  position: relative;
   display: block;
   padding: 2px 0;
   color: var(--muted);
@@ -246,6 +249,26 @@ h4 {
 
 .rail-nav a:hover {
   color: var(--ink);
+}
+
+/* Hovering another item previews the square there as an outline. */
+.rail-nav a::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: calc(2px + 0.725em - 2.5px);
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  transform: scale(0.2) rotate(-90deg);
+  transition: opacity 0.2s ease, transform 0.4s var(--ease);
+  pointer-events: none;
+}
+
+.rail-nav a:hover:not([aria-current])::before {
+  opacity: 1;
+  transform: none;
 }
 
 .rail-nav a[aria-current] {
@@ -263,7 +286,7 @@ h4 {
   background: var(--accent);
   pointer-events: none;
   transform: translateY(var(--y, calc(var(--i, 0) * (1.45em + 4px) + 0.725em - 0.5px)));
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.45s var(--ease);
   view-transition-name: rail-dot;
 }
 
@@ -281,7 +304,7 @@ h4 {
 ::view-transition-group(rail-dot),
 ::view-transition-group(toc-dot) {
   animation-duration: 0.45s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-timing-function: var(--ease);
 }
 
 .toc .d2 + .d2 {
@@ -1265,6 +1288,8 @@ figcaption,
 }
 
 .post-list a.title {
+  position: relative;
+  display: block;
   font-family: var(--font-display);
   font-size: 1.45rem;
   line-height: 1.2;
@@ -1803,6 +1828,289 @@ figcaption,
 
 .cursor.is-down .cursor-label {
   transform: translate(-50%, -50%) scale(0.92);
+}
+
+/* ---------- motion ----------
+   Everything that moves uses --ease. Rules that hide something until it animates sit under
+   prefers-reduced-motion: no-preference, and the reduced-motion rule at the end of this file cuts the rest short. */
+
+/* Page changes: the rail, the bottom bar and the toggle stay put while the new page rises into place. On phones
+   only the floating ask button is fixed, so it's the only thing held still. */
+@media (min-width: 900px) {
+  .rail {
+    view-transition-name: rail;
+  }
+
+  .statusbar {
+    view-transition-name: statusbar;
+  }
+
+  .theme-toggle {
+    view-transition-name: theme-toggle;
+  }
+}
+
+@media (max-width: 899px) {
+  .ask-trigger {
+    view-transition-name: ask-trigger;
+  }
+}
+
+::view-transition-old(root) {
+  animation-duration: 0.15s;
+}
+
+::view-transition-new(root) {
+  animation: page-in 0.5s var(--ease) 0.05s both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* The theme switch (see Base): the whole page is one snapshot, and the new colors spread out from the toggle in
+   a circle that the script draws. */
+html.theme-switch *,
+html.theme-switch *::before,
+html.theme-switch *::after {
+  transition: none !important;
+  view-transition-name: none !important;
+}
+
+html.theme-switch::view-transition-old(root),
+html.theme-switch::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+.theme-toggle.spin svg {
+  animation: icon-in 0.6s var(--ease);
+}
+
+@keyframes icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.4);
+  }
+}
+
+/* The home statement's first appearance in a session (see index.astro). If the script never runs, the
+   failsafe shows everything after two seconds. */
+html.intro .statement,
+html.intro .now-then {
+  visibility: hidden;
+  animation: intro-failsafe 0s 2s forwards;
+}
+
+@keyframes intro-failsafe {
+  to {
+    visibility: visible;
+  }
+}
+
+html.intro-go .statement .w {
+  display: inline-block;
+  animation: word-in 0.9s var(--ease) calc(var(--w) * 0.045s) both;
+}
+
+html.intro-go .now-then {
+  animation: rise-in 0.9s var(--ease) 0.55s both;
+}
+
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em) rotate(3deg);
+    filter: blur(8px);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Tiles rise in the first time they scroll into view, the right column a beat after the left. A tile the address
+   points at (like /side/#scout) shows at once, so the jump to it lands in the right place. Hovering a tile eases
+   its picture in a little. YouTube posters already zoom on their own, and a playing video stays put. */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal .tile {
+    transition: opacity 0.8s var(--ease) var(--delay, 0s), transform 1.1s var(--ease) var(--delay, 0s);
+  }
+
+  html.reveal .tile:not(.is-in, :target) {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  html.reveal .tile:target {
+    transition: opacity 0.8s var(--ease);
+  }
+}
+
+@media (min-width: 721px) {
+  .tiles-col + .tiles-col .tile {
+    --delay: 0.12s;
+  }
+}
+
+.tile-media > .media {
+  transition: transform 1.2s var(--ease);
+}
+
+@media (hover: hover) {
+  .tile:hover .tile-media:not(:has(.yt)) > .media {
+    transform: scale(1.035);
+  }
+}
+
+/* Metrics count up like an odometer the first time they scroll into view (see Odometer.astro). Each digit
+   column shows a strip of numbers, and --n is how many rows it travels to land on its digit. */
+.odo-run {
+  display: inline-flex;
+  align-items: flex-start;
+  line-height: 1.1;
+  user-select: none;
+}
+
+.odo-run > span {
+  display: block;
+  height: 1.1em;
+}
+
+.odo-col {
+  position: relative;
+  overflow: hidden;
+  color: transparent;
+}
+
+.odo-col::after {
+  content: '0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: var(--ink);
+  text-align: center;
+  white-space: pre;
+  transform: translateY(calc(var(--n) * -1.1em));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal .odo-col::after {
+    transition: transform 1.6s var(--ease) calc(0.15s + var(--k) * 0.07s);
+  }
+
+  html.reveal .odo:not(.is-in) .odo-col::after {
+    transform: none;
+  }
+}
+
+/* The clock's changed digits roll up on the minute, and the square beside the city turns once. */
+.clock {
+  font-variant-numeric: tabular-nums;
+}
+
+.clock .roll {
+  display: inline-block;
+  animation: clock-roll 0.7s var(--ease) both;
+}
+
+@keyframes clock-roll {
+  from {
+    opacity: 0;
+    transform: translateY(0.65em);
+    filter: blur(2px);
+  }
+}
+
+.status .sq.tick {
+  animation: sq-tick 0.8s var(--ease);
+}
+
+@keyframes sq-tick {
+  45% {
+    transform: rotate(90deg) scale(1.8);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+/* Arrows lean the way they point. */
+.nudge-l,
+.nudge-r,
+.nudge-ne {
+  display: inline-block;
+  transition: transform 0.35s var(--ease);
+}
+
+a:hover .nudge-l {
+  transform: translateX(-3px);
+}
+
+a:hover .nudge-r {
+  transform: translateX(3px);
+}
+
+a:hover .nudge-ne {
+  transform: translate(2px, -2px);
+}
+
+/* A post title gets the rail's square when you point at it. */
+.post-list a.title::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: calc(0.6em - 2.5px);
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  transform: scale(0) rotate(-90deg);
+  transition: transform 0.4s var(--ease);
+}
+
+.post-list a.title:hover::before,
+.post-list a.title:focus-visible::before {
+  transform: none;
+}
+
+/* Type details: headings balance their lines, paragraphs avoid a lone last word, and dates line up. */
+h1,
+h2,
+h3,
+.lede,
+.tile-dek {
+  text-wrap: balance;
+}
+
+p,
+li,
+dd,
+figcaption {
+  text-wrap: pretty;
+}
+
+.post-list time,
+.timeline .when {
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  html.reveal .tile:not(.is-in) {
+    opacity: 1;
+    transform: none;
+  }
+
+  html.reveal .odo:not(.is-in) .odo-col::after {
+    transform: translateY(calc(var(--n) * -1.1em));
+  }
 }
 
 /* ---------- small screens ---------- */

@@ -59,7 +59,7 @@ const honors = [
           <div>
             <span class="what">{item.href ? <a href={item.href}>{item.what}</a> : item.what}</span>
             <span class="role">{item.role}</span>
-            <span class="detail">{item.detail} {item.link && <a class="detail-link" href={item.link.href}>{item.link.label} ↗</a>}</span>
+            <span class="detail">{item.detail} {item.link && <a class="detail-link" href={item.link.href}>{item.link.label} <span class="nudge-ne" aria-hidden="true">↗</span></a>}</span>
           </div>
         </li>
       ))}

@@ -11,6 +11,11 @@ const redirect = `(() => { let id = location.hash.slice(1); try { id = decodeURI
 
 <Base>
   <script is:inline slot="head" set:html={redirect} />
+  <script is:inline slot="head">
+    try {
+      if (!sessionStorage.getItem('intro') && matchMedia('(prefers-reduced-motion: no-preference)').matches) document.documentElement.classList.add('intro');
+    } catch {}
+  </script>
   <section class="intro">
     <h1 class="statement"><em>malak ali</em> is a <span class="keep">product + engineer hybrid</span> working on ai for science and collaboration.</h1>
     <dl class="now-then">
@@ -32,4 +37,51 @@ const redirect = `(() => { let id = location.hash.slice(1); try { id = decodeURI
     </div>
     <Tiles entries={work} feature="quine" />
   </section>
+
+  <script>
+    // The first time someone opens the home page in a session, the statement arrives word by word and the
+    // lines under it follow. The head script above hides both until the words are ready.
+    const root = document.documentElement;
+    const statement = document.querySelector<HTMLElement>('.statement');
+    if (statement && root.classList.contains('intro')) {
+      let count = 0;
+      const split = (node: Node) => {
+        for (const child of Array.from(node.childNodes)) {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            split(child);
+            continue;
+          }
+          if (child.nodeType !== Node.TEXT_NODE) continue;
+          const words = document.createDocumentFragment();
+          for (const part of (child.textContent ?? '').split(/(\s+)/)) {
+            if (!part) continue;
+            if (!part.trim()) {
+              words.append(part);
+              continue;
+            }
+            const word = document.createElement('span');
+            word.className = 'w';
+            word.style.setProperty('--w', String(count++));
+            word.textContent = part;
+            words.append(word);
+          }
+          child.replaceWith(words);
+        }
+      };
+      split(statement);
+      try {
+        sessionStorage.setItem('intro', '1');
+      } catch {}
+      const start = () => {
+        root.classList.replace('intro', 'intro-go');
+        // Afterwards the words go back to plain text, so the statement renders exactly as it does on later visits.
+        window.setTimeout(() => {
+          root.classList.remove('intro-go');
+          statement.querySelectorAll('.w').forEach((word) => word.replaceWith(word.textContent ?? ''));
+          statement.normalize();
+        }, 2800);
+      };
+      Promise.race([document.fonts.ready, new Promise((resolve) => window.setTimeout(resolve, 600))]).then(() => requestAnimationFrame(start));
+    }
+  </script>
 </Base>
