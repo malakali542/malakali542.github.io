@@ -38,6 +38,7 @@ const ogImage = new URL(image, Astro.site);
     <meta name="description" content={description} />
     <meta name="author" content={site.name} />
     <link rel="canonical" href={canonical} />
+    <link rel="expect" href="#topbar" blocking="render" />
     <link rel="preload" href={frauncesRoman} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
@@ -90,13 +91,25 @@ const ogImage = new URL(image, Astro.site);
         window.setInterval(tick, 20000);
       }
 
-      // Table of contents: mark the section currently at the top of the screen.
+      // Table of contents: mark the section currently at the top of the screen. The rail dot follows
+      // aria-current (see Header), so it only changes when the section does.
       const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc]'));
       const tocTargets = tocLinks.map((link) => document.getElementById(link.dataset.toc ?? '')).filter((el): el is HTMLElement => !!el);
       if (tocTargets.length) {
         let frame = 0;
+        let hold = 0;
+        let currentId = tocLinks.find((link) => link.hasAttribute('aria-current'))?.dataset.toc;
+        const setCurrent = (id: string) => {
+          if (id === currentId) return;
+          currentId = id;
+          tocLinks.forEach((link) => {
+            if (link.dataset.toc === id) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          });
+        };
         const mark = () => {
           frame = 0;
+          if (hold) return;
           const line = window.innerHeight * 0.3;
           let current = tocTargets[0];
           for (const target of tocTargets) {
@@ -104,13 +117,43 @@ const ogImage = new URL(image, Astro.site);
             else break;
           }
           if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) current = tocTargets[tocTargets.length - 1];
-          tocLinks.forEach((link) => {
-            if (link.dataset.toc === current.id) link.setAttribute('aria-current', 'location');
-            else link.removeAttribute('aria-current');
-          });
+          setCurrent(current.id);
         };
-        window.addEventListener('scroll', () => (frame ||= window.requestAnimationFrame(mark)), { passive: true });
-        mark();
+        // A click sends the dot straight to its item and holds it there until the page stops scrolling,
+        // so it doesn't step through every section on the way.
+        const holdWhileScrolling = () => {
+          window.clearTimeout(hold);
+          hold = window.setTimeout(() => (hold = 0), 160);
+        };
+        const release = () => {
+          window.clearTimeout(hold);
+          hold = 0;
+        };
+        tocLinks.forEach((link) =>
+          link.addEventListener('click', (event) => {
+            if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.pathname !== location.pathname) return;
+            setCurrent(link.dataset.toc ?? '');
+            holdWhileScrolling();
+            // "work" on the home page scrolls back up instead of reloading the page.
+            if (!link.hash) {
+              event.preventDefault();
+              if (location.hash) history.pushState(null, '', link.pathname);
+              window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+            }
+          }),
+        );
+        // Scrolling by hand takes over from a click.
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((type) => window.addEventListener(type, release, { passive: true }));
+        window.addEventListener('scroll', () => (hold ? holdWhileScrolling() : (frame ||= window.requestAnimationFrame(mark))), { passive: true });
+        // When the address names a section, Header already started the dot there and the jump to it
+        // fires a scroll, so measuring now (before that jump) would pull the dot away and back. Check
+        // once more after load in case the browser restored a different spot without scrolling.
+        let hashId = location.hash.slice(1);
+        try {
+          hashId = decodeURIComponent(hashId);
+        } catch {}
+        if (!tocLinks.some((link) => link.dataset.toc === hashId)) mark();
+        else window.addEventListener('load', () => (frame ||= window.requestAnimationFrame(mark)), { once: true });
       }
 
       // Loop videos play only while on screen. Reduced-motion users get controls instead.

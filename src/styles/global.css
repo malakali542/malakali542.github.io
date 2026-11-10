@@ -236,12 +236,12 @@ h4 {
 }
 
 .rail-nav a {
-  position: relative;
   display: block;
   padding: 2px 0;
   color: var(--muted);
   line-height: 1.45;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .rail-nav a:hover {
@@ -252,14 +252,36 @@ h4 {
   color: var(--accent-ink);
 }
 
-.rail-nav a[aria-current]::before {
-  content: '';
+/* One square for the current item. It glides between items on scroll, and between pages through a view
+   transition. Header's script sets --y. Before it runs, --i (the item's index) places it. */
+.rail-dot {
   position: absolute;
-  left: -12px;
-  top: calc(2px + 0.72em - 2.5px);
+  top: 0;
+  left: 0;
   width: 5px;
   height: 5px;
   background: var(--accent);
+  pointer-events: none;
+  transform: translateY(var(--y, calc(var(--i, 0) * (1.45em + 4px) + 0.725em - 0.5px)));
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  view-transition-name: rail-dot;
+}
+
+/* The contents list is a different list, so its dot fades in rather than gliding over from the menu. */
+.toc .rail-dot {
+  view-transition-name: toc-dot;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+::view-transition-group(rail-dot),
+::view-transition-group(toc-dot) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .toc .d2 + .d2 {

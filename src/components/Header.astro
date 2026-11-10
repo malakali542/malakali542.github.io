@@ -28,6 +28,9 @@ const items = [
   { href: '/about/', label: 'about', current: path.startsWith('/about/') },
 ];
 const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
+// The dot starts on the current item so the first paint is already right. The script below takes over after that.
+const currentIndex = items.findIndex((item) => item.current);
+const dotStyle = `--i: ${currentIndex}`;
 ---
 
 <header class="rail">
@@ -52,6 +55,7 @@ const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
           <li class={`d${item.depth}`}><a href={`#${item.slug}`} data-toc={item.slug}>{item.text}</a></li>
         ))}
       </ul>
+      <span class="rail-dot" aria-hidden="true"></span>
     </nav>
   ) : (
     <nav class="rail-nav" aria-label="primary">
@@ -60,11 +64,58 @@ const sections = toc.filter((item) => item.depth === 2 || item.depth === 3);
           <li><a href={item.href} aria-current={item.current ? 'page' : undefined} data-toc={item.spy}>{item.label}</a></li>
         ))}
       </ul>
+      {currentIndex >= 0 && <span class="rail-dot" style={dotStyle} aria-hidden="true"></span>}
     </nav>
   )}
+  <script is:inline>
+    // One dot marks the current item. It is placed before the first paint, then glides whenever
+    // aria-current moves (the scrollspy in Base sets it as you scroll).
+    (() => {
+      // Arriving on a link to a section (like /#side) jumps straight there. Smooth scrolling is for
+      // clicks within a page, and here it would scroll the whole page past the dot on load.
+      if (location.hash) {
+        const root = document.documentElement;
+        root.style.scrollBehavior = 'auto';
+        addEventListener('load', () => requestAnimationFrame(() => root.style.removeProperty('scroll-behavior')), { once: true });
+      }
+      const nav = document.querySelector('.rail .rail-nav');
+      const dot = nav && nav.querySelector('.rail-dot');
+      if (!dot) return;
+      let y = '';
+      const place = (glide) => {
+        const link = nav.querySelector('a[aria-current]');
+        if (!link) return;
+        const style = getComputedStyle(link);
+        const line = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.45;
+        const top = link.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop;
+        const next = `${(top + parseFloat(style.paddingTop) + (line - dot.offsetHeight) / 2).toFixed(2)}px`;
+        if (next === y) return;
+        y = next;
+        if (!glide) dot.style.transition = 'none';
+        dot.style.setProperty('--y', y);
+        if (!glide) {
+          dot.getBoundingClientRect();
+          dot.style.transition = '';
+        }
+      };
+      // A link straight to a section, like /#side, starts the dot on that section.
+      let id = location.hash.slice(1);
+      try {
+        id = decodeURIComponent(id);
+      } catch {}
+      const target = id && Array.from(nav.querySelectorAll('a[data-toc]')).find((link) => link.dataset.toc === id);
+      if (target) {
+        nav.querySelectorAll('a[aria-current]').forEach((link) => link.removeAttribute('aria-current'));
+        target.setAttribute('aria-current', 'location');
+      }
+      place(false);
+      new MutationObserver(() => place(true)).observe(nav, { subtree: true, attributeFilter: ['aria-current'] });
+      new ResizeObserver(() => place(false)).observe(nav.querySelector('ul'));
+    })();
+  </script>
 </header>
 
-<header class="topbar">
+<header class="topbar" id="topbar">
   <nav aria-label="primary">
     {items.filter((item) => !item.railOnly).map((item) => (
       <a href={item.href} aria-current={item.current ? 'page' : undefined}>{item.label}</a>
