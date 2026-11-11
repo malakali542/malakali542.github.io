@@ -1,5 +1,5 @@
 ---
-title: 'Copilot diagnostics: letting Copilot run code on your PC to fix it'
+title: 'Copilot diagnostics: letting Copilot run code on your PC to find what''s wrong'
 short: Copilot diagnostics
 org: Microsoft AI
 role: product manager
@@ -13,7 +13,7 @@ card:
 hero:
   kind: demo
   name: copilot-diagnostics
-  caption: An illustration of the consent-then-execute idea, not the shipped UI.
+  caption: An illustration of Copilot asking before it runs a read-only diagnostic, then asking again before it changes a setting. Not the shipped UI.
 metrics:
   - value: 10M+
     label: Windows Copilot users the capability shipped to
@@ -36,14 +36,14 @@ I owned product definition for **diagnostics in Copilot Tasks**, the capability 
 
 Running model-written code on someone's personal computer is a big ask, so most of the product work was deciding exactly when and how Copilot gets to do it.
 
-- **Ask before running anything.** I designed the consent flows, so Copilot asks before it runs code and the person at the keyboard stays the one who decides.
-- **Set a readiness bar before real users.** I defined the criteria a model had to meet before it could generate and execute code for real users, and the evals behind them.
+- **Ask before running anything.** I designed the consent flows. Copilot asks before it runs code and says in plain language what the script will read and what it will change, so the person at the keyboard decides with the facts in front of them.
+- **Set a readiness bar before real users.** A model that writes a wrong diagnostic wastes someone's afternoon, and one that writes an unsafe one does worse. I defined the criteria a model had to meet before it could generate and execute code for real users, and the evals behind them.
 - **Draw the line between acting alone and asking first.** I set the execution guardrails and the human-approval boundaries: what the agent can do on its own and what always needs a person to approve. That included the MCP permission patterns for exposing OS capabilities to the agent as tools.
-- **Give Copilot the machine's context.** I shipped Copilot and Windows integrations that surface richer system context, so answers start from the PC's real state.
+- **Give Copilot the machine's context.** I shipped Copilot and Windows integrations that surface richer system context, so answers start from the PC's real state instead of a guess.
 
 ## Outcome
 
-Diagnostics shipped to **10M+ Windows Copilot users**. The goal was to move troubleshooting from "here are 6 things to try" to "here is what's wrong with this PC, and here is a fix if you want it."
+Diagnostics shipped to **10M+ Windows Copilot users**. Troubleshooting moved from "here are 6 things to try" toward "here is what I found on this PC, and here is a fix if you want it", inside boundaries that decide what Copilot may do alone and what it has to ask about first.
 
 ## What I learned
 

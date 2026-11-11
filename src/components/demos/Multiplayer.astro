@@ -1,115 +1,322 @@
 ---
-// Illustration of the multiplayer, self-improving system: teammates see each other's sessions and build on
-// them, anyone can change the system's code, and the system learns from every session. Not the internal UI.
-// A wide layout for 16:9 frames and a square one for tiles and phones, switched by the container's shape.
-type Card = { id: string; x: number; y: number; color: string };
-const colors = { a: '#e8865f', b: '#5b9bd5', c: '#6aa36f', d: '#a28bff' };
+// Illustration of the multiplayer, self-improving system, drawn like a live collaboration canvas: a dot grid,
+// shared session cards, presence colors and named cursors. Ben opens Ana's session and drags a piece of it into
+// his own, Cleo changes the system's code, the system learns from that change and every session gets better.
+// One team's project now runs across 5+ teams and 300+ people. The teammates' names are made up.
+// Layouts: wide for 16:9 frames, square for big square tiles, and square-sm for small or short frames.
+const people = {
+  a: { name: 'ana', color: '#f26b1d' },
+  b: { name: 'ben', color: '#2563eb' },
+  c: { name: 'cleo', color: '#08875d' },
+  d: { name: 'dina', color: '#7c3aed' },
+} as const;
+type Id = keyof typeof people;
+type P = [number, number];
+const ids: Id[] = ['a', 'b', 'c', 'd'];
+
+// Label widths in em, measured in the browser (Inter Variable 600, the chip in IBM Plex Mono 500), so every
+// pill fits its text.
+const EM = { benSays: 13.33, cleoSays: 10.91, ben: 1.83, cleo: 2.04, learns: 8.59, chip: 8.4, footLong: 24.64, footShort: 16.06 };
+
+// Ben's and Cleo's cursor moves run on their own clocks. The other steps are timed against them.
+const BEN = { at: 300, dur: 3600 };
+const CLEO = { at: 4100, dur: 3000 };
+const T = {
+  view: BEN.at + 0.25 * BEN.dur,
+  build: BEN.at + 0.28 * BEN.dur,
+  drop: BEN.at + 0.58 * BEN.dur,
+  benSays: BEN.at + 0.88 * BEN.dur,
+  chip: CLEO.at + 0.2 * CLEO.dur,
+  cleoSays: CLEO.at + 0.64 * CLEO.dur,
+  learn: 6950,
+  spread: 7650,
+  checks: 8500,
+  foot: 9200,
+};
+
+const round = (n: number) => Math.round(n * 100) / 100;
 
 const layouts = [
   {
-    name: 'wide', w: 800, h: 470, cw: 230, ch: 116, name_size: 15, label: 16, chip: 13, footSize: 16,
-    cards: [
-      { id: 'a', x: 50, y: 36 }, { id: 'b', x: 520, y: 36 }, { id: 'c', x: 50, y: 318 }, { id: 'd', x: 520, y: 318 },
-    ],
-    core: { x: 315, y: 170, w: 170, h: 120, title: 26, sub: 13 },
-    build: { x1: 280, x2: 520, y: 94, labelX: 400, labelY: 80 },
-    edit: { labelX: 50, labelY: 304 },
-    learn: { labelX: 400, labelY: 318 },
-    foot: { x: 400, y: 462, anchor: 'middle' },
+    name: 'wide', w: 800, h: 450, cw: 236, ch: 118, u: 1,
+    cards: { a: [34, 32], b: [530, 32], c: [34, 288], d: [530, 288] } as Record<Id, P>,
+    sys: { x: 302, y: 154, w: 196, h: 126, title: 21, inside: false },
+    details: true, chip: 13, flag: 14, cursor: 1,
+    ben: { start: [690, 128], click: [196, 100], rest: [292, 86], flag: [12, 17] as P },
+    cleo: { start: [250, 400], type: [196, 366], rest: [196, 366], flag: [12, 17] as P },
+    learn: { x: 400, y: 307, size: 14 },
+    foot: { x: 400, y: 438, size: 15, middle: true, short: false },
   },
   {
-    name: 'square', w: 600, h: 600, cw: 240, ch: 124, name_size: 18, label: 18, chip: 15, footSize: 18,
-    cards: [
-      { id: 'a', x: 24, y: 64 }, { id: 'b', x: 336, y: 64 }, { id: 'c', x: 24, y: 412 }, { id: 'd', x: 336, y: 412 },
-    ],
-    core: { x: 215, y: 250, w: 170, h: 112, title: 28, sub: 14 },
-    build: { x1: 264, x2: 336, y: 126, labelX: 300, labelY: 40 },
-    edit: { labelX: 24, labelY: 398 },
-    learn: { labelX: 300, labelY: 238 },
-    // Left-aligned so the line clears the illustration tag in the bottom-right corner.
-    foot: { x: 24, y: 580, anchor: 'start' },
+    name: 'square', w: 600, h: 600, cw: 236, ch: 120, u: 1.08,
+    cards: { a: [24, 92], b: [340, 92], c: [24, 396], d: [340, 396] } as Record<Id, P>,
+    sys: { x: 192, y: 254, w: 216, h: 120, title: 22, inside: false },
+    details: true, chip: 15, flag: 16, cursor: 1.15,
+    ben: { start: [470, 190], click: [190, 168], rest: [150, 20], flag: [14, 19] as P },
+    cleo: { start: [250, 506], type: [128, 478], rest: [128, 478], flag: [14, 19] as P },
+    learn: { x: 300, y: 233, size: 15 },
+    foot: { x: 24, y: 572, size: 15, middle: false, short: false },
+  },
+  {
+    name: 'square-sm', w: 600, h: 600, cw: 240, ch: 124, u: 1.45,
+    cards: { a: [20, 96], b: [340, 96], c: [20, 404], d: [340, 404] } as Record<Id, P>,
+    sys: { x: 176, y: 250, w: 248, h: 104, title: 28, inside: true },
+    details: false, chip: 21, flag: 22, cursor: 1.5,
+    ben: { start: [480, 196], click: [200, 176], rest: [40, 18], flag: [16, 22] as P },
+    cleo: { start: [250, 516], type: [248, 468], rest: [24, 340], flag: [16, 22] as P },
+    learn: { x: 300, y: 0, size: 21 },
+    foot: { x: 20, y: 574, size: 22, middle: false, short: true },
   },
 ].map((l) => {
-  const cx = l.core.x + l.core.w / 2;
-  const cy = l.core.y + l.core.h / 2;
-  const cards = l.cards.map((c) => {
-    const right = c.x < cx;
-    const top = c.y < cy;
-    // The card corner that faces the core, where its connector starts.
-    const hx = right ? c.x + l.cw : c.x;
-    const hy = top ? c.y + l.ch : c.y;
-    return { ...c, color: colors[c.id as keyof typeof colors], hx, hy } as Card & { hx: number; hy: number };
+  const { u } = l;
+  const cx = l.sys.x + l.sys.w / 2;
+  const cy = l.sys.y + l.sys.h / 2;
+  const cards = ids.map((id) => {
+    const [x, y] = l.cards[id];
+    const right = x < cx;
+    const top = y < cy;
+    return {
+      id, x, y, ...people[id],
+      // The card corner that faces the system, where its connector starts.
+      hx: right ? x + l.cw : x,
+      hy: top ? y + l.ch : y,
+      ax: round(x + 22 * u),
+      ay: round(y + 0.25 * l.ch),
+    };
   });
-  return { ...l, cx, cy, cards };
+  const [a, b, c] = cards;
+  const flag = (em: number, [dx, dy]: P) => ({
+    x: dx, y: dy, w: round(em * l.flag + 1.3 * l.flag), h: round(1.8 * l.flag),
+    tx: round(dx + 0.65 * l.flag), ty: round(dy + 0.9 * l.flag + 0.36 * l.flag),
+  });
+  const chipBox = { x: round(c.x + 14 * u), y: round(c.y + 0.44 * l.ch), w: round(EM.chip * l.chip + 1.3 * l.chip), h: round(1.8 * l.chip) };
+  const learnW = round(EM.learns * l.learn.size + 3.1 * l.learn.size);
+  const footText = l.foot.short ? EM.footShort : EM.footLong;
+  const pileR = round(0.6 * l.foot.size);
+  const pileW = l.foot.short ? 0 : round(2 * pileR + 4 * 0.95 * l.foot.size + 0.7 * l.foot.size);
+  const footW = pileW + footText * l.foot.size;
+  const footX = l.foot.middle ? round(l.foot.x - footW / 2) : l.foot.x;
+  const ripple = (p: P) => ({ x: p[0], y: p[1] });
+  // A piece of Ana's session: in Ben's card after the drop, and as the ghost he drags. He lets go with the
+  // cursor near its right end, so the ghost lands exactly where the piece appears.
+  const piece = { x: round(b.x + 14 * u), y: round(b.y + 0.6 * l.ch), w: round(0.66 * l.cw), h: round(0.28 * l.ch) };
+  const drop: P = [round(piece.x + piece.w - 12 * u), round(piece.y + piece.h / 2)];
+  const benPath: P[] = [l.ben.start as P, l.ben.click as P, drop, l.ben.rest as P];
+  return {
+    ...l, cx, cy, cards,
+    vars: (pts: P[]) => pts.map(([x, y], i) => `--x${i}: ${x}px; --y${i}: ${y}px`).join('; '),
+    benShort: flag(EM.ben, l.ben.flag),
+    benLong: flag(EM.benSays, l.ben.flag),
+    cleoShort: flag(EM.cleo, l.cleo.flag),
+    cleoLong: flag(EM.cleoSays, l.cleo.flag),
+    arrow: { x1: round(a.x + l.cw + 8 * u), x2: round(b.x - 8 * u), y: round(a.y + 0.3 * l.ch) },
+    select: { x: a.x - 5, y: a.y - 5, w: l.cw + 10, h: l.ch + 10 },
+    clickAt: ripple(l.ben.click as P),
+    dropAt: ripple(drop),
+    piece, drop, benPath,
+    chipBox,
+    diff: { x: chipBox.x + chipBox.w, y: chipBox.y + chipBox.h / 2 },
+    learnBox: { x: round(l.learn.x - learnW / 2), y: round(l.learn.y - 0.95 * l.learn.size), w: learnW, h: round(1.9 * l.learn.size) },
+    footX, pileR, pileW,
+  };
 });
 
-const T = { cards: 200, core: 900, build: 1800, mini: 3000, edit: 4300, editMove: 5000, learn: 6200, spread: 6700, checks: 7800, foot: 8900 };
+// The cursor arrow, tip at 0,0.
+const pointer = 'M0 0 L0 17 L4.2 13.1 L7.3 20 L10.2 18.7 L7.2 11.9 L13 11.9 Z';
+// A circular arrow for "learns", radius 1, drawn clockwise from 1 o'clock around to 11 o'clock.
+const loopIcon = (x: number, y: number, r: number) => {
+  const p = (deg: number) => [round(x + r * Math.sin((deg * Math.PI) / 180)), round(y - r * Math.cos((deg * Math.PI) / 180))];
+  const [sx, sy] = p(40);
+  const [ex, ey] = p(330);
+  const t = (330 * Math.PI) / 180;
+  const [tx, ty] = [Math.cos(t), Math.sin(t)];
+  const s = r * 0.62;
+  return {
+    arc: `M ${sx} ${sy} A ${r} ${r} 0 1 1 ${ex} ${ey}`,
+    head: `M ${round(ex + tx * s)} ${round(ey + ty * s)} L ${round(ex - ty * s * 0.8)} ${round(ey + tx * s * 0.8)} L ${round(ex + ty * s * 0.8)} ${round(ey - tx * s * 0.8)} Z`,
+  };
+};
+const pile = [people.a.color, people.b.color, people.c.color, people.d.color];
 ---
 
 <div
   class="demo demo-mp"
   data-seq
-  data-cycle="13500"
+  data-cycle="14000"
   role="img"
-  aria-label="Illustration of a multiplayer, self-improving AI system. Four teammates' sessions sit around a shared system. B builds on A's session, C changes the system's code, the system learns from it, and every session gets better. One team's project now runs across 5+ teams and 300+ people."
+  aria-label="Illustration of a multiplayer, self-improving AI system, drawn as a shared canvas. Four teammates' sessions sit around the system with live cursors. Ben opens Ana's session and builds on it in his own, Cleo changes the system's code, the system learns from it, and every session gets the update. One team's project now runs across 5+ teams and 300+ people."
 >
   {layouts.map((l) => (
     <svg class={`mp-svg ${l.name}`} viewBox={`0 0 ${l.w} ${l.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-      {l.cards.map((c, i) => (
-        <line class="link" x1={c.hx} y1={c.hy} x2={l.cx} y2={l.cy} data-step data-at={T.core + i * 80} />
+      <defs>
+        <linearGradient id={`mp-team-${l.name}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color={people.a.color} />
+          <stop offset="0.36" stop-color={people.b.color} />
+          <stop offset="0.68" stop-color={people.c.color} />
+          <stop offset="1" stop-color={people.d.color} />
+        </linearGradient>
+        <filter id={`mp-lift-${l.name}`} x="-12%" y="-12%" width="124%" height="140%">
+          <feDropShadow dx="0" dy={2 * l.u} stdDeviation={5 * l.u} flood-color="#1f1b3d" flood-opacity="0.12" />
+        </filter>
+        <filter id={`mp-glow-${l.name}`} x="-30%" y="-40%" width="160%" height="180%">
+          <feGaussianBlur stdDeviation={9 * l.u} />
+        </filter>
+      </defs>
+
+      {l.cards.map((c) => <line class="link" x1={c.hx} y1={c.hy} x2={l.cx} y2={l.cy} />)}
+
+      {l.cards.map((c) => (
+        <g class={`card card-${c.id}`}>
+          <rect class="card-box" x={c.x} y={c.y} width={l.cw} height={l.ch} rx={12 * l.u} filter={`url(#mp-lift-${l.name})`} />
+          <circle cx={c.ax} cy={c.ay} r={12.5 * l.u} fill={c.color} />
+          <text class="initial" x={c.ax} y={c.ay + 4.6 * l.u} font-size={13 * l.u} text-anchor="middle">{c.name[0]}</text>
+          {l.details && <text class="card-title" x={c.ax + 20 * l.u} y={c.ay + 5 * l.u} font-size={14 * l.u}>{c.name}'s session</text>}
+          {c.id !== 'c' && (
+            <g>
+              <text class="prompt" x={c.x + 16 * l.u} y={c.y + 0.5 * l.ch + 5 * l.u} font-size={15 * l.u} fill={c.color}>›</text>
+              <rect class="bar" x={c.x + 30 * l.u} y={c.y + 0.5 * l.ch - 4 * l.u} width={0.5 * l.cw} height={8 * l.u} rx={4 * l.u} />
+            </g>
+          )}
+          <rect class="bar soft" x={c.x + 16 * l.u} y={c.y + 0.69 * l.ch - 3.5 * l.u} width={0.78 * l.cw - 16 * l.u} height={7 * l.u} rx={3.5 * l.u} />
+          <rect class="bar soft" x={c.x + 16 * l.u} y={c.y + 0.84 * l.ch - 3.5 * l.u} width={0.5 * l.cw} height={7 * l.u} rx={3.5 * l.u} />
+        </g>
       ))}
 
-      <g data-step data-at={T.core}>
-        <rect class="core" x={l.core.x} y={l.core.y} width={l.core.w} height={l.core.h} rx="12" />
-        <text class="core-title" x={l.cx} y={l.cy + 2} font-size={l.core.title} text-anchor="middle">the system</text>
-        <text class="core-sub minor" x={l.cx} y={l.cy + l.core.title * 0.95} font-size={l.core.sub} text-anchor="middle">shared by the team</text>
+      <g class="code-chip">
+        <rect class="chip-box" x={l.chipBox.x} y={l.chipBox.y} width={l.chipBox.w} height={l.chipBox.h} rx={6 * l.u} />
+        <g data-step data-at={T.chip}>
+          <text class="chip-text" x={l.chipBox.x + 0.65 * l.chip} y={l.chipBox.y + l.chipBox.h / 2 + 0.36 * l.chip} font-size={l.chip}>edits the code</text>
+          <rect class="chip-cover" x={l.chipBox.x + 0.5 * l.chip} y={l.chipBox.y + 3 * l.u} width={l.chipBox.w - 0.9 * l.chip} height={l.chipBox.h - 6 * l.u} />
+          <rect class="caret" x={l.chipBox.x + 0.6 * l.chip} y={l.chipBox.y + 0.3 * l.chip} width={1.6 * l.u} height={1.2 * l.chip} style={`--run: ${round(EM.chip * l.chip)}px`} />
+        </g>
       </g>
-      <rect class="core-pulse" x={l.core.x} y={l.core.y} width={l.core.w} height={l.core.h} rx="12" data-step data-at={T.learn} />
+
+      <g data-step data-at={T.drop}>
+        <g class="piece">
+          <rect class="piece-box" x={l.piece.x} y={l.piece.y} width={l.piece.w} height={l.piece.h} rx={7 * l.u} />
+          <circle cx={l.piece.x + 13 * l.u} cy={l.piece.y + l.piece.h / 2} r={6.5 * l.u} fill={people.a.color} />
+          <rect class="piece-bar" x={l.piece.x + 26 * l.u} y={l.piece.y + l.piece.h / 2 - 3.5 * l.u} width={l.piece.w * 0.6} height={7 * l.u} rx={3.5 * l.u} />
+        </g>
+      </g>
+      <g data-step data-at={T.view}>
+        <circle class="viewer" cx={l.cards[0].x + l.cw - 46 * l.u} cy={l.cards[0].ay} r={9.5 * l.u} fill={people.b.color} />
+        <text class="initial" x={l.cards[0].x + l.cw - 46 * l.u} y={l.cards[0].ay + 3.6 * l.u} font-size={10.5 * l.u} text-anchor="middle">b</text>
+      </g>
+
+      <g class="diff" style={`--dx: ${round(l.cx - l.diff.x)}px; --dy: ${round(l.cy - l.diff.y)}px`}>
+        <rect x={l.diff.x - 9 * l.u} y={l.diff.y - 9 * l.u} width={18 * l.u} height={18 * l.u} rx={5 * l.u} />
+        <path d={`M ${l.diff.x - 4.5 * l.u} ${l.diff.y} h ${9 * l.u} M ${l.diff.x} ${l.diff.y - 4.5 * l.u} v ${9 * l.u}`} />
+      </g>
+      <g data-step data-at={T.spread}>
+        {l.cards.map((c) => (
+          <circle class="pulse" cx={l.cx} cy={l.cy} r={5.5 * l.u} style={`--dx: ${round(c.hx - l.cx)}px; --dy: ${round(c.hy - l.cy)}px`} />
+        ))}
+      </g>
+
+      <g class="sys">
+        <rect class="sys-glow" x={l.sys.x} y={l.sys.y} width={l.sys.w} height={l.sys.h} rx={16 * l.u} stroke={`url(#mp-team-${l.name})`} filter={`url(#mp-glow-${l.name})`} />
+        <rect class="sys-box" x={l.sys.x} y={l.sys.y} width={l.sys.w} height={l.sys.h} rx={16 * l.u} stroke={`url(#mp-team-${l.name})`} />
+        <text class="sys-title" x={l.cx} y={l.sys.y + (l.sys.inside ? 0.42 : 0.36) * l.sys.h} font-size={l.sys.title} text-anchor="middle">the system</text>
+        {l.details && <text class="sys-sub" x={l.cx} y={l.sys.y + 0.36 * l.sys.h + 21 * l.u} font-size={13.5 * l.u} text-anchor="middle">shared by the team</text>}
+        {l.details && (
+          <g>
+            <rect class="code" x={l.sys.x + 26 * l.u} y={l.sys.y + l.sys.h - 40 * l.u} width={l.sys.w * 0.34} height={5.5 * l.u} rx={2.75 * l.u} fill={people.d.color} />
+            <rect class="code" x={l.sys.x + 26 * l.u + l.sys.w * 0.37} y={l.sys.y + l.sys.h - 40 * l.u} width={l.sys.w * 0.22} height={5.5 * l.u} rx={2.75 * l.u} fill={people.b.color} />
+            <rect class="code" x={l.sys.x + 38 * l.u} y={l.sys.y + l.sys.h - 29 * l.u} width={l.sys.w * 0.46} height={5.5 * l.u} rx={2.75 * l.u} fill="#8c86c8" />
+            <g data-step data-at={T.learn}>
+              <rect class="code new" x={l.sys.x + 38 * l.u} y={l.sys.y + l.sys.h - 18 * l.u} width={l.sys.w * 0.3} height={5.5 * l.u} rx={2.75 * l.u} fill="#34d399" />
+            </g>
+          </g>
+        )}
+        {l.sys.inside && (
+          <g class="learn-in" data-step data-at={T.learn}>
+            <path class="loop" d={loopIcon(l.cx - EM.learns * l.learn.size / 2 - 0.2 * l.learn.size, l.sys.y + 0.72 * l.sys.h - 0.36 * l.learn.size, 0.42 * l.learn.size).arc} />
+            <path class="loop-head" d={loopIcon(l.cx - EM.learns * l.learn.size / 2 - 0.2 * l.learn.size, l.sys.y + 0.72 * l.sys.h - 0.36 * l.learn.size, 0.42 * l.learn.size).head} />
+            <text class="learn-text" x={l.cx + 0.45 * l.learn.size} y={l.sys.y + 0.72 * l.sys.h} font-size={l.learn.size} text-anchor="middle">the system learns</text>
+          </g>
+        )}
+      </g>
+      <g data-step data-at={T.learn}>
+        <rect class="sys-pulse" x={l.sys.x} y={l.sys.y} width={l.sys.w} height={l.sys.h} rx={16 * l.u} />
+      </g>
+      {!l.sys.inside && (
+        <g data-step data-at={T.learn}>
+          <rect class="learn-box" x={l.learnBox.x} y={l.learnBox.y} width={l.learnBox.w} height={l.learnBox.h} rx={l.learnBox.h / 2} />
+          <g class="spin" style={`transform-origin: ${round(l.learnBox.x + 1.25 * l.learn.size)}px ${l.learn.y}px`}>
+            <path class="loop" d={loopIcon(l.learnBox.x + 1.25 * l.learn.size, l.learn.y, 0.42 * l.learn.size).arc} />
+            <path class="loop-head" d={loopIcon(l.learnBox.x + 1.25 * l.learn.size, l.learn.y, 0.42 * l.learn.size).head} />
+          </g>
+          <text class="learn-text" x={l.learnBox.x + 2.1 * l.learn.size} y={l.learn.y + 0.36 * l.learn.size} font-size={l.learn.size}>the system learns</text>
+        </g>
+      )}
 
       {l.cards.map((c, i) => (
-        <g data-step data-at={T.cards + i * 150}>
-          <rect class="card" x={c.x} y={c.y} width={l.cw} height={l.ch} rx="10" />
-          <circle cx={c.x + 30} cy={c.y + 32} r="15" fill={c.color} />
-          <text class="initial" x={c.x + 30} y={c.y + 37} font-size="15" text-anchor="middle">{c.id}</text>
-          <text class="name minor" x={c.x + 56} y={c.y + 38} font-size={l.name_size}>{c.id}'s session</text>
-          <rect class="skel" x={c.x + 20} y={c.y + 62} width={l.cw * 0.7} height="7" rx="3.5" />
-          <rect class="skel" x={c.x + 20} y={c.y + 80} width={l.cw * 0.55} height="7" rx="3.5" />
-          <rect class="skel" x={c.x + 20} y={c.y + 98} width={l.cw * 0.38} height="7" rx="3.5" />
+        <g data-step data-at={T.checks + i * 90}>
+          <g class="check">
+            <circle cx={c.x + l.cw - 20 * l.u} cy={c.ay} r={9.5 * l.u} />
+            <path d={`M ${c.x + l.cw - 24.2 * l.u} ${c.ay + 0.2 * l.u} l ${3 * l.u} ${3 * l.u} l ${5.6 * l.u} ${-6 * l.u}`} />
+          </g>
         </g>
       ))}
 
       <g data-step data-at={T.build}>
-        <line class="build" x1={l.build.x1 + 6} y1={l.build.y} x2={l.build.x2 - 10} y2={l.build.y} />
-        <path class="build-head" d={`M ${l.build.x2 - 16} ${l.build.y - 6} L ${l.build.x2 - 8} ${l.build.y} L ${l.build.x2 - 16} ${l.build.y + 6}`} />
-        <text class="label" x={l.build.labelX} y={l.build.labelY} font-size={l.label} text-anchor="middle">b builds on a's session</text>
-      </g>
-      <rect class="packet" data-step data-at={T.build + 150} x={l.build.x1 - 7} y={l.build.y - 7} width="14" height="14" style={`--dx: ${l.build.x2 - l.build.x1}px; --dy: 0px`} />
-      <g data-step data-at={T.mini}>
-        <circle cx={l.cards[1].x + 46} cy={l.cards[1].y + 44} r="10" fill={l.cards[0].color} stroke="var(--surface)" stroke-width="2.5" />
-        <text class="initial" x={l.cards[1].x + 46} y={l.cards[1].y + 48} font-size="11" text-anchor="middle">a</text>
+        <path class="build" d={`M ${l.arrow.x1} ${l.arrow.y} L ${l.arrow.x2 - 3 * l.u} ${l.arrow.y}`} pathLength="1" />
+        <path class="build-head" d={`M ${l.arrow.x2 - 9 * l.u} ${l.arrow.y - 6 * l.u} L ${l.arrow.x2} ${l.arrow.y} L ${l.arrow.x2 - 9 * l.u} ${l.arrow.y + 6 * l.u} Z`} />
       </g>
 
-      <g data-step data-at={T.edit}>
-        <rect class="chip" x={l.cards[2].x + 20} y={l.cards[2].y + 56} width={l.chip * 10.6} height={l.chip * 1.9} rx="4" />
-        <text class="chip-text" x={l.cards[2].x + 20 + l.chip * 0.7} y={l.cards[2].y + 56 + l.chip * 1.32} font-size={l.chip}>edits the code</text>
-        <text class="label" x={l.edit.labelX} y={l.edit.labelY} font-size={l.label}>c changes the code</text>
-      </g>
-      <rect class="packet" data-step data-at={T.editMove} x={l.cards[2].hx - 7} y={l.cards[2].hy - 7} width="14" height="14" style={`--dx: ${l.cx - l.cards[2].hx}px; --dy: ${l.cy - l.cards[2].hy}px`} />
-
-      <text class="label learn" data-step data-at={T.learn} x={l.learn.labelX} y={l.learn.labelY} font-size={l.label} text-anchor="middle">the system learns</text>
-      {l.cards.map((c) => (
-        <rect class="packet" data-step data-at={T.spread} x={l.cx - 7} y={l.cy - 7} width="14" height="14" style={`--dx: ${c.hx - l.cx}px; --dy: ${c.hy - l.cy}px`} />
-      ))}
-      {l.cards.map((c, i) => (
-        <g data-step data-at={T.checks + i * 90}>
-          <rect class="check" x={c.x + l.cw - 30} y={c.y + 14} width="18" height="18" rx="3" />
-          <path class="check-mark" d={`M ${c.x + l.cw - 26} ${c.y + 23} l 4 4 l 7 -8`} />
+      <rect class="select" x={l.select.x} y={l.select.y} width={l.select.w} height={l.select.h} rx={15 * l.u} />
+      <circle class="ripple" cx={l.clickAt.x} cy={l.clickAt.y} r={12 * l.u} />
+      <circle class="ripple ripple-drop" cx={l.dropAt.x} cy={l.dropAt.y} r={12 * l.u} />
+      <g class="ghost" style={l.vars([l.ben.click as P, l.drop])}>
+        <g transform={`translate(${l.piece.x - l.drop[0]} ${l.piece.y - l.drop[1]})`}>
+          <rect class="piece-box" x="0" y="0" width={l.piece.w} height={l.piece.h} rx={7 * l.u} />
+          <circle cx={13 * l.u} cy={l.piece.h / 2} r={6.5 * l.u} fill={people.a.color} />
+          <rect class="piece-bar" x={26 * l.u} y={l.piece.h / 2 - 3.5 * l.u} width={l.piece.w * 0.6} height={7 * l.u} rx={3.5 * l.u} />
         </g>
-      ))}
+      </g>
 
-      <g data-step data-at={T.foot}>
-        <text class="foot foot-long" x={l.foot.x} y={l.foot.y} font-size={l.footSize} text-anchor={l.foot.anchor}>one team's project, now 5+ teams and 300+ people</text>
-        <text class="foot foot-short" x={l.foot.x} y={l.foot.y} text-anchor={l.foot.anchor}>1 team → 5+ teams · 300+ people</text>
+      <g class="cursor cursor-b" data-step data-at={BEN.at}>
+        <g class="move" style={l.vars(l.benPath)}>
+          <g class="flag-short">
+            <rect x={l.benShort.x} y={l.benShort.y} width={l.benShort.w} height={l.benShort.h} rx={0.4 * l.flag} fill={people.b.color} />
+            <text class="flag-text" x={l.benShort.tx} y={l.benShort.ty} font-size={l.flag}>ben</text>
+          </g>
+          <g class="flag-long" data-step data-at={T.benSays}>
+            <rect x={l.benLong.x} y={l.benLong.y} width={l.benLong.w} height={l.benLong.h} rx={0.4 * l.flag} fill={people.b.color} />
+            <text class="flag-text" x={l.benLong.tx} y={l.benLong.ty} font-size={l.flag}>ben builds on ana's session</text>
+          </g>
+          <g transform={`scale(${l.cursor})`}>
+            <path class="pointer" d={pointer} fill={people.b.color} />
+          </g>
+        </g>
+      </g>
+
+      <g class="cursor cursor-c" data-step data-at={CLEO.at}>
+        <g class="move" style={l.vars([l.cleo.start as P, l.cleo.type as P, l.cleo.rest as P])}>
+          <g class="flag-short">
+            <rect x={l.cleoShort.x} y={l.cleoShort.y} width={l.cleoShort.w} height={l.cleoShort.h} rx={0.4 * l.flag} fill={people.c.color} />
+            <text class="flag-text" x={l.cleoShort.tx} y={l.cleoShort.ty} font-size={l.flag}>cleo</text>
+          </g>
+          <g class="flag-long" data-step data-at={T.cleoSays}>
+            <rect x={l.cleoLong.x} y={l.cleoLong.y} width={l.cleoLong.w} height={l.cleoLong.h} rx={0.4 * l.flag} fill={people.c.color} />
+            <text class="flag-text" x={l.cleoLong.tx} y={l.cleoLong.ty} font-size={l.flag}>cleo changes the code</text>
+          </g>
+          <g transform={`scale(${l.cursor})`}>
+            <path class="pointer" d={pointer} fill={people.c.color} />
+          </g>
+        </g>
+      </g>
+
+      <g class="foot" data-step data-at={T.foot}>
+        {!l.foot.short && pile.map((color, i) => (
+          <circle class="face" cx={l.footX + l.pileR + i * 0.95 * l.foot.size} cy={l.foot.y - 0.36 * l.foot.size} r={l.pileR} fill={color} style={`--i: ${i}`} />
+        ))}
+        {!l.foot.short && (
+          <circle class="face more" cx={l.footX + l.pileR + 4 * 0.95 * l.foot.size} cy={l.foot.y - 0.36 * l.foot.size} r={l.pileR} style="--i: 4" />
+        )}
+        <text class="foot-text" x={l.footX + l.pileW} y={l.foot.y} font-size={l.foot.size}>
+          {l.foot.short ? '1 team → 5+ teams · 300+ people' : "one team's project, now 5+ teams and 300+ people"}
+        </text>
       </g>
     </svg>
   ))}
@@ -117,26 +324,36 @@ const T = { cards: 200, core: 900, build: 1800, mini: 3000, edit: 4300, editMove
 </div>
 
 <style is:global>
+  /* A collaboration canvas: cool lilac paper with a dot grid, white cards, an ink-navy system, and one presence
+     color per teammate. Fixed colors, so it looks the same in the site's light and dark themes. */
   .demo-mp {
+    --mp-ink: #1f1b3d;
+    --mp-ink-2: #4a4566;
+    --mp-line: #e1def4;
+    --mp-bar: #dcd8f3;
+    --mp-bar-2: #eceaf8;
+    --mp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --mp-move: cubic-bezier(0.45, 0, 0.2, 1);
     position: relative;
     width: 100%;
     height: 100%;
-    display: grid;
-    place-items: center;
-    padding: 2.5cqh 3cqw;
-    background:
-      radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 45%),
-      radial-gradient(circle at 10% 90%, color-mix(in srgb, var(--highlight) 30%, transparent), transparent 45%),
-      var(--bg-soft);
+    background-color: #eeecfb;
+    background-image: radial-gradient(circle at 1px 1px, #cdc8ef 1px, transparent 1.4px);
+    background-size: 18px 18px;
+    background-position: 8px 8px;
     overflow: hidden;
   }
 
+  /* Absolutely placed so a square drawing letterboxes inside a 4:3 frame instead of growing the grid row. */
   .demo-mp .mp-svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
   }
 
-  .demo-mp .mp-svg.square {
+  .demo-mp .mp-svg.square,
+  .demo-mp .mp-svg.square-sm {
     display: none;
   }
 
@@ -150,146 +367,626 @@ const T = { cards: 200, core: 900, build: 1800, mini: 3000, edit: 4300, editMove
     }
   }
 
-  .demo-mp .foot-short {
-    display: none;
-    font-size: 26px;
-  }
-
-  /* Small tiles on phones drop the small print and enlarge the three labels that tell the story. */
-  @container (width < 420px) {
-    .demo-mp .minor {
+  @container (aspect-ratio < 1.45) and (height < 400px) {
+    .demo-mp .mp-svg.square {
       display: none;
     }
 
-    .demo-mp .label {
-      font-size: 26px;
-    }
-
-    .demo-mp .foot-long {
-      display: none;
-    }
-
-    .demo-mp .foot-short {
-      display: inline;
+    .demo-mp .mp-svg.square-sm {
+      display: block;
     }
   }
 
   .demo-mp text {
-    font-family: var(--font-body);
-    fill: var(--ink);
+    font-family: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    fill: var(--mp-ink);
   }
 
-  .demo-mp .core-title {
-    font-family: var(--font-display);
-    font-weight: var(--display-weight);
-    font-style: italic;
-    letter-spacing: -0.02em;
+  .demo-mp .link {
+    stroke: #bdb7e6;
+    stroke-width: 1.5;
+    stroke-dasharray: 3 5;
+    stroke-linecap: round;
   }
 
-  .demo-mp .core-sub,
-  .demo-mp .foot {
-    fill: var(--muted);
-  }
-
-  .demo-mp .label {
-    fill: var(--accent-ink);
+  .demo-mp .card-box {
+    fill: #fff;
+    stroke: var(--mp-line);
+    stroke-width: 1;
   }
 
   .demo-mp .initial {
     fill: #fff;
+    font-weight: 700;
+  }
+
+  .demo-mp .card-title {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .demo-mp .prompt {
+    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
     font-weight: 600;
   }
 
-  .demo-mp .card,
-  .demo-mp .core {
-    fill: var(--surface);
-    stroke: var(--line);
-    stroke-width: 1.5;
+  .demo-mp .bar {
+    fill: var(--mp-bar);
   }
 
-  .demo-mp .skel {
-    fill: var(--line);
+  .demo-mp .bar.soft {
+    fill: var(--mp-bar-2);
   }
 
-  .demo-mp .link {
-    stroke: var(--line);
-    stroke-width: 2;
-    stroke-dasharray: 2 6;
-    stroke-linecap: round;
+  .demo-mp .chip-box,
+  .demo-mp .chip-cover {
+    fill: #f3f1ff;
   }
 
-  .demo-mp .build,
-  .demo-mp .build-head {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .demo-mp .chip {
-    fill: var(--accent-soft);
-    stroke: color-mix(in srgb, var(--accent) 45%, transparent);
+  .demo-mp .chip-box {
+    stroke: #d6d1f6;
+    stroke-width: 1;
   }
 
   .demo-mp .chip-text {
-    font-family: var(--font-mono);
+    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    font-weight: 500;
+    fill: #3b2fa0;
   }
 
-  .demo-mp .packet {
-    fill: var(--accent);
+  .demo-mp .chip-cover {
+    transform-box: fill-box;
+    transform-origin: right center;
+    transform: scaleX(0);
   }
 
-  .demo-mp .packet.is-on {
-    animation: mp-travel 1100ms ease-in-out forwards;
+  .demo-mp .caret {
+    fill: var(--mp-ink);
+    opacity: 0;
   }
 
-  .demo-mp .core-pulse {
+  .demo-mp .piece-box {
+    fill: #fff3ea;
+    stroke: #f8c4a0;
+    stroke-width: 1;
+  }
+
+  .demo-mp .piece-bar {
+    fill: #f8bf96;
+  }
+
+  .demo-mp .viewer {
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  .demo-mp .sys-box {
+    fill: var(--mp-ink);
+    stroke-width: 3;
+  }
+
+  .demo-mp .sys-glow {
     fill: none;
-    stroke: var(--accent);
+    stroke-width: 10;
+    opacity: 0;
+  }
+
+  .demo-mp .sys-title {
+    fill: #fff;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .demo-mp .sys-sub {
+    fill: #bdb8e8;
+    font-weight: 500;
+  }
+
+  .demo-mp .code.new {
+    transform-box: fill-box;
+    transform-origin: left center;
+  }
+
+  .demo-mp .sys-pulse {
+    fill: none;
+    stroke: #a99ff5;
     stroke-width: 2.5;
+    opacity: 0;
     transform-box: fill-box;
     transform-origin: center;
   }
 
-  .demo-mp .core-pulse.is-on {
-    animation: mp-pulse 1400ms ease-out 2;
+  .demo-mp .learn-box {
+    fill: var(--mp-ink);
   }
 
-  .demo-mp .check {
-    fill: var(--accent);
+  .demo-mp .learn-text {
+    fill: #fff;
+    font-weight: 600;
   }
 
-  .demo-mp .check-mark {
+  .demo-mp .learn-in .learn-text {
+    fill: #c9c4f5;
+  }
+
+  .demo-mp .loop {
     fill: none;
-    stroke: var(--on-accent);
-    stroke-width: 2.2;
+    stroke: #a7f3d0;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .demo-mp .loop-head {
+    fill: #a7f3d0;
+  }
+
+  .demo-mp .check circle {
+    fill: var(--mp-ink);
+  }
+
+  .demo-mp .check path {
+    fill: none;
+    stroke: #a7f3d0;
+    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
-  @keyframes mp-travel {
-    from {
-      transform: translate(0, 0);
-      opacity: 1;
+  .demo-mp .check {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .demo-mp .build {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 0;
+  }
+
+  .demo-mp .build-head {
+    fill: #2563eb;
+  }
+
+  .demo-mp .select {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2;
+    opacity: 0;
+  }
+
+  .demo-mp .ripple {
+    fill: #2563eb;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .demo-mp .ghost {
+    opacity: 0;
+  }
+
+  .demo-mp .diff {
+    opacity: 0;
+  }
+
+  .demo-mp .diff rect {
+    fill: #10b981;
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  .demo-mp .diff path {
+    stroke: #fff;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  .demo-mp .pulse {
+    fill: #a99ff5;
+    stroke: #fff;
+    stroke-width: 2;
+    opacity: 0;
+  }
+
+  .demo-mp .pointer {
+    stroke: #fff;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+    transform-box: fill-box;
+    transform-origin: 0 0;
+  }
+
+  .demo-mp .flag-text {
+    fill: #fff;
+    font-weight: 600;
+  }
+
+  .demo-mp .cursor-b .move {
+    transform: translate(var(--x3), var(--y3));
+  }
+
+  .demo-mp .cursor-c .move {
+    transform: translate(var(--x2), var(--y2));
+  }
+
+  .demo-mp .cursor:has(.flag-long.is-on) .flag-short {
+    opacity: 0;
+  }
+
+  .demo-mp .flag-short {
+    transition: opacity 0.2s ease;
+  }
+
+  .demo-mp .face {
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  .demo-mp .face.more {
+    fill: #cfc9f3;
+  }
+
+  .demo-mp .foot-text {
+    fill: var(--mp-ink-2);
+    font-weight: 500;
+  }
+
+  /* Choreography. Everything below runs only while the sequence plays. Without it (stopped, or reduced motion)
+     the base styles above are the finished state: cursors parked with their labels, nothing in flight. */
+  .demo-mp.seq-on .build {
+    stroke-dashoffset: 1;
+  }
+
+  .demo-mp.seq-on .is-on > .build {
+    animation: mp-draw 950ms var(--mp-move) both;
+  }
+
+  .demo-mp.seq-on .is-on > .build-head {
+    animation: mp-fade 250ms ease-out 850ms both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-b.is-on) .cursor-b .move {
+    animation: mp-ben 3600ms var(--mp-move) both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-b.is-on) .cursor-b .pointer {
+    animation: mp-press-ben 3600ms linear both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-b.is-on) .ghost {
+    animation: mp-ghost 3600ms var(--mp-move) both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-b.is-on) .select {
+    animation: mp-select 3600ms linear both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-b.is-on) .ripple {
+    animation: mp-ripple 3600ms ease-out both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-b.is-on) .ripple-drop {
+    animation-name: mp-ripple-drop;
+  }
+
+  .demo-mp.seq-on:has(.cursor-c.is-on) .cursor-c .move {
+    animation: mp-cleo 3000ms var(--mp-move) both;
+  }
+
+  .demo-mp.seq-on .is-on > .chip-cover {
+    animation: mp-type 1100ms steps(14, end) both;
+  }
+
+  .demo-mp.seq-on .is-on > .caret {
+    animation:
+      mp-caret 1100ms steps(14, end) both,
+      mp-blink 1800ms steps(1, end) both;
+  }
+
+  .demo-mp.seq-on:has(.cursor-c .flag-long.is-on) .diff {
+    animation: mp-travel 850ms var(--mp-move) 140ms both;
+  }
+
+  .demo-mp.seq-on .is-on > .pulse {
+    animation: mp-travel 850ms var(--mp-move) both;
+  }
+
+  .demo-mp.seq-on .is-on > .sys-pulse {
+    animation: mp-ring 1100ms ease-out 2 both;
+  }
+
+  .demo-mp.seq-on:has(.is-on > .sys-pulse) .sys-glow {
+    animation: mp-glow 2200ms ease-in-out both;
+  }
+
+  .demo-mp.seq-on .is-on > .code.new {
+    animation: mp-grow 600ms var(--mp-ease) both;
+  }
+
+  .demo-mp.seq-on .is-on > .spin {
+    animation: mp-spin 900ms var(--mp-ease) both;
+  }
+
+  .demo-mp.seq-on .is-on > .check {
+    animation: mp-pop 420ms cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  }
+
+  .demo-mp.seq-on .foot.is-on .face {
+    animation: mp-join 500ms var(--mp-ease) both;
+    animation-delay: calc(var(--i) * 90ms);
+  }
+
+  .demo-mp.seq-on .is-on > .piece {
+    animation: mp-land 450ms var(--mp-ease) both;
+  }
+
+  @keyframes mp-ben {
+    0% {
+      transform: translate(var(--x0), var(--y0));
     }
-    85% {
-      opacity: 1;
+    22%,
+    28% {
+      transform: translate(var(--x1), var(--y1));
     }
-    to {
-      transform: translate(var(--dx), var(--dy));
+    55%,
+    60% {
+      transform: translate(var(--x2), var(--y2));
+    }
+    84%,
+    100% {
+      transform: translate(var(--x3), var(--y3));
+    }
+  }
+
+  /* Pressed on Ana's card, held through the drag, released over Ben's card. */
+  @keyframes mp-press-ben {
+    0%,
+    22% {
+      transform: none;
+    }
+    24% {
+      transform: scale(0.82);
+    }
+    27%,
+    55% {
+      transform: scale(0.9);
+    }
+    58%,
+    100% {
+      transform: none;
+    }
+  }
+
+  /* Moves on the same keyframes as Ben's drag (28% to 55%), so it stays under his cursor. */
+  @keyframes mp-ghost {
+    0%,
+    28% {
+      transform: translate(var(--x0), var(--y0));
+    }
+    0%,
+    25% {
+      opacity: 0;
+    }
+    29%,
+    55% {
+      opacity: 0.92;
+    }
+    55%,
+    100% {
+      transform: translate(var(--x1), var(--y1));
+    }
+    59%,
+    100% {
       opacity: 0;
     }
   }
 
-  @keyframes mp-pulse {
-    from {
-      transform: scale(1);
+  @keyframes mp-select {
+    0%,
+    23% {
+      opacity: 0;
+    }
+    25%,
+    46% {
       opacity: 1;
     }
-    to {
-      transform: scale(1.25);
+    54%,
+    100% {
       opacity: 0;
+    }
+  }
+
+  @keyframes mp-ripple {
+    0%,
+    23% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    24% {
+      opacity: 0.35;
+    }
+    36%,
+    100% {
+      opacity: 0;
+      transform: scale(1.8);
+    }
+  }
+
+  @keyframes mp-ripple-drop {
+    0%,
+    56% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    57% {
+      opacity: 0.35;
+    }
+    69%,
+    100% {
+      opacity: 0;
+      transform: scale(1.8);
+    }
+  }
+
+  /* In to the code chip, still while she types, then out of the way if the layout needs the room. */
+  @keyframes mp-cleo {
+    0% {
+      transform: translate(var(--x0), var(--y0));
+    }
+    20%,
+    62% {
+      transform: translate(var(--x1), var(--y1));
+    }
+    76%,
+    100% {
+      transform: translate(var(--x2), var(--y2));
+    }
+  }
+
+  @keyframes mp-type {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes mp-caret {
+    from {
+      transform: none;
+    }
+    to {
+      transform: translateX(var(--run));
+    }
+  }
+
+  /* Solid while she types, two blinks, then gone. */
+  @keyframes mp-blink {
+    0% {
+      opacity: 1;
+    }
+    61% {
+      opacity: 0;
+    }
+    70% {
+      opacity: 1;
+    }
+    79% {
+      opacity: 0;
+    }
+    88% {
+      opacity: 1;
+    }
+    97%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mp-travel {
+    0% {
+      opacity: 1;
+      transform: none;
+    }
+    82% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy));
+    }
+  }
+
+  @keyframes mp-ring {
+    from {
+      opacity: 0.9;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes mp-glow {
+    0% {
+      opacity: 0;
+    }
+    30%,
+    60% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mp-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mp-spin {
+    from {
+      transform: rotate(-300deg);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mp-pop {
+    from {
+      transform: scale(0.2);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mp-join {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes mp-land {
+    from {
+      transform: translateY(-6px) scale(0.96);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes mp-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes mp-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 </style>

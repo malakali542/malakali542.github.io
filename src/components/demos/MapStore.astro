@@ -1,177 +1,1528 @@
 ---
-// Illustrative: MapStore queries before and after the redesign (average query time down 40%).
+// Illustration of MapStore, the internal Uber map data service, styled after the Base design system from Uber
+// (black and white, Uber Move with system fallbacks, 8px controls, pill tags) beside a map in the style of
+// the rider app (light gray land, white streets, black route, circle pickup and square dropoff).
+// The same bounding box query runs twice: the old full result set, then pages of 50 with fewer fields.
+// The only metric is from the case study: average query time 1.0x before and 0.6x after, 40% lower.
+
+// Map and overlay share one 300 by 180 frame. Streets run far past it so the map fills any box.
+const box = { x: 34, y: 26, w: 236, h: 134 };
+const route: [number, number][] = [
+  [64, 134],
+  [142, 134],
+  [198, 68],
+  [246, 68],
+];
+const routePath = `M${route.map(([x, y]) => `${x} ${y}`).join('L')}`;
+
+const R = 14;
+const HX = (Math.sqrt(3) * R) / 2;
+const f = (n: number) => Math.round(n * 10) / 10;
+const distToRoute = (x: number, y: number) =>
+  Math.min(
+    ...route.slice(1).map(([bx, by], i) => {
+      const [ax, ay] = route[i];
+      const dx = bx - ax;
+      const dy = by - ay;
+      const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)));
+      return Math.hypot(x - ax - t * dx, y - ay - t * dy);
+    }),
+  );
+
+// Region cells inside the box, shaded by closeness to the route, then split into 4 pages that sweep
+// from the pickup side to the dropoff side.
+type Cell = { x: number; y: number; level: number; sweep: number };
+const cells: Cell[] = [];
+for (let row = 0; box.y + 8 + row * 1.5 * R <= box.y + box.h + 1; row++) {
+  const y = box.y + 8 + row * 1.5 * R;
+  for (let x = box.x + 6 + (row % 2) * HX; x <= box.x + box.w - 2; x += 2 * HX) {
+    const d = distToRoute(x, y);
+    let level = d < 13 ? 3 : d < 30 ? 2 : d < 52 ? 1 : 0;
+    const salt = (row * 7 + Math.round(x) * 3) % 7;
+    if (salt === 0) level = Math.min(3, level + 1);
+    if (salt === 6) level = Math.max(0, level - 1);
+    cells.push({ x, y, level, sweep: x + 0.4 * (box.y + box.h - y) });
+  }
+}
+const ordered = [...cells].sort((a, b) => a.sweep - b.sweep);
+const perPage = Math.ceil(ordered.length / 4);
+const hexes = ordered.map((c, i) => ({
+  d: `M${f(c.x)} ${f(c.y - R)}L${f(c.x + HX)} ${f(c.y - R / 2)}V${f(c.y + R / 2)}L${f(c.x)} ${f(c.y + R)}L${f(c.x - HX)} ${f(c.y + R / 2)}V${f(c.y - R / 2)}Z`,
+  cls: `hx p${Math.floor(i / perPage) + 1} l${c.level}`,
+  st: `--k:${i % perPage}`,
+}));
+
+// A street grid with a few blocks dropped, so it reads as a city rather than graph paper.
+const xs = Array.from({ length: 24 }, (_, k) => 64 + 26 * (k - 8));
+const ys = Array.from({ length: 23 }, (_, k) => 134 + 22 * (k - 13));
+const runs = (stops: number[], keep: (i: number) => boolean) => {
+  const out: [number, number][] = [];
+  let start: number | null = null;
+  stops.slice(0, -1).forEach((s, i) => {
+    if (keep(i)) start ??= s;
+    else if (start !== null) {
+      out.push([start, s]);
+      start = null;
+    }
+  });
+  if (start !== null) out.push([start, stops[stops.length - 1]]);
+  return out;
+};
+const streets = [
+  ...ys.flatMap((y, j) => runs(xs, (i) => y === 68 || y === 134 || (i * 5 + j * 3) % 11 !== 0).map(([a, b]) => `M${a} ${y}H${b}`)),
+  ...xs.flatMap((x, i) => runs(ys, (j) => (j * 5 + i * 7) % 13 !== 0).map(([a, b]) => `M${x} ${a}V${b}`)),
+].join('');
 ---
 
-<div class="demo demo-map" data-seq data-cycle="11000" role="img" aria-label="Illustration: a paginated MapStore query returns map regions, and average query time drops by 40 percent.">
-  <div class="map">
-    <svg viewBox="0 0 300 200" aria-hidden="true">
-      <defs>
-        <pattern id="hex" width="24" height="41.57" patternUnits="userSpaceOnUse" patternTransform="scale(0.9)">
-          <path d="M12 0 L24 6.93 L24 20.78 L12 27.71 L0 20.78 L0 6.93 Z M12 27.71 L12 41.57" fill="none" stroke="currentColor" stroke-width="0.8" />
-        </pattern>
-      </defs>
-      <rect width="300" height="200" fill="url(#hex)" />
-      <path class="road" d="M-10 150 C 60 120, 110 160, 170 110 S 260 60, 320 70" />
-      <path class="road thin" d="M40 -10 C 70 60, 60 120, 110 210" />
-      <g class="pins">
-        <circle data-step data-at="900" cx="78" cy="132" r="5" />
-        <circle data-step data-at="1300" cx="150" cy="118" r="5" />
-        <circle data-step data-at="1700" cx="214" cy="84" r="5" />
-        <circle data-step data-at="2100" cx="250" cy="140" r="5" />
-      </g>
-    </svg>
+<div
+  class="demo demo-map"
+  data-seq
+  data-cycle="16500"
+  role="img"
+  aria-label="Illustration: an internal MapStore console in Uber's style asks for map regions inside a box drawn on a map. The old query returns the entire result set in one slow response. The new query asks for page 1 with a limit of 50 and fewer fields, so regions fill the map page by page. Paginated results, faster SQL and lighter payloads take average query time from 1.0x to 0.6x, 40 percent lower."
+>
+  <i class="mk m-drag" data-step data-at="200"></i>
+  <i class="mk m-bbox" data-step data-at="1700"></i>
+  <i class="mk m-click1" data-step data-at="2200"></i>
+  <i class="mk m-run1" data-step data-at="2650"></i>
+  <i class="mk m-land1" data-step data-at="6650"></i>
+  <i class="mk m-edit" data-step data-at="7850"></i>
+  <i class="mk m-click2" data-step data-at="9100"></i>
+  <i class="mk m-run2" data-step data-at="9550"></i>
+  <i class="mk m-p1" data-step data-at="10150"></i>
+  <i class="mk m-p2" data-step data-at="10750"></i>
+  <i class="mk m-p3" data-step data-at="11350"></i>
+  <i class="mk m-p4" data-step data-at="11950"></i>
+  <i class="mk m-out" data-step data-at="16000"></i>
+
+  <div class="bar">
+    <span class="mark"><i></i></span>
+    <b class="app">MapStore</b>
+    <span class="crumb">Region explorer</span>
+    <span class="env"><i></i>staging</span>
+    <span class="ava"><svg viewBox="0 0 16 16"><circle cx="8" cy="5.6" r="3" /><path d="M2.4 15c.7-3.1 2.9-4.7 5.6-4.7s4.9 1.6 5.6 4.7z" /></svg></span>
   </div>
-  <div class="panel">
-    <div class="query" data-step data-at="300">
-      <span class="verb">GET</span> /mapstore/regions?bbox=…&amp;<b>page=1&amp;limit=50</b>
+
+  <div class="body">
+    <div class="console">
+      <div class="req">
+        <span class="lbl req-lbl">Request</span>
+        <span class="run-wrap">
+          <span class="run"><span class="run-txt"><svg viewBox="0 0 10 10"><path d="M2.2 1.3v7.4L8.6 5z" /></svg>Run</span><span class="spin"></span></span>
+          <span class="cur cur-run"><svg viewBox="0 0 12 18"><path d="M1 1v13.6l3.4-3.1 2.3 5.2 2.4-1-2.3-5.1H11z" /></svg></span>
+        </span>
+        <div class="field">
+          <span class="verb">GET</span>
+          <span class="url"><span class="u-path">/mapstore/regions</span><span class="u-line dyn"><span class="ty u-bbox-w" style="--n:33">?bbox=-122.42,37.77,-122.39,37.79</span><span class="ty u-bbox-c" style="--n:7">?bbox=…</span></span><wbr /><span class="u-line dyn"><span class="ty new u-page" style="--n:16">&amp;page=1&amp;limit=50</span></span><wbr /><span class="u-line dyn"><span class="ty new u-fields" style="--n:15">&amp;fields=id,geom</span></span></span>
+        </div>
+      </div>
+
+      <div class="resp">
+        <div class="sec-head">
+          <span class="lbl">Response</span>
+          <span class="dyn"><span class="tag" data-step data-at="6650">200 OK</span></span>
+        </div>
+        <div class="rows dyn">
+          <span class="empty">No response yet</span>
+          <div class="r r-all">
+            <span class="ic"><span class="ic-spin"></span><svg class="ic-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /><path d="M4.6 8.2l2.2 2.2 4.6-4.7" /></svg></span>
+            <span>entire result set</span><span class="meta">1 response</span>
+          </div>
+          <div class="r" data-step data-at="10150"><span class="ic"><svg class="ic-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /><path d="M4.6 8.2l2.2 2.2 4.6-4.7" /></svg></span><span>page 1</span><span class="meta">200</span></div>
+          <div class="r" data-step data-at="10750"><span class="ic"><svg class="ic-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /><path d="M4.6 8.2l2.2 2.2 4.6-4.7" /></svg></span><span>page 2</span><span class="meta">200</span></div>
+          <div class="r" data-step data-at="11350"><span class="ic"><svg class="ic-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /><path d="M4.6 8.2l2.2 2.2 4.6-4.7" /></svg></span><span>page 3</span><span class="meta">200</span></div>
+          <div class="r" data-step data-at="11950"><span class="ic"><svg class="ic-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /><path d="M4.6 8.2l2.2 2.2 4.6-4.7" /></svg></span><span>page 4</span><span class="meta">200</span></div>
+        </div>
+      </div>
+
+      <div class="time">
+        <div class="sec-head">
+          <span class="lbl"><svg class="sw" viewBox="0 0 16 16"><circle cx="8" cy="9.2" r="5.6" /><path d="M8 9.2V6.2M6.2 1.6h3.6M12.3 4.6l1-1" /></svg>Avg query time</span>
+        </div>
+        <div class="trow t-before"><span class="tl">before</span><span class="track"><b class="dyn"><i></i></b></span><span class="vw dyn"><span class="val"></span></span></div>
+        <div class="trow t-after"><span class="tl">after</span><span class="track"><b class="dyn"><i></i></b></span><span class="vw dyn"><span class="val"></span></span></div>
+        <div class="dyn">
+          <div class="win" data-step data-at="12250"><svg viewBox="0 0 16 16"><path d="M8 2.5v10M3.8 8.6 8 12.8l4.2-4.2" /></svg><span><b>40% lower</b> average query time</span></div>
+        </div>
+        <div class="chips dyn">
+          <span data-step data-at="12500">paginated results</span>
+          <span data-step data-at="12650">faster SQL</span>
+          <span data-step data-at="12800">lighter payloads</span>
+        </div>
+      </div>
     </div>
-    <div class="row" data-step data-at="3000">
-      <span class="lbl">before</span><span class="bar"><i style="--w:100%"></i></span><span class="v">1.0×</span>
+
+    <div class="map">
+      <div class="fg">
+        <svg class="under" viewBox="0 0 300 180" overflow="visible" aria-hidden="true">
+          <path class="streets" d={streets} />
+          <path class="park" d="M223.5 115.5h45v15h-45zM-36.5 158.5h71v38h-71zM301.5 -17.5h70v38h-70zM92 -37.5h22v15H92z" />
+          <path class="art-case" d="M-170 134H470M-56 368L370 -134M272 -170V350" />
+          <path class="hwy-case" d="M-170 228C-10 214 80 238 180 223S360 196 470 206" />
+          <path class="art" d="M-170 134H470M-56 368L370 -134M272 -170V350" />
+          <path class="hwy" d="M-170 228C-10 214 80 238 180 223S360 196 470 206" />
+          <g class="hexes dyn">
+            {hexes.map((h) => <path class={h.cls} d={h.d} style={h.st} />)}
+          </g>
+        </svg>
+        <div class="shim"></div>
+        <svg class="over" viewBox="0 0 300 180" overflow="visible" aria-hidden="true">
+          <path class="route-halo" d={routePath} />
+          <path class="route" d={routePath} />
+          <circle class="pin" cx="64" cy="134" r="6.4" />
+          <circle class="pin-dot" cx="64" cy="134" r="2.3" />
+          <rect class="pin" x="240.3" y="62.3" width="11.4" height="11.4" />
+          <rect class="pin-dot" x="243.9" y="65.9" width="4.2" height="4.2" />
+        </svg>
+        <div class="bbox-wrap dyn">
+          <div class="bbox">
+            <i class="hd a"></i><i class="hd b"></i><i class="hd c"></i><i class="hd d"></i>
+            <span class="bbox-tag">bbox</span>
+            <span class="cur cur-drag"><svg viewBox="0 0 12 18"><path d="M1 1v13.6l3.4-3.1 2.3 5.2 2.4-1-2.3-5.1H11z" /></svg></span>
+          </div>
+        </div>
+      </div>
+      <div class="toast-wrap dyn">
+        <div class="toast">
+          <span class="t-ic"><span class="t-spin"></span><svg class="t-ok" viewBox="0 0 16 16"><path d="M3.8 8.4l2.7 2.7 5.7-5.9" /></svg></span>
+          <span class="t-txt t-all">Loading entire result set</span>
+          <span class="t-txt t-one">1 response</span>
+          <span class="t-txt t-page">Loading page <span class="pg"></span> of 4</span>
+        </div>
+      </div>
+      <div class="zoom">
+        <span><svg viewBox="0 0 12 12"><path d="M6 2v8M2 6h8" /></svg></span>
+        <span><svg viewBox="0 0 12 12"><path d="M2 6h8" /></svg></span>
+      </div>
     </div>
-    <div class="row" data-step data-at="4600">
-      <span class="lbl">after</span><span class="bar after"><i style="--w:60%"></i></span><span class="v">0.6×</span>
-    </div>
-    <div class="notes" data-step data-at="6000">
-      <span>paginated results</span><span>faster SQL</span><span>lighter payloads</span>
-    </div>
-    <div class="delta" data-step data-at="7200">40% lower average query time</div>
   </div>
   <span class="illustration-tag">illustration</span>
 </div>
 
 <style>
+  /* A ticking query timer: an integer that counts tenths, printed as 0.0x to 1.0x. */
+  @property --ms-n {
+    syntax: '<integer>';
+    inherits: true;
+    initial-value: 0;
+  }
+
+  @property --ms-p {
+    syntax: '<integer>';
+    inherits: true;
+    initial-value: 1;
+  }
+
+  @counter-style ms-x {
+    system: fixed 0;
+    symbols: '0.0×' '0.1×' '0.2×' '0.3×' '0.4×' '0.5×' '0.6×' '0.7×' '0.8×' '0.9×' '1.0×';
+  }
+
+  /* Uber Base palette and type: black, white, gray 50 to 900, accent blue, positive green. */
   .demo-map {
+    --ms-sans: UberMoveText, system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --ms-display: UberMove, UberMoveText, system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --ms-mono: UberMoveMono, ui-monospace, 'SF Mono', Menlo, Monaco, 'Lucida Console', monospace;
     position: relative;
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 4cqw;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    background: #ffffff;
+    color: #000000;
+    font-family: var(--ms-sans);
+    font-size: clamp(9px, 2.7cqw, 12px);
+    font-variation-settings: normal;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  .mk {
+    display: none;
+  }
+
+  svg {
+    display: block;
+  }
+
+  /* ---------- top bar ---------- */
+  .bar {
+    display: flex;
     align-items: center;
-    padding: 7cqh 5cqw;
-    font-size: clamp(9px, 2.05cqw, 19px);
-    color: var(--ink);
-    background: var(--bg-soft);
-    overflow: hidden;
+    gap: 0.6em;
+    min-width: 0;
+    height: 2.6em;
+    padding: 0 0.9em;
+    background: #000000;
+    color: #ffffff;
+    white-space: nowrap;
   }
 
-  .map {
-    height: 100%;
-    border-radius: 1em;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: color-mix(in srgb, var(--ink) 14%, transparent);
+  .mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 0.22em;
+    background: #ffffff;
   }
 
-  .map svg {
+  .mark i {
+    width: 0.44em;
+    height: 0.44em;
+    background: #000000;
+  }
+
+  .app {
+    font-family: var(--ms-display);
+    font-size: 1.08em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .crumb {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 0.6em;
+    border-left: 1px solid #4b4b4b;
+    color: #a6a6a6;
+  }
+
+  .env {
+    flex: none;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.18em 0.65em;
+    border-radius: 999px;
+    background: #282828;
+    color: #dddddd;
+    font-size: max(9px, 0.86em);
+    font-weight: 500;
+  }
+
+  .env i {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: #06c167;
+  }
+
+  .ava {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.7em;
+    height: 1.7em;
+    border-radius: 50%;
+    background: #4b4b4b;
+  }
+
+  .ava svg {
+    width: 1.05em;
+    height: 1.05em;
+    fill: #dddddd;
+  }
+
+  /* ---------- layout: console above the map, or beside it in wide boxes ---------- */
+  .body {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .console {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+    min-width: 0;
+    padding: 0.65em 0.75em 0.7em;
+    background: #ffffff;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .lbl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-weight: 500;
+  }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 1.5em;
+  }
+
+  /* ---------- request ---------- */
+  .req {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'field run';
+    align-items: start;
+    gap: 0.5em;
+  }
+
+  .req-lbl {
+    display: none;
+    grid-area: lbl;
+  }
+
+  .run-wrap {
+    grid-area: run;
+    position: relative;
+  }
+
+  .run {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.3em;
+    padding: 0 0.95em;
+    border-radius: 8px;
+    background: #000000;
+    color: #ffffff;
+    font-weight: 500;
+  }
+
+  .run-txt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    transition: opacity 0.15s ease;
+  }
+
+  .run-txt svg {
+    width: 0.7em;
+    height: 0.7em;
+    fill: currentColor;
+  }
+
+  .spin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.1em;
+    height: 1.1em;
+    margin: -0.55em 0 0 -0.55em;
+    border-radius: 50%;
+    border: 0.17em solid rgb(255 255 255 / 0.28);
+    border-top-color: #276ef1;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .field {
+    grid-area: field;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
+    min-width: 0;
+    min-height: calc(2 * 1.5em + 0.9em);
+    padding: 0.45em 0.6em;
+    border-radius: 8px;
+    background: #f3f3f3;
+    font-family: var(--ms-mono);
+    font-size: max(9px, 0.92em);
+    line-height: 1.5;
+  }
+
+  .verb {
+    flex: none;
+    padding: 0 0.42em;
+    border-radius: 4px;
+    background: #000000;
+    color: #ffffff;
+    font-family: var(--ms-sans);
+    font-size: max(9px, 0.86em);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.75;
+  }
+
+  .url {
+    min-width: 0;
+    color: #000000;
+  }
+
+  .ty {
+    display: inline-block;
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+
+  .new {
+    border-radius: 3px;
+    background: #eff4fe;
+    color: #175bcc;
+  }
+
+  .u-bbox-w {
+    display: none;
+  }
+
+  /* ---------- response (wide only) ---------- */
+  .resp {
+    display: none;
+  }
+
+  .tag {
+    padding: 0.12em 0.65em;
+    border-radius: 999px;
+    background: #eaf6ed;
+    color: #166c3b;
+    font-size: max(9px, 0.86em);
+    font-weight: 500;
+  }
+
+  .rows {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35em 0.4em;
+    margin-top: 0.4em;
+    min-height: calc(2 * 2.1 * max(9px, 0.92em) + 0.35em);
+  }
+
+  .r {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    height: 2.1em;
+    padding: 0 0.6em;
+    border-radius: 8px;
+    background: #f3f3f3;
+    font-size: max(9px, 0.92em);
+  }
+
+  .meta {
+    margin-left: auto;
+    color: #5e5e5e;
+    font-family: var(--ms-mono);
+    font-size: max(9px, 0.92em);
+  }
+
+  .r-all {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .empty {
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    color: #868686;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ic {
+    position: relative;
+    flex: none;
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .ic-ok {
     width: 100%;
     height: 100%;
   }
 
-  .road {
+  .ic-ok circle {
+    fill: #000000;
+  }
+
+  .ic-ok path {
     fill: none;
-    stroke: var(--highlight);
-    stroke-width: 7;
+    stroke: #ffffff;
+    stroke-width: 1.8;
     stroke-linecap: round;
-    opacity: 0.8;
+    stroke-linejoin: round;
   }
 
-  .road.thin {
-    stroke-width: 4;
-    opacity: 0.6;
+  .ic-spin {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 0.16em solid #dddddd;
+    border-top-color: #276ef1;
+    opacity: 0;
   }
 
-  .pins circle {
-    fill: var(--accent);
-    stroke: var(--surface);
-    stroke-width: 2;
-  }
-
-  .panel {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9em;
-  }
-
-  .query {
-    padding: 0.6em 0.8em;
-    border-radius: 0.6em;
-    background: #16181d;
-    color: #d7dae0;
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    word-break: break-all;
-  }
-
-  .query .verb {
-    color: #8fd18f;
-    margin-right: 0.4em;
-  }
-
-  .query b {
-    color: #ffd27a;
-    font-weight: 500;
-  }
-
-  .row {
+  /* ---------- query time ---------- */
+  .time {
     display: grid;
-    grid-template-columns: 3.6em 1fr 2.6em;
+    gap: 0.4em;
+  }
+
+  .time > .sec-head {
+    display: none;
+  }
+
+  .sw {
+    width: 1.05em;
+    height: 1.05em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .trow {
+    display: grid;
+    grid-template-columns: 3.4em minmax(0, 1fr) 2.7em;
     align-items: center;
     gap: 0.6em;
   }
 
-  .lbl,
-  .v {
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    color: var(--muted);
+  .tl {
+    color: #5e5e5e;
   }
 
-  .bar {
-    height: 1.3em;
-    border-radius: 0.3em;
-    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  .track {
+    position: relative;
+    height: 0.62em;
+    border-radius: 999px;
+    background: #eeeeee;
     overflow: hidden;
   }
 
-  .bar i {
+  .track b {
+    position: absolute;
+    inset: 0;
+  }
+
+  .track i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    border-radius: 999px;
+    background: #a6a6a6;
+    transition: width 0.3s ease;
+  }
+
+  .t-after .track i {
+    width: 60%;
+    background: #000000;
+  }
+
+  .val {
+    --ms-n: 10;
     display: block;
-    height: 100%;
-    width: 0;
-    background: color-mix(in srgb, var(--ink) 28%, transparent);
-    transition: width 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+    font-family: var(--ms-mono);
+    font-weight: 600;
+    text-align: right;
+    transition: opacity 0.2s ease;
   }
 
-  .bar.after i {
-    background: var(--accent);
+  .t-after .val {
+    --ms-n: 6;
   }
 
-  .row.is-on .bar i {
-    width: var(--w);
+  .val::before {
+    counter-reset: ms var(--ms-n);
+    content: counter(ms, ms-x);
   }
 
-  .notes {
-    display: flex;
-    flex-wrap: wrap;
+  .win {
+    display: inline-flex;
+    align-items: center;
     gap: 0.4em;
+    padding: 0.32em 0.75em 0.32em 0.5em;
+    border-radius: 999px;
+    background: #eaf6ed;
+    color: #166c3b;
+    font-weight: 500;
   }
 
-  .notes span {
+  .win svg {
+    flex: none;
+    width: 1.05em;
+    height: 1.05em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .win b {
+    font-weight: 700;
+  }
+
+  .chips {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.35em;
+  }
+
+  .chips span {
     padding: 0.2em 0.7em;
     border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    font-family: var(--font-mono);
-    font-size: 0.85em;
+    background: #eeeeee;
+    color: #282828;
+    font-size: max(9px, 0.88em);
+    font-weight: 500;
   }
 
-  .delta {
-    align-self: flex-start;
-    padding: 0.35em 0.9em;
+  /* ---------- map in the rider app style ---------- */
+  .map {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: #ececec;
+    container-type: size;
+  }
+
+  /* Sits a little high so the box clears the illustration tag in the bottom right corner. */
+  .fg {
+    --fw: min(96cqw, 80cqh * 5 / 3);
+    position: absolute;
+    left: 50%;
+    top: max(3px, 50cqh - var(--fw) * 0.3 - 12px);
+    width: var(--fw);
+    aspect-ratio: 5 / 3;
+    translate: -50% 0;
+  }
+
+  .fg svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .streets {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2.6;
+  }
+
+  .park {
+    fill: #d6e9cf;
+  }
+
+  .art-case,
+  .art,
+  .hwy-case,
+  .hwy {
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .art-case {
+    stroke: #d9d9d9;
+    stroke-width: 6.6;
+  }
+
+  .art {
+    stroke: #ffffff;
+    stroke-width: 5;
+  }
+
+  .hwy-case {
+    stroke: #cfcfcf;
+    stroke-width: 9.4;
+  }
+
+  .hwy {
+    stroke: #ffffff;
+    stroke-width: 7.4;
+  }
+
+  .hx {
+    fill: #276ef1;
+    fill-opacity: var(--lv);
+    stroke: #ffffff;
+    stroke-width: 1.1;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: opacity 0.3s ease, transform 0.3s ease, fill 0.3s ease, fill-opacity 0.3s ease;
+  }
+
+  .l0 {
+    --lv: 0.14;
+  }
+
+  .l1 {
+    --lv: 0.25;
+  }
+
+  .l2 {
+    --lv: 0.38;
+  }
+
+  .l3 {
+    --lv: 0.54;
+  }
+
+  .route-halo,
+  .route {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .route-halo {
+    stroke: #ffffff;
+    stroke-width: 6.4;
+  }
+
+  .route {
+    stroke: #000000;
+    stroke-width: 3.6;
+  }
+
+  .pin {
+    fill: #000000;
+  }
+
+  .pin-dot {
+    fill: #ffffff;
+  }
+
+  .shim {
+    position: absolute;
+    left: 11.33%;
+    top: 14.44%;
+    width: 78.67%;
+    height: 74.44%;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .shim::before {
+    content: '';
+    position: absolute;
+    inset: 0 -70%;
+    background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.7) 50%, transparent 62%);
+    transform: translateX(-35%);
+  }
+
+  .bbox-wrap {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bbox {
+    position: absolute;
+    left: 11.33%;
+    top: 14.44%;
+    width: 78.67%;
+    height: 74.44%;
+    border: 1.5px dashed #000000;
+    background: rgb(0 0 0 / 0.025);
+  }
+
+  .hd {
+    position: absolute;
+    width: 0.55em;
+    height: 0.55em;
+    margin: -0.3em;
+    border: 1.5px solid #000000;
+    background: #ffffff;
+  }
+
+  .hd.a {
+    left: 0;
+    top: 0;
+  }
+
+  .hd.b {
+    right: 0;
+    top: 0;
+    margin-right: -0.3em;
+  }
+
+  .hd.c {
+    left: 0;
+    bottom: 0;
+    margin-bottom: -0.3em;
+  }
+
+  .hd.d {
+    right: 0;
+    bottom: 0;
+    margin-right: -0.3em;
+    margin-bottom: -0.3em;
+  }
+
+  .bbox-tag {
+    position: absolute;
+    left: -1.5px;
+    bottom: 100%;
+    margin-bottom: 0.45em;
+    padding: 0.05em 0.45em;
+    border-radius: 4px;
+    background: #000000;
+    color: #ffffff;
+    font-family: var(--ms-mono);
+    font-size: max(9px, 0.85em);
+    line-height: 1.5;
+  }
+
+  .zoom {
+    position: absolute;
+    top: 0.75em;
+    right: 0.75em;
+    display: none;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 1px 4px hsl(0 0% 0% / 0.16);
+  }
+
+  .zoom span {
+    display: grid;
+    place-items: center;
+    width: 2.1em;
+    height: 2.1em;
+  }
+
+  .zoom span + span {
+    border-top: 1px solid #eeeeee;
+  }
+
+  .zoom svg {
+    width: 0.85em;
+    height: 0.85em;
+    fill: none;
+    stroke: #000000;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  @container (min-height: 230px) {
+    .zoom {
+      display: block;
+    }
+  }
+
+  /* Map status, shown only while a query runs. */
+  .toast-wrap {
+    position: absolute;
+    left: 0.75em;
+    bottom: 0.75em;
+    z-index: 3;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.45em 0.85em 0.45em 0.6em;
     border-radius: 999px;
-    background: var(--ink);
-    color: var(--bg);
-    font-family: var(--font-mono);
+    background: #000000;
+    color: #ffffff;
+    box-shadow: 0 4px 16px hsl(0 0% 0% / 0.16);
+    font-size: max(9px, 0.92em);
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(0.4em);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .t-ic {
+    position: relative;
+    flex: none;
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .t-spin {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 0.16em solid rgb(255 255 255 / 0.28);
+    border-top-color: #ffffff;
+  }
+
+  .t-ok {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #06c167;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+  }
+
+  .t-txt {
+    display: none;
+  }
+
+  .pg::before {
+    counter-reset: pg var(--ms-p);
+    content: counter(pg);
+  }
+
+  /* ---------- pointer ---------- */
+  .cur {
+    position: absolute;
+    z-index: 5;
+    width: 1.3em;
+    height: 1.95em;
+    margin: -0.1em 0 0 -0.1em;
+    pointer-events: none;
+    opacity: 0;
+    transform-origin: 0.1em 0.1em;
+    filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.35));
+  }
+
+  .cur svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cur path {
+    fill: #000000;
+    stroke: #ffffff;
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+  }
+
+  .cur-run {
+    left: 58%;
+    top: 58%;
+  }
+
+  .cur-drag {
+    left: 100%;
+    top: 100%;
+  }
+
+  /* ---------- wide boxes: console beside the map ---------- */
+  @container (min-width: 540px) {
+    .demo-map {
+      font-size: clamp(9px, 1.62cqw, 13px);
+    }
+
+    .body {
+      grid-template-columns: min(28em, 47%) minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr);
+    }
+
+    .console {
+      gap: 1.05em;
+      padding: 1em 1.1em;
+      border-bottom: 0;
+      border-right: 1px solid #e8e8e8;
+    }
+
+    .req {
+      grid-template-areas: 'lbl run' 'field field';
+      align-items: center;
+      row-gap: 0.55em;
+    }
+
+    .req-lbl,
+    .u-path,
+    .u-line {
+      display: block;
+    }
+
+    .u-bbox-w {
+      display: inline-block;
+    }
+
+    .u-bbox-c {
+      display: none;
+    }
+
+    .field {
+      min-height: calc(4 * 1.5em + 0.9em);
+    }
+
+    .url {
+      padding-top: 0.05em;
+    }
+
+    .url wbr {
+      display: none;
+    }
+
+    .time {
+      margin-top: auto;
+      padding-top: 0.9em;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .resp {
+      display: block;
+    }
+
+    .rows {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: calc(4 * 2.1 * max(9px, 0.92em) + 3 * 0.35em);
+    }
+
+    .time > .sec-head {
+      display: flex;
+    }
+
+    .chips {
+      display: flex;
+    }
+  }
+
+  @container (min-width: 540px) and (max-height: 400px) {
+    .rows {
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(2 * 2.1 * max(9px, 0.92em) + 0.35em);
+    }
+  }
+
+  @container (max-width: 539px) and (min-height: 300px) {
+    .chips {
+      display: flex;
+    }
+  }
+
+  @container (max-width: 299px) {
+    .ava {
+      display: none;
+    }
+  }
+
+  /* ---------- the timeline (see data-at on the markers above) ---------- */
+
+  /* Hidden until their moment while the loop runs. With every step on, all of it shows. */
+  .demo-map:global(.seq-on):not(:has(.m-drag:global(.is-on))) .bbox {
+    opacity: 0;
+  }
+
+  .demo-map:global(.seq-on):has(.m-drag:global(.is-on)) .bbox {
+    animation: ms-drag 1.5s cubic-bezier(0.5, 0, 0.2, 1) both;
+  }
+
+  .demo-map:global(.seq-on):has(.m-drag:global(.is-on)) .cur-drag {
+    animation: ms-drag-cur 1.9s ease both;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-drag:global(.is-on))) .bbox-tag {
+    opacity: 0;
+  }
+
+  .demo-map:global(.seq-on):has(.m-drag:global(.is-on)) .bbox-tag {
+    animation: ms-fade 0.3s ease 1.35s both;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-bbox:global(.is-on))) :is(.u-bbox-w, .u-bbox-c) {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .demo-map:global(.seq-on):has(.m-bbox:global(.is-on)) :is(.u-bbox-w, .u-bbox-c) {
+    animation: ms-type 0.5s steps(var(--n), end) both;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-edit:global(.is-on))) .new {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .demo-map:global(.seq-on):has(.m-edit:global(.is-on)) .u-page {
+    animation: ms-type 0.6s steps(var(--n), end) both;
+  }
+
+  .demo-map:global(.seq-on):has(.m-edit:global(.is-on)) .u-fields {
+    animation: ms-type 0.6s steps(var(--n), end) 0.65s both;
+  }
+
+  /* Two clicks on Run, each with a press. */
+  .demo-map:global(.seq-on):has(.m-click1:global(.is-on)) .cur-run {
+    animation: ms-click 1.1s ease both;
+  }
+
+  .demo-map:global(.seq-on):has(.m-click1:global(.is-on)) .run {
+    animation: ms-press 1.1s ease both;
+  }
+
+  .demo-map:global(.seq-on):has(.m-click2:global(.is-on)) .cur-run {
+    animation: ms-click-again 1.1s ease both;
+  }
+
+  .demo-map:global(.seq-on):has(.m-click2:global(.is-on)) .run {
+    animation: ms-press-again 1.1s ease both;
+  }
+
+  /* Loading: spinner in the button, shimmer over the box. */
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-land1:global(.is-on))) .run-txt,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)):not(:has(.m-p4:global(.is-on))) .run-txt {
+    opacity: 0;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-land1:global(.is-on))) .spin,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)):not(:has(.m-p4:global(.is-on))) .spin {
+    opacity: 1;
+    animation: ms-spin 0.7s linear infinite;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-land1:global(.is-on))) .shim,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)):not(:has(.m-p4:global(.is-on))) .shim {
+    opacity: 1;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-land1:global(.is-on))) .shim::before,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)):not(:has(.m-p4:global(.is-on))) .shim::before {
+    animation: ms-sweep 1.2s ease-in-out infinite;
+  }
+
+  /* Response rows: one long wait for the entire result set, then pages. */
+  .demo-map:global(.seq-on):not(:has(.m-run1:global(.is-on))) .empty {
+    opacity: 1;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-edit:global(.is-on))) .r-all {
+    opacity: 1;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-land1:global(.is-on))) .r-all .ic-ok {
+    opacity: 0;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-land1:global(.is-on))) .r-all .ic-spin {
+    opacity: 1;
+    animation: ms-spin 0.7s linear infinite;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-land1:global(.is-on))) .r-all .meta {
+    opacity: 0;
+  }
+
+  /* Map toast: the long wait, the single response, then the page count. */
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-edit:global(.is-on))) .toast,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)):not(:has(.m-p4:global(.is-on))) .toast {
+    opacity: 1;
+    transform: none;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-land1:global(.is-on))) .t-all,
+  .demo-map:global(.seq-on):has(.m-land1:global(.is-on)):not(:has(.m-edit:global(.is-on))) .t-one,
+  .demo-map:global(.seq-on):has(.m-edit:global(.is-on)) .t-page {
+    display: inline;
+  }
+
+  .demo-map:global(.seq-on):has(.m-land1:global(.is-on)):not(:has(.m-edit:global(.is-on))) .t-spin {
+    opacity: 0;
+  }
+
+  .demo-map:global(.seq-on):has(.m-land1:global(.is-on)):not(:has(.m-edit:global(.is-on))) .t-ok {
+    opacity: 1;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-land1:global(.is-on))) .t-spin,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)):not(:has(.m-p4:global(.is-on))) .t-spin {
+    animation: ms-spin 0.7s linear infinite;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)) .pg {
+    animation: ms-pages 2.4s step-end both;
+  }
+
+  /* The timers run at the same speed. Before stops at 1.0x, after at 0.6x. */
+  .demo-map:global(.seq-on):not(:has(.m-run1:global(.is-on))) .t-before .track i,
+  .demo-map:global(.seq-on):not(:has(.m-run2:global(.is-on))) .t-after .track i {
+    width: 0;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)) .t-before .track i {
+    transition: width 4s linear;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)) .t-after .track i {
+    transition: width 2.4s linear;
+  }
+
+  .demo-map:global(.seq-on):not(:has(.m-run1:global(.is-on))) .t-before .val,
+  .demo-map:global(.seq-on):not(:has(.m-run2:global(.is-on))) .t-after .val {
+    opacity: 0;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)) .t-before .val {
+    animation: ms-count-10 4s steps(10, end) both;
+  }
+
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)) .t-after .val {
+    animation: ms-count-6 2.4s steps(6, end) both;
+  }
+
+  /* Regions: gray placeholders while a query runs. The single response colors every cell at once,
+     the cells clear, then each page colors its own band. */
+  .demo-map:global(.seq-on):not(:has(.m-run1:global(.is-on))) .hx,
+  .demo-map:global(.seq-on):has(.m-edit:global(.is-on)):not(:has(.m-run2:global(.is-on))) .hx {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  .demo-map:global(.seq-on):has(.m-run1:global(.is-on)):not(:has(.m-land1:global(.is-on))) .hx,
+  .demo-map:global(.seq-on):has(.m-run2:global(.is-on)) .hx {
+    fill: #b4b4b4;
+    fill-opacity: 0.32;
+  }
+
+  .demo-map:global(.seq-on):has(.m-p1:global(.is-on)) .hx.p1,
+  .demo-map:global(.seq-on):has(.m-p2:global(.is-on)) .hx.p2,
+  .demo-map:global(.seq-on):has(.m-p3:global(.is-on)) .hx.p3,
+  .demo-map:global(.seq-on):has(.m-p4:global(.is-on)) .hx.p4 {
+    fill: #276ef1;
+    fill-opacity: var(--lv);
+    transition-delay: calc(var(--k) * 18ms);
+  }
+
+  /* End of the loop: changing parts fade out together, then fade back in once reset. */
+  .dyn {
+    transition: opacity 0.45s ease 0.5s;
+  }
+
+  .demo-map:global(.seq-on):has(.m-out:global(.is-on)) .dyn {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* The box hides itself on reset, so its layer can return at once for the next drag. */
+  .bbox-wrap {
+    transition: opacity 0.3s ease;
+  }
+
+  .win {
+    transform-origin: left center;
+  }
+
+  @keyframes ms-drag {
+    0%,
+    12% {
+      width: 0;
+      height: 0;
+      opacity: 1;
+    }
+
+    88%,
+    100% {
+      width: 78.67%;
+      height: 74.44%;
+      opacity: 1;
+    }
+  }
+
+  @keyframes ms-drag-cur {
+    0% {
+      opacity: 0;
+      transform: translate(0.6em, 0.8em);
+    }
+
+    6% {
+      opacity: 1;
+      transform: none;
+    }
+
+    9%,
+    70% {
+      opacity: 1;
+      transform: scale(0.86);
+    }
+
+    75%,
+    86% {
+      opacity: 1;
+      transform: none;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(0.5em, 0.6em);
+    }
+  }
+
+  @keyframes ms-fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes ms-type {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes ms-click {
+    0% {
+      opacity: 0;
+      transform: translate(-0.8em, 1.9em);
+    }
+
+    30% {
+      opacity: 1;
+      transform: none;
+    }
+
+    36%,
+    42% {
+      opacity: 1;
+      transform: scale(0.86);
+    }
+
+    50%,
+    80% {
+      opacity: 1;
+      transform: none;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(0.5em, 0.7em);
+    }
+  }
+
+  @keyframes ms-click-again {
+    0% {
+      opacity: 0;
+      transform: translate(-0.8em, 1.9em);
+    }
+
+    30% {
+      opacity: 1;
+      transform: none;
+    }
+
+    36%,
+    42% {
+      opacity: 1;
+      transform: scale(0.86);
+    }
+
+    50%,
+    80% {
+      opacity: 1;
+      transform: none;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(0.5em, 0.7em);
+    }
+  }
+
+  @keyframes ms-press {
+    0%,
+    33% {
+      background: #000000;
+      transform: none;
+    }
+
+    37%,
+    44% {
+      background: #4b4b4b;
+      transform: scale(0.95);
+    }
+
+    54%,
+    100% {
+      background: #000000;
+      transform: none;
+    }
+  }
+
+  @keyframes ms-press-again {
+    0%,
+    33% {
+      background: #000000;
+      transform: none;
+    }
+
+    37%,
+    44% {
+      background: #4b4b4b;
+      transform: scale(0.95);
+    }
+
+    54%,
+    100% {
+      background: #000000;
+      transform: none;
+    }
+  }
+
+  @keyframes ms-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes ms-sweep {
+    from {
+      transform: translateX(-35%);
+    }
+
+    to {
+      transform: translateX(35%);
+    }
+  }
+
+  @keyframes ms-count-10 {
+    from {
+      --ms-n: 0;
+    }
+
+    to {
+      --ms-n: 10;
+    }
+  }
+
+  @keyframes ms-pages {
+    0% {
+      --ms-p: 1;
+    }
+
+    25% {
+      --ms-p: 2;
+    }
+
+    50% {
+      --ms-p: 3;
+    }
+
+    75%,
+    100% {
+      --ms-p: 4;
+    }
+  }
+
+  @keyframes ms-count-6 {
+    from {
+      --ms-n: 0;
+    }
+
+    to {
+      --ms-n: 6;
+    }
   }
 </style>

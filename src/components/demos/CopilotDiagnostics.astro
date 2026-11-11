@@ -1,232 +1,1680 @@
 ---
-// Illustrative reconstruction of the diagnostics flow, not the shipped UI.
+// Diagnostics in Copilot Tasks, drawn after the Copilot app on Windows 11 in dark mode. Not the shipped UI.
+// Copilot writes a read-only PowerShell diagnostic, asks before it runs anything, runs it on the PC, explains
+// what it found, and asks again before it changes a setting. Wide frames split into a local workspace pane and
+// the chat (like Copilot Actions). Smaller frames keep one chat column that scrolls to the newest message.
+// Default styles are the finished state, so no-JS, reduced motion and the stopped loop all show the end of the
+// story. Earlier states only apply while the loop runs (.seq-on), keyed off empty marker steps (.m).
+
+const cycle = 17000;
+const T = {
+  type: 200,
+  send: 1150,
+  user: 1300,
+  think1: 1550,
+  script: 1650,
+  r1: 2050,
+  title: 2300,
+  consent: 2950,
+  ptr1: 4300,
+  press1: 5000,
+  allowed: 5250,
+  term: 5500,
+  runs: [
+    { cmd: 5700, out: 6300 },
+    { cmd: 6550, out: 7350 },
+    { cmd: 7600, out: 8300 },
+  ],
+  done: 8600,
+  think2: 8700,
+  r2: 9100,
+  chips: 10050,
+  ptr2: 10400,
+  press2: 10950,
+  approve: 11250,
+  ptr3: 12250,
+  press3: 12850,
+  chg1: 12950,
+  chg2: 13250,
+  chgDone: 13500,
+  off: 13350,
+  applied: 13550,
+  r3: 13800,
+  outro: 16500,
+};
+
+const label =
+  'Illustration in the style of the Copilot app on Windows 11 in dark mode. Someone says their Wi-Fi keeps dropping. Copilot asks to run a read-only diagnostic on the PC, runs a PowerShell script locally that finds 12 disconnects in 24 hours caused by power saving, then asks for approval before it turns that setting off.';
+const ask = 'my wifi keeps dropping every few minutes';
+const reply1 = 'I can check this PC’s network adapter and recent connection events with a read-only script that runs on your device.';
+const finding = 'Found it. Windows turns off your Wi-Fi adapter to save power, which matches the 12 drops. I can change that setting, and I’ll ask before I change anything.';
+const doneMsg = 'Done. Your Wi-Fi adapter stays on now.';
+
+// PowerShell token kinds follow PSReadLine's default colors: c command, p parameter, s string, t plain text.
+type Tok = [string, string];
+const runs: { cmd: Tok[]; out: string; at: { cmd: number; out: number } }[] = [
+  {
+    cmd: [["c", "Get-NetAdapter"], ["t", " "], ["p", "-Name"], ["t", " "], ["s", "\"Wi-Fi\""]],
+    out: 'Status : Up',
+    at: T.runs[0],
+  },
+  {
+    cmd: [["c", "Get-NetAdapterPowerManagement"], ["t", " "], ["p", "-Name"], ["t", " "], ["s", "\"Wi-Fi\""]],
+    out: 'AllowComputerToTurnOffDevice : Enabled',
+    at: T.runs[1],
+  },
+  {
+    cmd: [["c", "netsh"], ["t", " wlan show wlanreport"]],
+    out: '12 disconnects in 24 hours, reason: power saving',
+    at: T.runs[2],
+  },
+];
+
+const chars = (toks: Tok[], from = 0) => {
+  let i = from;
+  return toks.flatMap(([k, s]) => [...s].map((ch) => ({ k, ch, i: i++ })));
+};
+const words = (s: string) => s.split(' ').map((w, i) => ({ w: w.replaceAll('-', '\u2011'), i }));
+const typedAsk = chars([["t", ask]]);
+const runChars = runs.map((r) => chars(r.cmd));
+// The wide pane shows the script file Copilot wrote, then runs it. Line 1 is a comment, lines 2 to 4 are the checks.
+const script: Tok[][] = [
+  [["n", "# Read-only checks for Wi-Fi drops"]],
+  runs[0].cmd,
+  [["v", "$pm"], ["t", " "], ["o", "="], ["t", " "], ...runs[1].cmd],
+  runs[2].cmd,
+];
+const scriptStart = script.reduce<number[]>((acc, _line, n) => [...acc, n ? acc[n - 1] + chars(script[n - 1]).length + 8 : 0], []);
+const scriptChars = script.map((line, n) => chars(line, scriptStart[n]));
+const launch = chars([["t", ".\\diagnose-wifi.ps1"]]);
+// The fix runs only after the person approves it.
+const change = [
+  chars([["v", "$pm"], ["t", ".AllowComputerToTurnOffDevice"], ["t", " "], ["o", "="], ["t", " "], ["s", "\"Disabled\""]]),
+  chars([["v", "$pm"], ["t", " "], ["o", "|"], ["t", " "], ["c", "Set-NetAdapterPowerManagement"]]),
+];
+
+// Stroke icons on a 20 unit grid, drawn in the spirit of Fluent system icons.
+const icon = {
+  side: "M3.5 5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2zM8 3.5v13",
+  compose: "M9.5 4H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3.5M8 12l.6-2.6 6.2-6.2a1.4 1.4 0 0 1 2 2L10.6 11.4z",
+  min: "M5 10h10",
+  max: "M6.5 5h7A1.5 1.5 0 0 1 15 6.5v7a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 5 13.5v-7A1.5 1.5 0 0 1 6.5 5z",
+  close: "M5.5 5.5l9 9M14.5 5.5l-9 9",
+  plus: "M10 4.5v11M4.5 10h11",
+  mic: "M10 3.5a2.5 2.5 0 0 1 2.5 2.5v4a2.5 2.5 0 0 1-5 0V6A2.5 2.5 0 0 1 10 3.5zM5.5 9.5a4.5 4.5 0 0 0 9 0M10 14v2.5",
+  send: "M10 15.5v-11M5.5 9 10 4.5 14.5 9",
+  check: "M4.5 10.5l3.6 3.5 7.4-8",
+  shield: "M10 2.8 4.6 4.9v4.4c0 3.4 2.3 6.2 5.4 7.6 3.1-1.4 5.4-4.2 5.4-7.6V4.9z",
+  lock: "M6 9V7a4 4 0 0 1 8 0v2M5.5 9h9a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z",
+  pc: "M3.5 4.5h13a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1zM7 17h6M10 14.5V17",
+  wifi: "M2.8 8a10.4 10.4 0 0 1 14.4 0M5.3 10.7a6.8 6.8 0 0 1 9.4 0M7.9 13.4a3 3 0 0 1 4.2 0",
+  ps: "M5.5 6.5l3.5 3.5-3.5 3.5M10.5 14h4.5",
+  gear: "M10 7.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zM10 2.8v2M10 15.2v2M2.8 10h2M15.2 10h2M4.9 4.9l1.4 1.4M13.7 13.7l1.4 1.4M4.9 15.1l1.4-1.4M13.7 6.3l1.4-1.4",
+};
+const pointer = "M1.2 1.2v15.6l3.9-3.7 2.5 5.8 2.7-1.2-2.5-5.7h5.4z";
 ---
 
-<div class="demo demo-diag" data-seq data-cycle="15000" role="img" aria-label="Illustration: Copilot asks permission, runs a read-only diagnostic script on the PC, and explains the Wi-Fi problem it found.">
+<div class="demo demo-diag" data-seq data-cycle={cycle} role="img" aria-label={label}>
   <div class="win">
-    <div class="win-bar">
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="win-title">Copilot</span>
+    <div class="bar">
+      <span class="cp-brand"><i class="mark"></i><b>Copilot</b></span>
+      <svg class="cp-ico bar-ico" viewBox="0 0 20 20"><path d={icon.side} /></svg>
+      <svg class="cp-ico bar-ico" viewBox="0 0 20 20"><path d={icon.compose} /></svg>
+      <span class="bar-title">Wi-Fi keeps dropping</span>
+      <span class="caps">
+        <span class="cap"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.min} /></svg></span>
+        <span class="cap"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.max} /></svg></span>
+        <span class="cap"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.close} /></svg></span>
+      </span>
+      <i class="m m-title" data-step data-at={T.title}></i>
     </div>
-    <div class="chat">
-      <div class="msg user" data-step data-at="300">my wifi keeps dropping every few minutes</div>
-      <div class="msg bot" data-step data-at="1500">I can check this PC's network adapter and recent connection events. It's a read-only script that runs on your device.</div>
-      <div class="consent" data-step data-at="3200">
-        <div class="consent-title">Run a diagnostic on this PC?</div>
-        <div class="consent-row"><span>reads</span> adapter status, power settings, 24h of Wi-Fi events</div>
-        <div class="consent-row"><span>changes</span> nothing</div>
-        <div class="consent-actions">
-          <span class="btn primary allow">Allow once<span class="cursor" data-step data-at="4500" aria-hidden="true"></span></span>
-          <span class="btn">Not now</span>
+
+    <div class="cp-body">
+      <section class="pane">
+        <div class="pane-head">
+          <svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.pc} /></svg>
+          <b>This PC</b>
+          <span class="pstat fade">
+            <span class="pst p-wait1"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.lock} /></svg>Waiting for your OK</span>
+            <span class="pst p-run"><i class="spinner"></i>Running</span>
+            <span class="pst p-fin"><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg>Finished, nothing changed</span>
+            <span class="pst p-wait2"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.lock} /></svg>Waiting for your OK</span>
+            <span class="pst p-apply"><i class="spinner"></i>Changing 1 setting</span>
+            <span class="pst p-fixed"><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg>1 change, approved by you</span>
+          </span>
         </div>
-      </div>
-      <div class="term" data-step data-at="5600">
-        <div data-step data-at="5900"><b>&gt;</b> Get-NetAdapter -Name "Wi-Fi"</div>
-        <div class="out" data-step data-at="6700">Status Up · driver 22.250.1.2</div>
-        <div data-step data-at="7500"><b>&gt;</b> netsh wlan show wlanreport</div>
-        <div class="out" data-step data-at="8400">12 disconnects · reason: power saving</div>
-      </div>
-      <div class="msg bot" data-step data-at="9600">Found it: Windows is switching your Wi-Fi adapter off to save power. Want me to change that setting for you? I'll ask before I touch anything.</div>
-      <div class="chips" data-step data-at="11200"><span class="btn primary">Fix it</span><span class="btn">Show me how</span></div>
+        <div class="code fade" data-step data-at={T.script}>
+          <p class="code-head"><span class="file">diagnose-wifi.ps1</span><span class="by">written by Copilot</span><span class="ro-tag">Read-only</span></p>
+          <div class="code-body">
+            {scriptChars.map((line, n) => (
+              <p class="sl" data-step data-at={T.script}>
+                <span class="ln">{n + 1}</span>
+                <span class="code-src">{line.map((c) => <span class={`ch k-${c.k}`} style={`--i:${c.i}`}>{c.ch}</span>)}</span>
+                {n > 0 && <i class="m m-cmd" data-step data-at={runs[n - 1].at.cmd}></i>}
+                {n > 0 && <i class="m m-out" data-step data-at={runs[n - 1].at.out}></i>}
+              </p>
+            ))}
+          </div>
+        </div>
+        <div class="wt">
+          <div class="wt-tabs"><span class="wt-tab"><span class="ps-ico"><svg viewBox="0 0 20 20"><path d={icon.ps} /></svg></span>PowerShell</span></div>
+          <div class="wt-body fade">
+            <p class="locked"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.lock} /></svg>Nothing runs until you allow it.</p>
+            <p class="pl" data-step data-at={T.term}><span class="gut"></span><span class="tx"><span class="pr">PS&gt; </span>{launch.map((c) => <span class="ch k-t" style={`--i:${c.i}`}>{c.ch}</span>)}</span></p>
+            {runs.map((r) => (
+              <p class="pl res-row" data-step data-at={r.at.cmd}>
+                <span class="gut"><i class="spinner"></i><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg></span>
+                <span class="res-text"><span class="pending">{r.cmd[0][1]}</span><span class="result">{r.out}</span></span>
+                <i class="m m-out" data-step data-at={r.at.out}></i>
+              </p>
+            ))}
+            {change.map((line, n) => (
+              <p class="pl chg" data-step data-at={n ? T.chg2 : T.done}>
+                <span class="gut"><i class="spinner"></i><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg></span>
+                <span class="tx"><span class="pr">PS&gt; </span>{n === 0 && <i class="caret"></i>}<span class="typed">{line.map((c) => <span class={`ch k-${c.k}`} style={`--i:${c.i}`}>{c.ch}</span>)}</span></span>
+                <i class="m m-go" data-step data-at={n ? T.chg2 : T.chg1}></i>
+                <i class="m m-ok" data-step data-at={n ? T.chgDone : T.chg2}></i>
+              </p>
+            ))}
+            <p class="pl" data-step data-at={T.chgDone}><span class="gut"></span><span class="tx"><span class="pr">PS&gt; </span><i class="caret"></i></span></p>
+          </div>
+        </div>
+        <i class="m pm-consent" data-step data-at={T.consent}></i>
+        <i class="m pm-allowed" data-step data-at={T.allowed}></i>
+        <i class="m pm-done" data-step data-at={T.done}></i>
+        <i class="m pm-approve" data-step data-at={T.approve}></i>
+        <i class="m pm-press" data-step data-at={T.press3}></i>
+        <i class="m pm-applied" data-step data-at={T.applied}></i>
+      </section>
+
+      <section class="col">
+        <i class="m m-hello" data-step data-at={T.user}></i>
+        <p class="hello"><span class="hello-big">What’s on your mind?</span></p>
+        <div class="chat fade">
+          <div class="cp-item you" data-step data-at={T.user}>
+            <div class="in"><p class="bubble">{ask}</p></div>
+          </div>
+
+          <div class="cp-item think t1" data-step data-at={T.think1}>
+            <div class="in"><p class="thinking"><i class="mark"></i><span class="shim">Thinking</span></p></div>
+          </div>
+
+          <div class="cp-item say r1" data-step data-at={T.r1}>
+            <div class="in"><p class="stream">{words(reply1).map((w) => <span class="cp-w" style={`--i:${w.i}`}>{w.w} </span>)}</p></div>
+          </div>
+
+          <div class="cp-item cp-ask consent" data-step data-at={T.consent}>
+            <div class="in">
+              <div class="cp-card">
+                <span class="ring"></span>
+                <p class="cp-card-title"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.shield} /></svg>Run a diagnostic on this PC?</p>
+                <dl class="perm">
+                  <dt>Reads</dt>
+                  <dd>adapter status, power settings, 24 hours of Wi-Fi events</dd>
+                  <dt>Changes</dt>
+                  <dd class="nothing">nothing</dd>
+                </dl>
+                <div class="decide">
+                  <div class="acts">
+                    <span class="press-wrap"><span class="btn pri">Allow once<i class="ripple"></i></span><svg class="ptr" viewBox="0 0 14 21"><path d={pointer} /></svg></span>
+                    <span class="btn">Not now</span>
+                  </div>
+                  <p class="decided"><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg>Allowed once</p>
+                </div>
+              </div>
+              <i class="m m-ptr" data-step data-at={T.ptr1}></i>
+              <i class="m m-press" data-step data-at={T.press1}></i>
+              <i class="m m-res" data-step data-at={T.allowed}></i>
+            </div>
+          </div>
+
+          <div class="cp-item term-item" data-step data-at={T.term}>
+            <div class="in">
+              <div class="term">
+                <p class="term-head">
+                  <span class="ps-ico"><svg viewBox="0 0 20 20"><path d={icon.ps} /></svg></span><b>PowerShell</b><span class="where">on this PC</span>
+                  <span class="tstat">
+                    <span class="ts-run"><i class="spinner"></i>Running</span>
+                    <span class="ts-done"><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg>Read-only, 3 checks</span>
+                  </span>
+                </p>
+                <div class="fold">
+                  <div class="console">
+                    {runs.map((r, n) => (
+                      <div class="run">
+                        <p class="cl" data-step data-at={r.at.cmd}>
+                          <span class="gut"><i class="spinner"></i><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg></span>
+                          <span class="tx"><span class="pr">PS&gt; </span>{runChars[n].map((c) => <span class={`ch k-${c.k}`} style={`--i:${c.i}`}>{c.ch}</span>)}</span>
+                        </p>
+                        <p class="cl out" data-step data-at={r.at.out}><span class="gut"></span><span class="tx">{r.out}</span></p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <i class="m m-done" data-step data-at={T.done}></i>
+              <i class="m m-fold" data-step data-at={T.chips}></i>
+            </div>
+          </div>
+
+          <div class="cp-item steps-item" data-step data-at={T.term}>
+            <div class="in">
+              <p class="steps">
+                <span class="ring"></span>
+                <span class="ts-run"><i class="spinner"></i>Running a read-only diagnostic on this PC</span>
+                <span class="ts-done"><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg>Ran a read-only diagnostic on this PC</span>
+              </p>
+              <i class="m m-done" data-step data-at={T.done}></i>
+            </div>
+          </div>
+
+          <div class="cp-item think t2" data-step data-at={T.think2}>
+            <div class="in"><p class="thinking"><i class="mark"></i><span class="shim">Reading the results</span></p></div>
+          </div>
+
+          <div class="cp-item say r2" data-step data-at={T.r2}>
+            <div class="in"><p class="stream">{words(finding).map((w) => <span class="cp-w" style={`--i:${w.i}`}>{w.w} </span>)}</p></div>
+          </div>
+
+          <div class="cp-item chips-item" data-step data-at={T.chips}>
+            <div class="in">
+              <div class="chips">
+                <span class="press-wrap"><span class="btn pri fix">Fix it<i class="ripple"></i></span><svg class="ptr" viewBox="0 0 14 21"><path d={pointer} /></svg></span>
+                <span class="btn how">Show me how</span>
+              </div>
+              <i class="m m-ptr" data-step data-at={T.ptr2}></i>
+              <i class="m m-press" data-step data-at={T.press2}></i>
+              <i class="m m-res" data-step data-at={T.approve}></i>
+            </div>
+          </div>
+
+          <div class="cp-item cp-ask approve" data-step data-at={T.approve}>
+            <div class="in">
+              <div class="cp-card">
+                <span class="ring"></span>
+                <p class="cp-card-title"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.gear} /></svg>Change this setting?</p>
+                <div class="setting">
+                  <svg class="cp-ico set-ico" viewBox="0 0 20 20"><path d={icon.wifi} /><circle cx="10" cy="15.9" r="1" /></svg>
+                  <span class="set-text">
+                    <span class="set-label">Allow the computer to turn off this device to save power</span>
+                    <span class="set-sub">Wi-Fi adapter, power management</span>
+                  </span>
+                  <span class="set-state"><span class="st-on">On</span><span class="st-off">Off</span></span>
+                  <span class="tgl"><i class="knob"></i></span>
+                </div>
+                <div class="decide">
+                  <div class="acts">
+                    <span class="press-wrap"><span class="btn pri">Approve<i class="ripple"></i></span><svg class="ptr" viewBox="0 0 14 21"><path d={pointer} /></svg></span>
+                    <span class="btn">Cancel</span>
+                  </div>
+                  <p class="decided"><svg class="cp-ico ok" viewBox="0 0 20 20"><path d={icon.check} /></svg>Changed with your approval</p>
+                </div>
+              </div>
+              <i class="m m-ptr" data-step data-at={T.ptr3}></i>
+              <i class="m m-press" data-step data-at={T.press3}></i>
+              <i class="m m-off" data-step data-at={T.off}></i>
+              <i class="m m-res" data-step data-at={T.applied}></i>
+            </div>
+          </div>
+
+          <div class="cp-item say r3" data-step data-at={T.r3}>
+            <div class="in"><p class="stream">{words(doneMsg).map((w) => <span class="cp-w" style={`--i:${w.i}`}>{w.w} </span>)}</p></div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <span class="c-btn"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.plus} /></svg></span>
+          <span class="c-field">
+            <span class="c-ph">Message Copilot</span>
+            <span class="c-typed">{typedAsk.map((c) => <span class="ch" style={`--i:${c.i}`}>{c.ch}</span>)}</span>
+          </span>
+          <span class="c-btn c-act">
+            <svg class="cp-ico c-mic" viewBox="0 0 20 20"><path d={icon.mic} /></svg>
+            <span class="c-send"><svg class="cp-ico" viewBox="0 0 20 20"><path d={icon.send} /></svg></span>
+          </span>
+          <i class="m m-type" data-step data-at={T.type}></i>
+          <i class="m m-send" data-step data-at={T.send}></i>
+        </div>
+        <p class="fine">Copilot uses AI. Check for mistakes.</p>
+      </section>
     </div>
   </div>
+  <i class="m m-outro" data-step data-at={T.outro}></i>
   <span class="illustration-tag">illustration</span>
 </div>
 
 <style>
+  /* Palette from the Copilot app on Windows (dark), Windows 11 Mica and Fluent, and the Windows Terminal
+     Campbell scheme. Prefixed so the site's own variables (and the illustration tag) are untouched. */
   .demo-diag {
+    --cp-ink: #f5ece8;
+    --cp-ink-2: #aaa4ae;
+    --cp-ink-3: #77727d;
+    --cp-line: rgba(255, 255, 255, 0.1);
+    --cp-bubble: #1e2535;
+    --cp-card: #121723;
+    --cp-raised: #1a1f2c;
+    --cp-btn: #262b38;
+    --cp-btn-pri: #e4e6f2;
+    --cp-btn-pri-ink: #1b1a21;
+    --cp-accent: #4cc2ff;
+    --cp-ok: #6ccb5f;
+    --cp-term: #0c0c0c;
+    --cp-gap: 0.85em;
+    --cp-ease: cubic-bezier(0.2, 0.75, 0.25, 1);
+    --cp-ui: 'Segoe UI Variable Text', 'Segoe UI', 'Inter Variable', Inter, system-ui, sans-serif;
+    --cp-mono: 'Cascadia Mono', 'Cascadia Code', Consolas, 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+    --cp-pad: clamp(6px, 2.4cqmin, 20px);
+
     position: relative;
     width: 100%;
     height: 100%;
-    display: grid;
-    place-items: center;
-    padding: 4.5cqh 6cqw;
-    font-size: clamp(9px, 2.15cqw, 17px);
-    line-height: 1.35;
-    background:
-      radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 45%),
-      radial-gradient(circle at 90% 85%, color-mix(in srgb, var(--highlight) 35%, transparent), transparent 45%),
-      var(--bg-soft);
     overflow: hidden;
+    padding: var(--cp-pad);
+    font-family: var(--cp-ui);
+    font-size: clamp(9px, 2.1cqw, 16px);
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--cp-ink);
+    text-align: left;
+    -webkit-font-smoothing: antialiased;
+    /* Windows 11 dark desktop: a blue bloom behind the window. */
+    background:
+      radial-gradient(70% 62% at 84% 112%, rgba(52, 116, 255, 0.85), transparent 70%),
+      radial-gradient(52% 50% at 4% -6%, rgba(28, 84, 228, 0.6), transparent 72%),
+      radial-gradient(34% 46% at 104% 14%, rgba(128, 96, 255, 0.38), transparent 70%),
+      linear-gradient(160deg, #071234, #030611 62%);
   }
 
+  .demo-diag *,
+  .demo-diag *::before,
+  .demo-diag *::after {
+    box-sizing: border-box;
+  }
+
+  .demo-diag p,
+  .demo-diag dl,
+  .demo-diag dd {
+    margin: 0;
+  }
+
+  .demo-diag b {
+    font-weight: 600;
+  }
+
+  .cp-ico {
+    flex: none;
+    width: 1.15em;
+    height: 1.15em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ok {
+    color: var(--cp-ok);
+    stroke-width: 2;
+  }
+
+  /* A simple two-ribbon mark in the Copilot gradient colors, not the logo. */
+  .mark {
+    position: relative;
+    flex: none;
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .mark::before,
+  .mark::after {
+    content: '';
+    position: absolute;
+    width: 46%;
+    height: 70%;
+    border-radius: 0.24em;
+    transform: skewX(-15deg);
+  }
+
+  .mark::before {
+    left: 13%;
+    top: 0;
+    background: linear-gradient(180deg, #1aa1f0, #2fa6c4 34%, #64b664 62%, #e0c413);
+  }
+
+  .mark::after {
+    right: 5%;
+    bottom: 0;
+    background: linear-gradient(180deg, #a853e1, #f36483 55%, #feaa55);
+  }
+
+  /* ---------- Windows 11 window ---------- */
   .win {
-    width: min(100%, 64em);
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
-    border-radius: 1em;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
+    border-radius: 0.75em;
     overflow: hidden;
+    background:
+      radial-gradient(120% 70% at 0% 0%, rgba(40, 72, 170, 0.16), transparent 60%),
+      linear-gradient(180deg, #0a0e19, #07090f);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.11),
+      0 1.4em 3.2em rgba(0, 0, 0, 0.55),
+      0 0.3em 0.8em rgba(0, 0, 0, 0.35);
   }
 
-  .win-bar {
+  .bar {
+    position: relative;
+    flex: none;
     display: flex;
     align-items: center;
+    gap: 0.8em;
+    height: 2.6em;
+    padding-left: 0.85em;
+  }
+
+  .cp-brand {
+    display: inline-flex;
+    align-items: center;
     gap: 0.4em;
-    padding: 0.7em 0.9em;
-    border-bottom: 1px solid var(--line);
-    font-family: var(--font-mono);
-    color: var(--muted);
+    color: #fff;
   }
 
-  .win-bar .dot {
-    width: 0.7em;
-    height: 0.7em;
-    border-radius: 50%;
-    background: var(--line);
+  .bar-ico {
+    width: 1.1em;
+    height: 1.1em;
+    color: var(--cp-ink-2);
   }
 
-  .win-title {
-    margin-left: 0.6em;
-  }
-
-  .chat {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: 0.6em;
-    padding: 0.9em 1.1em 1.1em;
-    overflow: hidden;
-    mask-image: linear-gradient(to bottom, transparent, #000 2.2em);
-  }
-
-  .msg {
-    max-width: 82%;
-    padding: 0.55em 0.85em;
-    border-radius: 0.9em;
-    color: var(--ink);
-  }
-
-  .msg.user {
-    align-self: flex-end;
-    background: var(--accent);
-    color: var(--on-accent);
-    border-bottom-right-radius: 0.25em;
-  }
-
-  .msg.bot {
-    align-self: flex-start;
-    background: var(--bg-soft);
-    border-bottom-left-radius: 0.25em;
-  }
-
-  .consent {
-    align-self: flex-start;
-    width: 78%;
-    padding: 0.7em 0.9em;
-    border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
-    border-radius: 0.8em;
-    background: color-mix(in srgb, var(--accent-soft) 60%, var(--surface));
-    color: var(--ink);
-  }
-
-  .consent-title {
-    font-weight: 600;
-    margin-bottom: 0.35em;
-  }
-
-  .consent-row {
-    color: var(--ink-2);
-  }
-
-  .consent-row span {
-    display: inline-block;
-    min-width: 4.6em;
-    font-family: var(--font-mono);
-    color: var(--muted);
-  }
-
-  .consent-actions,
-  .chips {
-    display: flex;
-    gap: 0.5em;
-    margin-top: 0.55em;
-  }
-
-  .btn {
-    padding: 0.3em 0.8em;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    font-family: var(--font-mono);
-    font-size: 0.92em;
-    color: var(--ink);
-  }
-
-  .btn.primary {
-    background: var(--ink);
-    color: var(--bg);
-    border-color: var(--ink);
-  }
-
-  .allow {
-    position: relative;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .allow:has(.cursor.is-on) {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--on-accent);
-    box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--accent) 25%, transparent);
-  }
-
-  .cursor {
+  .bar-title {
     position: absolute;
-    right: -0.5em;
-    bottom: -1em;
-    width: 1.3em;
-    height: 1.3em;
-    background: no-repeat center / contain
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l15 9-6.5 1.5L9.5 19z' fill='%23111' stroke='%23fff' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: max(9px, 0.85em);
+    color: var(--cp-ink-2);
+    white-space: nowrap;
+    transition: opacity 0.4s ease;
   }
 
-  .term {
+  .caps {
     align-self: stretch;
-    padding: 0.6em 0.8em;
-    border-radius: 0.6em;
-    background: #16181d;
-    color: #d7dae0;
-    font-family: var(--font-mono);
-    font-size: 0.92em;
+    display: flex;
+    margin-left: auto;
   }
 
-  .term b {
-    color: #8fd18f;
-    font-weight: 500;
+  .cap {
+    display: grid;
+    place-items: center;
+    width: 2.75em;
+    color: #e8e8e8;
   }
 
-  .term .out {
-    color: #9aa3b2;
-    padding-left: 1em;
+  .cap .cp-ico {
+    width: 0.95em;
+    height: 0.95em;
+    stroke-width: 1.35;
   }
 
-  .chips {
-    align-self: flex-start;
-    margin-top: 0;
+  .cp-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Behave like a real chat: unrevealed messages take no space, newest sits at the bottom. */
-  .demo-diag:global(.seq-on) .chat [data-step]:not(:global(.is-on)) {
+  .pane {
     display: none;
   }
 
-  .chat [data-step]:global(.is-on) {
-    animation: pop 0.35s ease;
+  .col {
+    position: relative;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0.9em;
   }
 
-  @keyframes pop {
+  /* Copilot's new-conversation greeting, before the first message. Hidden in the final state. */
+  .hello {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 38%;
+    display: grid;
+    justify-items: center;
+    padding: 0 1em;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hello-big {
+    font-size: 1.55em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+
+  /* ---------- conversation ---------- */
+  .chat {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 40em;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.2em);
+    mask-image: linear-gradient(to bottom, transparent, #000 2.2em);
+  }
+
+  /* Each message grows from zero height, so the column scrolls smoothly to the newest one. */
+  .demo-diag .cp-item {
+    flex: none;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows 0.5s var(--cp-ease),
+      opacity 0.4s ease,
+      transform 0.4s ease;
+  }
+
+  .in {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .in::before {
+    content: '';
+    display: block;
+    height: var(--cp-gap);
+  }
+
+  .demo-diag:global(.seq-on) .cp-item:not(:global(.is-on)) {
+    grid-template-rows: 0fr;
+  }
+
+  .demo-diag .think {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .demo-diag .steps-item {
+    display: none;
+  }
+
+  .bubble {
+    width: fit-content;
+    max-width: 82%;
+    margin-left: auto;
+    padding: 0.5em 0.95em;
+    border-radius: 1.15em;
+    background: var(--cp-bubble);
+  }
+
+  .thinking {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--cp-ink-2);
+  }
+
+  .thinking .mark {
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .shim {
+    background: linear-gradient(90deg, #8d8794 0%, #8d8794 38%, #fff6f0 50%, #8d8794 62%, #8d8794 100%);
+    background-size: 260% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ---------- permission and approval cards ---------- */
+  .cp-card {
+    position: relative;
+    padding: 0.85em 0.95em 0.9em;
+    border-radius: 1.05em;
+    background: var(--cp-card);
+    box-shadow: inset 0 0 0 1px var(--cp-line);
+  }
+
+  .cp-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 0.55em;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .cp-card-title .cp-ico {
+    color: var(--cp-accent);
+  }
+
+  .perm {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.2em 0.85em;
+    margin-bottom: 0.8em;
+  }
+
+  .perm dt {
+    color: var(--cp-ink-2);
+  }
+
+  .nothing {
+    color: var(--cp-ok);
+  }
+
+  .decide {
+    display: grid;
+    align-items: center;
+  }
+
+  .decide > * {
+    grid-area: 1 / 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .acts,
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .acts {
+    opacity: 0;
+  }
+
+  .chips {
+    padding-bottom: 0.45em;
+  }
+
+  .decided {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    color: var(--cp-ink-2);
+    transition-delay: 0.12s;
+  }
+
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 2.2em;
+    padding: 0 1.05em;
+    border-radius: 999px;
+    overflow: hidden;
+    white-space: nowrap;
+    background: var(--cp-btn);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+    color: var(--cp-ink);
+    font-weight: 500;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      opacity 0.35s ease;
+  }
+
+  .btn.pri {
+    background: var(--cp-btn-pri);
+    box-shadow: none;
+    color: var(--cp-btn-pri-ink);
+    font-weight: 600;
+  }
+
+  .how {
+    opacity: 0.4;
+  }
+
+  .press-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .ripple {
+    position: absolute;
+    left: 55%;
+    top: 50%;
+    width: 0.7em;
+    height: 0.7em;
+    margin: -0.35em 0 0 -0.35em;
+    border-radius: 50%;
+    background: rgba(27, 26, 33, 0.35);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* The Windows arrow pointer, white with a dark outline. */
+  .ptr {
+    position: absolute;
+    left: 55%;
+    top: 46%;
+    z-index: 2;
+    width: 1.1em;
+    height: 1.65em;
+    opacity: 0;
+    transform: translate(1.5em, 1em);
+    transform-origin: 0 0;
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0.08em 0.12em rgba(0, 0, 0, 0.6));
+    pointer-events: none;
+    transition:
+      transform 0.6s cubic-bezier(0.25, 0.8, 0.3, 1),
+      opacity 0.3s ease;
+  }
+
+  /* A slow Copilot-colored border while a card waits for the person to decide. */
+  .ring {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+  }
+
+  .ring::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: conic-gradient(#1aa1f0, #64b664, #e0c413, #feaa55, #f36483, #a853e1, #1aa1f0);
+  }
+
+  .setting {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    margin-bottom: 0.8em;
+    padding: 0.6em 0.75em;
+    border-radius: 0.65em;
+    background: var(--cp-raised);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .set-text {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 0.1em;
+  }
+
+  .set-sub {
+    font-size: max(9px, 0.85em);
+    color: var(--cp-ink-2);
+  }
+
+  .set-state {
+    display: grid;
+    justify-items: end;
+    min-width: 1.7em;
+  }
+
+  .set-state > * {
+    grid-area: 1 / 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .st-on {
+    opacity: 0;
+  }
+
+  /* Windows 11 toggle switch, shown in its final Off position by default. */
+  .tgl {
+    position: relative;
+    flex: none;
+    width: 2.5em;
+    height: 1.25em;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px #c8c8c8;
+    transition:
+      background-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .knob {
+    position: absolute;
+    left: 0.25em;
+    top: 50%;
+    width: 0.75em;
+    height: 0.75em;
+    margin-top: -0.375em;
+    border-radius: 50%;
+    background: #cfcfcf;
+    transition:
+      transform 0.32s cubic-bezier(0.3, 1.3, 0.5, 1),
+      background-color 0.25s ease;
+  }
+
+  /* ---------- PowerShell, Windows Terminal Campbell colors, PSReadLine token colors ---------- */
+  .term {
+    border-radius: 0.8em;
+    overflow: hidden;
+    background: var(--cp-term);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+  }
+
+  .term-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.45em 0.8em;
+    background: #1c1c1f;
+    font-size: max(9px, 0.88em);
+    color: #fff;
+  }
+
+  .where {
+    color: var(--cp-ink-2);
+  }
+
+  .ps-ico {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 1.35em;
+    height: 1.15em;
+    border-radius: 0.25em;
+    background: linear-gradient(180deg, #2c74d6, #10408f);
+  }
+
+  .ps-ico svg {
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .tstat {
+    display: grid;
+    justify-items: end;
+    margin-left: auto;
+    color: var(--cp-ink-2);
+  }
+
+  .tstat > *,
+  .steps > :not(.ring) {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+  }
+
+  .ts-run {
+    opacity: 0;
+  }
+
+  .ts-done {
+    transition-delay: 0.2s;
+  }
+
+  .spinner {
+    flex: none;
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    border-radius: 50%;
+    border: 0.14em solid rgba(76, 194, 255, 0.22);
+    border-top-color: var(--cp-accent);
+  }
+
+  /* The run folds to its header once Copilot has read the results. Folded is the final state. */
+  .fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.55s var(--cp-ease);
+  }
+
+  .console {
+    min-height: 0;
+    overflow: hidden;
+    font-family: var(--cp-mono);
+    font-size: max(9px, 0.86em);
+    line-height: 1.5;
+    color: #cccccc;
+  }
+
+  .console::before,
+  .console::after {
+    content: '';
+    display: block;
+    height: 0.45em;
+  }
+
+  .cl,
+  .pl {
+    display: flex;
+    padding-right: 0.7em;
+  }
+
+  .tx {
+    flex: 1;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .gut {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.75em;
+    height: 1.5em;
+  }
+
+  .gut > * {
+    grid-area: 1 / 1;
+    transition:
+      opacity 0.25s ease,
+      transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .gut .ok {
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .gut .spinner {
+    opacity: 0;
+  }
+
+  .k-c {
+    color: #f9f1a5;
+  }
+
+  .k-p {
+    color: #8c8c8c;
+  }
+
+  .k-s {
+    color: #3a96dd;
+  }
+
+  .k-v {
+    color: #16c60c;
+  }
+
+  .k-o {
+    color: #8c8c8c;
+  }
+
+  .k-n {
+    color: #13a10e;
+  }
+
+  .out {
+    color: #bdbdbd;
+  }
+
+  /* Wide layout only: the step row in the chat and the local workspace pane. */
+  .steps {
+    position: relative;
+    display: grid;
+    padding: 0.6em 0.85em;
+    border-radius: 0.9em;
+    box-shadow: inset 0 0 0 1px var(--cp-line);
+    color: var(--cp-ink-2);
+  }
+
+  .pane-head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    min-width: 0;
+    font-size: max(9px, 0.9em);
+    color: #fff;
+  }
+
+  .ro-tag {
+    padding: 0.05em 0.6em;
+    border-radius: 999px;
+    background: rgba(108, 203, 95, 0.14);
+    color: var(--cp-ok);
+  }
+
+  .pstat {
+    display: inline-flex;
+    margin-left: auto;
+    color: var(--cp-ink-2);
+    white-space: nowrap;
+  }
+
+  .pst {
+    display: none;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .p-fixed {
+    display: inline-flex;
+  }
+
+  .code {
+    flex: none;
+    border-radius: 0.7em;
+    overflow: hidden;
+    background: #10141f;
+    box-shadow: inset 0 0 0 1px var(--cp-line);
+  }
+
+  .code-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7em;
+    padding: 0.45em 0.85em;
+    border-bottom: 1px solid var(--cp-line);
+    font-size: max(9px, 0.85em);
+  }
+
+  .file {
+    font-family: var(--cp-mono);
+    color: #fff;
+  }
+
+  .by {
+    color: var(--cp-ink-2);
+  }
+
+  .code-head .ro-tag {
+    margin-left: auto;
+  }
+
+  .code-body {
+    padding: 0.4em 0 0.5em;
+    font-family: var(--cp-mono);
+    font-size: max(9px, 0.86em);
+    line-height: 1.65;
+    color: #cccccc;
+  }
+
+  .sl {
+    display: flex;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .ln {
+    flex: none;
+    width: 2.6em;
+    padding-right: 1em;
+    text-align: right;
+    color: #5b616d;
+  }
+
+  .code-src {
+    white-space: pre;
+  }
+
+  .wt {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.7em;
+    overflow: hidden;
+    background: var(--cp-term);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+  }
+
+  .wt-tabs {
+    flex: none;
+    display: flex;
+    align-items: flex-end;
+    height: 2.2em;
+    padding: 0 0.5em;
+    background: #1c1c1f;
+  }
+
+  .wt-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    height: 1.8em;
+    padding: 0 1.2em 0 0.7em;
+    border-radius: 0.5em 0.5em 0 0;
+    background: var(--cp-term);
+    font-size: max(9px, 0.85em);
+    color: #fff;
+  }
+
+  .wt-body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    padding: 0.5em 0.4em;
+    font-family: var(--cp-mono);
+    font-size: max(9px, 0.88em);
+    line-height: 1.6;
+    color: #cccccc;
+  }
+
+  .locked {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    font-family: var(--cp-ui);
+    color: var(--cp-ink-2);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .res-text {
+    display: grid;
+  }
+
+  .res-text > * {
+    grid-area: 1 / 1;
+    transition: opacity 0.25s ease;
+  }
+
+  .pending {
+    color: #767676;
+    opacity: 0;
+  }
+
+  .caret {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.1em;
+    vertical-align: -0.2em;
+    background: #cccccc;
+  }
+
+  /* ---------- composer ---------- */
+  .composer {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    width: 100%;
+    max-width: 40em;
+    margin: 0.55em auto 0;
+    padding: 0.3em;
+    border-radius: 1.6em;
+    background: #191d29;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+      0 0.5em 1.4em rgba(0, 0, 0, 0.35);
+  }
+
+  .c-btn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.15em;
+    height: 2.15em;
+    border-radius: 50%;
+    color: #e9e3e0;
+  }
+
+  .c-field {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    height: 2.3em;
+    padding: 0 0.8em;
+    border-radius: 1.15em;
+    background: #0c101c;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .c-ph {
+    color: #9d97a3;
+    transition: opacity 0.2s ease;
+  }
+
+  .c-typed {
+    position: absolute;
+    left: 0.8em;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+
+  .c-act {
+    position: relative;
+  }
+
+  .c-act > * {
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .c-send {
+    position: absolute;
+    inset: 0.1em;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #f5ece8;
+    color: #15141a;
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  /* The row under the composer is tall enough that the illustration tag sits beside the fine print. */
+  .fine {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: max(1.9em, calc(37px - var(--cp-pad)));
+    padding-right: calc(90px - var(--cp-pad));
+    font-size: max(9px, 0.78em);
+    color: var(--cp-ink-3);
+    white-space: nowrap;
+  }
+
+  .m {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .fade {
+    transition: opacity 0.3s ease 0.45s;
+  }
+
+  /* ---------- the loop: earlier states apply only while it runs ---------- */
+  .demo-diag:global(.seq-on) .bar:not(:has(.m-title:global(.is-on))) .bar-title {
+    opacity: 0;
+  }
+
+  .demo-diag:global(.seq-on) .chat:not(:has(.r1:global(.is-on))) .t1:global(.is-on),
+  .demo-diag:global(.seq-on) .chat:not(:has(.r2:global(.is-on))) .t2:global(.is-on) {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .chat:not(:has(.r1:global(.is-on))) .t1:global(.is-on) .shim,
+  .demo-diag:global(.seq-on) .chat:not(:has(.r2:global(.is-on))) .t2:global(.is-on) .shim {
+    animation: cp-shimmer 1.4s linear infinite;
+  }
+
+  .demo-diag:global(.seq-on) .chat:not(:has(.r1:global(.is-on))) .t1:global(.is-on) .mark,
+  .demo-diag:global(.seq-on) .chat:not(:has(.r2:global(.is-on))) .t2:global(.is-on) .mark {
+    animation: cp-breathe 1.4s ease-in-out infinite;
+  }
+
+  .demo-diag:global(.seq-on) .say:global(.is-on) .cp-w {
+    animation: cp-in 0.35s ease both;
+    animation-delay: calc(var(--i) * 30ms + 0.12s);
+  }
+
+  /* Typing: the composer, the script Copilot writes, and the commands it runs. */
+  .demo-diag:global(.seq-on) .composer:has(.m-type:global(.is-on)) .c-typed .ch {
+    animation: cp-type 1ms linear both;
+    animation-delay: calc(var(--i) * 22ms);
+  }
+
+  .demo-diag:global(.seq-on) .sl:global(.is-on) .ch {
+    animation: cp-type 1ms linear both;
+    animation-delay: calc(var(--i) * 9ms);
+  }
+
+  .demo-diag:global(.seq-on) .cl:global(.is-on) .ch,
+  .demo-diag:global(.seq-on) .pl:not(.chg):global(.is-on) .ch {
+    animation: cp-type 1ms linear both;
+    animation-delay: calc(var(--i) * 15ms + 0.12s);
+  }
+
+  .demo-diag:global(.seq-on) .console [data-step]:not(:global(.is-on)),
+  .demo-diag:global(.seq-on) .wt-body [data-step]:not(:global(.is-on)),
+  .demo-diag:global(.seq-on) .code-body [data-step]:not(:global(.is-on)) {
+    transform: none;
+  }
+
+  .demo-diag:global(.seq-on) .composer:has(.m-type:global(.is-on)):not(:has(.m-send:global(.is-on))) .c-typed {
+    opacity: 1;
+  }
+
+  /* The placeholder goes at the first keystroke and fades back after sending. */
+  .demo-diag:global(.seq-on) .composer:has(.m-type:global(.is-on)):not(:has(.m-send:global(.is-on))) .c-ph {
+    opacity: 0;
+    transition: none;
+  }
+
+  .demo-diag:global(.seq-on) .composer:has(.m-type:global(.is-on)):not(:has(.m-send:global(.is-on))) .c-send {
+    opacity: 1;
+    transform: none;
+  }
+
+  .demo-diag:global(.seq-on) .composer:has(.m-type:global(.is-on)):not(:has(.m-send:global(.is-on))) .c-mic {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  .demo-diag:global(.seq-on) .composer:has(.m-send:global(.is-on)) .c-act {
+    animation: cp-send 0.35s ease;
+  }
+
+  /* Cards wait for a decision: buttons, a moving gradient border, then a pointer click. */
+  .demo-diag:global(.seq-on) .cp-ask:not(:has(.m-res:global(.is-on))) .acts {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .cp-ask:not(:has(.m-res:global(.is-on))) .decided {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  .demo-diag:global(.seq-on) .cp-ask:global(.is-on):not(:has(.m-res:global(.is-on))) .ring,
+  .demo-diag:global(.seq-on) .steps-item:global(.is-on):not(:has(.m-done:global(.is-on))) .ring {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .cp-ask:global(.is-on):not(:has(.m-res:global(.is-on))) .ring::before,
+  .demo-diag:global(.seq-on) .steps-item:global(.is-on):not(:has(.m-done:global(.is-on))) .ring::before {
+    animation: cp-spin 3.2s linear infinite;
+  }
+
+  .demo-diag:global(.seq-on) .cp-item:has(.m-ptr:global(.is-on)):not(:has(.m-res:global(.is-on))) .ptr {
+    opacity: 1;
+    transform: none;
+  }
+
+  .demo-diag:global(.seq-on) .cp-item:has(.m-press:global(.is-on)):not(:has(.m-res:global(.is-on))) .ptr {
+    transform: scale(0.86);
+  }
+
+  .demo-diag:global(.seq-on) .cp-item:has(.m-press:global(.is-on)):not(:has(.m-res:global(.is-on))) .btn.pri {
+    transform: scale(0.96);
+    background: #c6c9d8;
+  }
+
+  .demo-diag:global(.seq-on) .cp-item:has(.m-press:global(.is-on)):not(:has(.m-res:global(.is-on))) .ripple {
+    animation: cp-ripple 0.6s ease-out both;
+  }
+
+  .demo-diag:global(.seq-on) .chips-item:not(:has(.m-press:global(.is-on))) .how {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .approve:not(:has(.m-off:global(.is-on))) .tgl {
+    background: var(--cp-accent);
+    box-shadow: inset 0 0 0 1px var(--cp-accent);
+  }
+
+  .demo-diag:global(.seq-on) .approve:not(:has(.m-off:global(.is-on))) .knob {
+    transform: translateX(1.25em);
+    background: #000;
+  }
+
+  .demo-diag:global(.seq-on) .approve:not(:has(.m-off:global(.is-on))) .st-on {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .approve:not(:has(.m-off:global(.is-on))) .st-off {
+    opacity: 0;
+  }
+
+  /* The run: spinners turn into check marks as each result comes back. */
+  .demo-diag:global(.seq-on) .term-item:not(:has(.m-fold:global(.is-on))) .fold {
+    grid-template-rows: 1fr;
+  }
+
+  .demo-diag:global(.seq-on) .term-item:not(:has(.m-done:global(.is-on))) .ts-run,
+  .demo-diag:global(.seq-on) .steps-item:not(:has(.m-done:global(.is-on))) .ts-run {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .term-item:not(:has(.m-done:global(.is-on))) .ts-done,
+  .demo-diag:global(.seq-on) .steps-item:not(:has(.m-done:global(.is-on))) .ts-done {
+    opacity: 0;
+  }
+
+  .demo-diag:global(.seq-on) .term-item:global(.is-on):not(:has(.m-done:global(.is-on))) .ts-run .spinner,
+  .demo-diag:global(.seq-on) .steps-item:global(.is-on):not(:has(.m-done:global(.is-on))) .ts-run .spinner,
+  .demo-diag:global(.seq-on) .pane:has(.pm-allowed:global(.is-on)):not(:has(.pm-done:global(.is-on))) .p-run .spinner,
+  .demo-diag:global(.seq-on) .pane:has(.pm-press:global(.is-on)):not(:has(.pm-applied:global(.is-on))) .p-apply .spinner,
+  .demo-diag:global(.seq-on) .run:not(:has(.out:global(.is-on))) .cl:global(.is-on) .gut .spinner,
+  .demo-diag:global(.seq-on) .res-row:global(.is-on):not(:has(.m-out:global(.is-on))) .gut .spinner {
+    animation: cp-spin 0.8s linear infinite;
+  }
+
+  .demo-diag:global(.seq-on) .run:not(:has(.out:global(.is-on))) .gut .spinner,
+  .demo-diag:global(.seq-on) .res-row:not(:has(.m-out:global(.is-on))) .gut .spinner {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .run:not(:has(.out:global(.is-on))) .gut .ok,
+  .demo-diag:global(.seq-on) .res-row:not(:has(.m-out:global(.is-on))) .gut .ok {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  .demo-diag:global(.seq-on) .res-row:not(:has(.m-out:global(.is-on))) .pending {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .res-row:not(:has(.m-out:global(.is-on))) .result {
+    opacity: 0;
+  }
+
+  .demo-diag:global(.seq-on) .sl:has(.m-cmd:global(.is-on)):not(:has(.m-out:global(.is-on))) {
+    background: rgba(76, 194, 255, 0.1);
+    box-shadow: inset 0.18em 0 0 var(--cp-accent);
+  }
+
+  .demo-diag:global(.seq-on) .caret {
+    animation: cp-blink 1.06s steps(1) infinite;
+  }
+
+  .demo-diag:global(.seq-on) .pane:not(:has(.pm-allowed:global(.is-on))) .locked {
+    opacity: 1;
+  }
+
+  .demo-diag:global(.seq-on) .pane:not(:has(.pm-applied:global(.is-on))) .p-fixed {
+    display: none;
+  }
+
+  .demo-diag:global(.seq-on) .pane:has(.pm-consent:global(.is-on)):not(:has(.pm-allowed:global(.is-on))) .p-wait1,
+  .demo-diag:global(.seq-on) .pane:has(.pm-allowed:global(.is-on)):not(:has(.pm-done:global(.is-on))) .p-run,
+  .demo-diag:global(.seq-on) .pane:has(.pm-done:global(.is-on)):not(:has(.pm-approve:global(.is-on))) .p-fin,
+  .demo-diag:global(.seq-on) .pane:has(.pm-approve:global(.is-on)):not(:has(.pm-press:global(.is-on))) .p-wait2,
+  .demo-diag:global(.seq-on) .pane:has(.pm-press:global(.is-on)):not(:has(.pm-applied:global(.is-on))) .p-apply {
+    display: inline-flex;
+  }
+
+  .demo-diag:global(.seq-on) .col:not(:has(.m-hello:global(.is-on))) .hello {
+    opacity: 1;
+    transition: opacity 0.4s ease 0.3s;
+  }
+
+  .demo-diag:global(.seq-on) .col:has(.m-hello:global(.is-on)) .hello {
+    transition: opacity 0.25s ease;
+  }
+
+  /* The approved change: a waiting prompt, then two typed lines with their own progress. */
+  .chg .caret {
+    display: none;
+  }
+
+  .demo-diag:global(.seq-on) .chg:not(:has(.m-go:global(.is-on))) .caret {
+    display: inline-block;
+  }
+
+  .demo-diag:global(.seq-on) .chg:not(:has(.m-go:global(.is-on))) .typed {
+    display: none;
+  }
+
+  .demo-diag:global(.seq-on) .chg:has(.m-go:global(.is-on)) .ch {
+    animation: cp-type 1ms linear both;
+    animation-delay: calc(var(--i) * 7ms);
+  }
+
+  .demo-diag:global(.seq-on) .chg:not(:has(.m-ok:global(.is-on))) .gut .ok {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  .demo-diag:global(.seq-on) .chg:has(.m-go:global(.is-on)):not(:has(.m-ok:global(.is-on))) .gut .spinner {
+    opacity: 1;
+    animation: cp-spin 0.8s linear infinite;
+  }
+
+  /* The loop ends by fading the conversation out, so the restart never jumps. */
+  .demo-diag:global(.seq-on):has(.m-outro:global(.is-on)) .fade {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+
+  @keyframes cp-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes cp-type {
     from {
       opacity: 0;
-      transform: translateY(0.5em);
     }
     to {
       opacity: 1;
-      transform: none;
+    }
+  }
+
+  @keyframes cp-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes cp-shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0% 0;
+    }
+  }
+
+  @keyframes cp-breathe {
+    50% {
+      transform: scale(0.8) rotate(-10deg);
+    }
+  }
+
+  @keyframes cp-ripple {
+    from {
+      opacity: 0.5;
+      transform: scale(0.4);
+    }
+    to {
+      opacity: 0;
+      transform: scale(9);
+    }
+  }
+
+  @keyframes cp-send {
+    40% {
+      transform: scale(0.86);
+    }
+  }
+
+  @keyframes cp-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* ---------- frames ---------- */
+  /* Wide frames: the local workspace (script and PowerShell) on the left, the chat on the right. */
+  @container (aspect-ratio > 1.5) and (width >= 640px) {
+    .demo-diag {
+      font-size: clamp(9px, 1.5cqw, 15px);
+    }
+
+    .cp-body {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    }
+
+    .pane {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      padding: 0.35em 0.9em 0.95em 0.95em;
+    }
+
+    .col {
+      padding: 0 0.95em 0 0.35em;
+    }
+
+    .chat,
+    .composer {
+      max-width: none;
+    }
+
+    .demo-diag .term-item {
+      display: none;
+    }
+
+    .demo-diag .steps-item {
+      display: grid;
+    }
+
+  }
+
+  @container (width < 400px) {
+    .bar-title {
+      display: none;
+    }
+
+    .fine {
+      justify-content: flex-start;
+      padding: 0 0 0 1.4em;
     }
   }
 </style>

@@ -1,305 +1,1682 @@
 ---
-// Illustrative reconstruction of guided search: suggestions while typing, then filters that adapt to the results.
+// Guided search in the style of the Windows 11 Recall app (light theme, as of general availability in 2025).
+// Story: completions while typing, then filters built from the results narrow 38 moments to 9, then 2.
+// Snapshot thumbnails are simplified drawings, not screenshots. Product marks are abstract shapes.
 ---
 
-<div class="demo demo-gs" data-seq data-cycle="13000" role="img" aria-label="Illustration: a search for 'green jacket' shows suggestions as the user types, then filters narrow the results from 38 moments to 2.">
+<div
+  class="demo demo-rc"
+  data-seq
+  data-cycle="14000"
+  role="img"
+  aria-label="Illustration in the style of the Windows Recall app. Typing green jacket brings up suggested completions, picking green jacket on a shopping site shows snapshot moments from Teams, Edge and Outlook, and the Edge and last week filters narrow 38 moments to 9, then 2, with the shopping page marked found it."
+>
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="rc-edge-g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#1a6fd8"></stop>
+        <stop offset="1" stop-color="#2fc79f"></stop>
+      </linearGradient>
+      <linearGradient id="rc-ai-g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#0a6cd6"></stop>
+        <stop offset="1" stop-color="#8f4fe0"></stop>
+      </linearGradient>
+      <linearGradient id="rc-wall-g" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f1ece3"></stop>
+        <stop offset="1" stop-color="#dfd5c6"></stop>
+      </linearGradient>
+      <linearGradient id="rc-hero-g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#d9e8d2"></stop>
+        <stop offset="1" stop-color="#93b98c"></stop>
+      </linearGradient>
+
+      <g id="rc-jk">
+        <path d="M-15 -16L-7 -19L0 -15L7 -19L15 -16Q19.5 -14.5 20.5 -9L23.5 17L17 18.2L14.6 -1L14 24L-14 24L-14.6 -1L-17 18.2L-23.5 17L-20.5 -9Q-19.5 -14.5 -15 -16Z"></path>
+        <path d="M-7 -19L-6 -23L6 -23L7 -19L0 -15Z" fill="#000" fill-opacity=".24"></path>
+        <path d="M-14 20.6H14V24H-14Z" fill="#000" fill-opacity=".14"></path>
+        <path d="M0 -15V24M-11 8H-4M4 8H11M-14.6 -1L-14.2 19M14.6 -1L14.2 19" fill="none" stroke="#000" stroke-opacity=".2" stroke-width=".9"></path>
+      </g>
+
+      <g id="rc-chrome">
+        <rect width="160" height="100" fill="#fff"></rect>
+        <rect width="160" height="8" fill="#e8ecf1"></rect>
+        <path d="M5 8V4.4Q5 2.6 6.8 2.6H39.2Q41 2.6 41 4.4V8Z" fill="#fff"></path>
+        <circle cx="9.2" cy="5.4" r="1.6" fill="url(#rc-edge-g)"></circle>
+        <rect x="12.6" y="4.7" width="20" height="1.4" rx=".7" fill="#b9bfc7"></rect>
+        <rect x="45" y="4.7" width="16" height="1.4" rx=".7" fill="#c8cdd4"></rect>
+        <circle cx="4.6" cy="11.6" r="1.1" fill="#b9bfc7"></circle>
+        <circle cx="9.4" cy="11.6" r="1.1" fill="#b9bfc7"></circle>
+        <rect x="15" y="9.4" width="104" height="4.4" rx="2.2" fill="#eff2f5"></rect>
+        <rect x="19" y="10.9" width="34" height="1.4" rx=".7" fill="#a9b0b8"></rect>
+        <circle cx="141" cy="11.6" r="1.2" fill="#b9bfc7"></circle>
+        <circle cx="147" cy="11.6" r="1.2" fill="#b9bfc7"></circle>
+        <circle cx="153" cy="11.6" r="1.2" fill="#b9bfc7"></circle>
+        <rect y="15.2" width="160" height=".5" fill="#e2e6ea"></rect>
+      </g>
+
+      <g id="rc-shop">
+        <use href="#rc-chrome"></use>
+        <rect x="8" y="19" width="20" height="2.8" rx="1" fill="#1b1b1b"></rect>
+        <rect x="96" y="19.7" width="11" height="1.4" rx=".7" fill="#a0a5ab"></rect>
+        <rect x="111" y="19.7" width="11" height="1.4" rx=".7" fill="#a0a5ab"></rect>
+        <rect x="126" y="19.7" width="11" height="1.4" rx=".7" fill="#a0a5ab"></rect>
+        <rect x="145" y="18.6" width="6" height="3.6" rx="1" fill="none" stroke="#5f6368" stroke-width=".7"></rect>
+        <rect x="8" y="26" width="70" height="68" rx="2" fill="#f1eee8"></rect>
+        <use href="#rc-jk" transform="translate(43 60) scale(1.08)" fill="#3f7d3b"></use>
+        <rect x="86" y="29" width="56" height="3.2" rx="1.2" fill="#1b1b1b"></rect>
+        <rect x="86" y="35.5" width="36" height="3.2" rx="1.2" fill="#1b1b1b"></rect>
+        <rect x="86" y="43.5" width="17" height="3.6" rx="1.2" fill="#1b1b1b"></rect>
+        <circle cx="89" cy="54.5" r="3.5" fill="none" stroke="#1b1b1b" stroke-width=".7"></circle>
+        <circle cx="89" cy="54.5" r="2.4" fill="#3f7d3b"></circle>
+        <circle cx="97.5" cy="54.5" r="2.4" fill="#26324a"></circle>
+        <circle cx="105" cy="54.5" r="2.4" fill="#c9b48c"></circle>
+        <g fill="none" stroke="#bcc1c7" stroke-width=".6">
+          <rect x="86" y="61.5" width="9" height="6" rx="1.2"></rect>
+          <rect x="97" y="61.5" width="9" height="6" rx="1.2"></rect>
+          <rect x="108" y="61.5" width="9" height="6" rx="1.2"></rect>
+          <rect x="119" y="61.5" width="9" height="6" rx="1.2"></rect>
+        </g>
+        <rect x="86" y="73" width="58" height="8" rx="4" fill="#1b1b1b"></rect>
+        <rect x="104" y="76.4" width="22" height="1.3" rx=".65" fill="#fff"></rect>
+        <rect x="86" y="86" width="46" height="1.4" rx=".7" fill="#c7cbd0"></rect>
+        <rect x="86" y="90" width="38" height="1.4" rx=".7" fill="#c7cbd0"></rect>
+      </g>
+
+      <g id="rc-grid">
+        <use href="#rc-chrome"></use>
+        <rect x="8" y="19" width="20" height="2.8" rx="1" fill="#1b1b1b"></rect>
+        <rect x="8" y="27" width="30" height="3" rx="1.2" fill="#1b1b1b"></rect>
+        <rect x="122" y="26.3" width="30" height="4.6" rx="2.3" fill="none" stroke="#c7cbd0" stroke-width=".6"></rect>
+        <rect x="8" y="35" width="33" height="42" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="45" y="35" width="33" height="42" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="82" y="35" width="33" height="42" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="119" y="35" width="33" height="42" rx="1.5" fill="#f1eee8"></rect>
+        <use href="#rc-jk" transform="translate(24.5 56) scale(.62)" fill="#3f7d3b"></use>
+        <use href="#rc-jk" transform="translate(61.5 56) scale(.62)" fill="#c9b48c"></use>
+        <use href="#rc-jk" transform="translate(98.5 56) scale(.62)" fill="#26324a"></use>
+        <use href="#rc-jk" transform="translate(135.5 56) scale(.62)" fill="#7a8a3c"></use>
+        <g fill="#5f6368">
+          <rect x="8" y="81" width="26" height="1.6" rx=".8"></rect>
+          <rect x="45" y="81" width="22" height="1.6" rx=".8"></rect>
+          <rect x="82" y="81" width="26" height="1.6" rx=".8"></rect>
+          <rect x="119" y="81" width="20" height="1.6" rx=".8"></rect>
+        </g>
+        <g fill="#1b1b1b">
+          <rect x="8" y="85.5" width="12" height="2" rx=".8"></rect>
+          <rect x="45" y="85.5" width="12" height="2" rx=".8"></rect>
+          <rect x="82" y="85.5" width="12" height="2" rx=".8"></rect>
+          <rect x="119" y="85.5" width="12" height="2" rx=".8"></rect>
+        </g>
+      </g>
+
+      <g id="rc-mail">
+        <rect width="160" height="100" fill="#fff"></rect>
+        <rect width="160" height="9" fill="#0f6cbd"></rect>
+        <rect x="56" y="2.4" width="48" height="4.2" rx="2.1" fill="#fff" fill-opacity=".9"></rect>
+        <rect y="9" width="11" height="91" fill="#f0f0f0"></rect>
+        <rect x="3" y="13" width="5" height="5" rx="1.2" fill="#0f6cbd"></rect>
+        <rect x="3" y="22" width="5" height="5" rx="1.2" fill="#c4c4c4"></rect>
+        <rect x="3" y="31" width="5" height="5" rx="1.2" fill="#c4c4c4"></rect>
+        <rect x="11" y="9" width="30" height="91" fill="#fafafa"></rect>
+        <rect x="15" y="13.5" width="22" height="5.5" rx="2.75" fill="#0f6cbd"></rect>
+        <rect x="15" y="25" width="16" height="1.6" rx=".8" fill="#1b1b1b"></rect>
+        <rect x="15" y="31" width="19" height="1.6" rx=".8" fill="#9a9a9a"></rect>
+        <rect x="15" y="37" width="14" height="1.6" rx=".8" fill="#9a9a9a"></rect>
+        <rect x="15" y="43" width="18" height="1.6" rx=".8" fill="#9a9a9a"></rect>
+        <rect x="41.5" y="23" width="45.5" height="12" fill="#e3eefa"></rect>
+        <rect x="41.5" y="23" width="1" height="12" fill="#0f6cbd"></rect>
+        <g fill="#1b1b1b">
+          <rect x="45" y="13.6" width="20" height="1.6" rx=".8"></rect>
+          <rect x="45" y="25.6" width="18" height="1.6" rx=".8"></rect>
+          <rect x="45" y="37.6" width="22" height="1.6" rx=".8"></rect>
+          <rect x="45" y="49.6" width="16" height="1.6" rx=".8"></rect>
+          <rect x="45" y="61.6" width="20" height="1.6" rx=".8"></rect>
+          <rect x="45" y="73.6" width="17" height="1.6" rx=".8"></rect>
+        </g>
+        <g fill="#9a9a9a">
+          <rect x="45" y="17.4" width="36" height="1.4" rx=".7"></rect>
+          <rect x="45" y="29.4" width="34" height="1.4" rx=".7"></rect>
+          <rect x="45" y="41.4" width="30" height="1.4" rx=".7"></rect>
+          <rect x="45" y="53.4" width="35" height="1.4" rx=".7"></rect>
+          <rect x="45" y="65.4" width="31" height="1.4" rx=".7"></rect>
+          <rect x="45" y="77.4" width="33" height="1.4" rx=".7"></rect>
+        </g>
+        <rect x="87" y="9" width=".5" height="91" fill="#e5e5e5"></rect>
+        <rect x="93" y="15" width="46" height="3.2" rx="1.2" fill="#1b1b1b"></rect>
+        <circle cx="96.5" cy="25.5" r="3.2" fill="#d6b8ee"></circle>
+        <rect x="102" y="23.2" width="22" height="1.6" rx=".8" fill="#1b1b1b"></rect>
+        <rect x="102" y="26.6" width="30" height="1.4" rx=".7" fill="#9a9a9a"></rect>
+        <rect x="93" y="35" width="58" height="1.4" rx=".7" fill="#9a9a9a"></rect>
+        <rect x="93" y="39" width="50" height="1.4" rx=".7" fill="#9a9a9a"></rect>
+        <rect x="93" y="46" width="30" height="32" rx="1.5" fill="#f1eee8"></rect>
+        <use href="#rc-jk" transform="translate(108 62.5) scale(.52)" fill="#3f7d3b"></use>
+        <rect x="127" y="49" width="22" height="1.8" rx=".8" fill="#1b1b1b"></rect>
+        <rect x="127" y="54" width="12" height="1.8" rx=".8" fill="#1b1b1b"></rect>
+        <rect x="127" y="71" width="20" height="5.5" rx="2.75" fill="#0f6cbd"></rect>
+        <rect x="93" y="85" width="52" height="1.4" rx=".7" fill="#9a9a9a"></rect>
+        <rect x="93" y="89" width="40" height="1.4" rx=".7" fill="#9a9a9a"></rect>
+      </g>
+
+      <g id="rc-chat">
+        <rect width="160" height="100" fill="#fff"></rect>
+        <rect width="160" height="9" fill="#ebebf2"></rect>
+        <rect x="55" y="2.4" width="50" height="4.2" rx="1.2" fill="#fff"></rect>
+        <rect y="9" width="12" height="91" fill="#ebebf2"></rect>
+        <rect x="3.5" y="13" width="5" height="5" rx="1.2" fill="#5b5fc7"></rect>
+        <rect x="3.5" y="22" width="5" height="5" rx="1.2" fill="#c3c3d6"></rect>
+        <rect x="3.5" y="31" width="5" height="5" rx="1.2" fill="#c3c3d6"></rect>
+        <rect x="12" y="9" width="40" height="91" fill="#f5f5f7"></rect>
+        <rect x="13.5" y="25" width="37" height="11" rx="1.2" fill="#fff"></rect>
+        <circle cx="19" cy="18.5" r="3.2" fill="#f2c4a8"></circle>
+        <circle cx="19" cy="30.5" r="3.2" fill="#b8d4f0"></circle>
+        <circle cx="19" cy="42.5" r="3.2" fill="#c9e3c2"></circle>
+        <circle cx="19" cy="54.5" r="3.2" fill="#e8c6e8"></circle>
+        <circle cx="19" cy="66.5" r="3.2" fill="#f0dca0"></circle>
+        <g fill="#1b1b1b">
+          <rect x="25" y="16.4" width="16" height="1.6" rx=".8"></rect>
+          <rect x="25" y="28.4" width="18" height="1.6" rx=".8"></rect>
+          <rect x="25" y="40.4" width="14" height="1.6" rx=".8"></rect>
+          <rect x="25" y="52.4" width="17" height="1.6" rx=".8"></rect>
+          <rect x="25" y="64.4" width="15" height="1.6" rx=".8"></rect>
+        </g>
+        <g fill="#9a9aa6">
+          <rect x="25" y="19.8" width="22" height="1.3" rx=".65"></rect>
+          <rect x="25" y="31.8" width="20" height="1.3" rx=".65"></rect>
+          <rect x="25" y="43.8" width="23" height="1.3" rx=".65"></rect>
+          <rect x="25" y="55.8" width="19" height="1.3" rx=".65"></rect>
+          <rect x="25" y="67.8" width="21" height="1.3" rx=".65"></rect>
+        </g>
+        <circle cx="59" cy="14.6" r="3" fill="#b8d4f0"></circle>
+        <rect x="64.5" y="13.7" width="24" height="1.8" rx=".8" fill="#1b1b1b"></rect>
+        <rect x="52" y="20.5" width="108" height=".5" fill="#e6e6ea"></rect>
+        <rect x="58" y="25" width="54" height="8" rx="2" fill="#f0f0f3"></rect>
+        <rect x="61.5" y="28.3" width="40" height="1.4" rx=".7" fill="#8a8a95"></rect>
+        <rect x="96" y="37" width="56" height="8" rx="2" fill="#e8ebfa"></rect>
+        <rect x="100" y="40.3" width="44" height="1.4" rx=".7" fill="#7a7fc4"></rect>
+        <rect x="58" y="49" width="64" height="30" rx="2" fill="#f0f0f3"></rect>
+        <rect x="61" y="52" width="22" height="24" rx="1.2" fill="#f1eee8"></rect>
+        <use href="#rc-jk" transform="translate(72 64) scale(.42)" fill="#3f7d3b"></use>
+        <rect x="87" y="55" width="30" height="1.8" rx=".8" fill="#1b1b1b"></rect>
+        <rect x="87" y="59.5" width="24" height="1.4" rx=".7" fill="#8a8a95"></rect>
+        <rect x="87" y="63.5" width="27" height="1.4" rx=".7" fill="#8a8a95"></rect>
+        <rect x="58" y="88" width="94" height="7" rx="1.5" fill="#fff" stroke="#e1e1e6" stroke-width=".5"></rect>
+        <rect x="58" y="94.4" width="94" height=".6" fill="#5b5fc7"></rect>
+      </g>
+
+      <g id="rc-photo">
+        <rect width="160" height="100" fill="#f3f3f3"></rect>
+        <rect width="160" height="9" fill="#fbfbfb"></rect>
+        <rect x="6" y="3" width="14" height="3" rx="1.5" fill="#c4c4c4"></rect>
+        <circle cx="140" cy="4.5" r="1.3" fill="#9a9a9a"></circle>
+        <circle cx="146" cy="4.5" r="1.3" fill="#9a9a9a"></circle>
+        <circle cx="152" cy="4.5" r="1.3" fill="#9a9a9a"></circle>
+        <rect x="22" y="13" width="116" height="82" fill="url(#rc-wall-g)"></rect>
+        <rect x="22" y="82" width="116" height="13" fill="#cdbfa9"></rect>
+        <ellipse cx="38" cy="66" rx="7" ry="13" fill="#7f9f6c" fill-opacity=".75"></ellipse>
+        <rect x="33.5" y="76" width="9" height="9" rx="1.2" fill="#b98f6a"></rect>
+        <path d="M80 23.5V21Q80 18.6 82 18.6Q84 18.6 84 20.6M80 23.5L66 30.5H94Z" fill="none" stroke="#7d6c58" stroke-width=".9" stroke-linejoin="round"></path>
+        <use href="#rc-jk" transform="translate(80 47.5) scale(1.05)" fill="#4a8a43"></use>
+      </g>
+
+      <g id="rc-article">
+        <use href="#rc-chrome"></use>
+        <rect x="8" y="19" width="18" height="2.6" rx="1" fill="#1b1b1b"></rect>
+        <rect x="30" y="26" width="100" height="4" rx="1.4" fill="#1b1b1b"></rect>
+        <rect x="30" y="33" width="66" height="4" rx="1.4" fill="#1b1b1b"></rect>
+        <rect x="30" y="41" width="100" height="36" rx="1.5" fill="url(#rc-hero-g)"></rect>
+        <path d="M30 70Q55 59 80 66T130 61V75.5Q130 77 128.5 77H31.5Q30 77 30 75.5Z" fill="#6f9a64" fill-opacity=".55"></path>
+        <use href="#rc-jk" transform="translate(99 58) scale(.56)" fill="#2f6b34"></use>
+        <g fill="#a3a9b0">
+          <rect x="30" y="81" width="100" height="1.4" rx=".7"></rect>
+          <rect x="30" y="85" width="94" height="1.4" rx=".7"></rect>
+          <rect x="30" y="89" width="98" height="1.4" rx=".7"></rect>
+          <rect x="30" y="93" width="60" height="1.4" rx=".7"></rect>
+        </g>
+      </g>
+
+      <g id="rc-serp">
+        <use href="#rc-chrome"></use>
+        <rect x="8" y="19" width="84" height="6" rx="3" fill="#fff" stroke="#d2d6db" stroke-width=".6"></rect>
+        <rect x="12" y="21.3" width="30" height="1.4" rx=".7" fill="#5f6368"></rect>
+        <rect x="8" y="29" width="10" height="1.3" rx=".65" fill="#0f6cbd"></rect>
+        <rect x="22" y="29" width="10" height="1.3" rx=".65" fill="#9aa0a6"></rect>
+        <rect x="36" y="29" width="10" height="1.3" rx=".65" fill="#9aa0a6"></rect>
+        <rect x="8" y="34" width="27" height="26" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="38.5" y="34" width="27" height="26" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="69" y="34" width="27" height="26" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="99.5" y="34" width="27" height="26" rx="1.5" fill="#f1eee8"></rect>
+        <rect x="130" y="34" width="22" height="26" rx="1.5" fill="#f1eee8"></rect>
+        <use href="#rc-jk" transform="translate(21.5 47) scale(.45)" fill="#3f7d3b"></use>
+        <use href="#rc-jk" transform="translate(52 47) scale(.45)" fill="#2f6b34"></use>
+        <use href="#rc-jk" transform="translate(82.5 47) scale(.45)" fill="#7a8a3c"></use>
+        <use href="#rc-jk" transform="translate(113 47) scale(.45)" fill="#4f9a4a"></use>
+        <use href="#rc-jk" transform="translate(141 47) scale(.42)" fill="#26324a"></use>
+        <rect x="8" y="66" width="50" height="2" rx=".8" fill="#1f4fbf"></rect>
+        <rect x="8" y="70.5" width="92" height="1.3" rx=".65" fill="#9aa0a6"></rect>
+        <rect x="8" y="74" width="80" height="1.3" rx=".65" fill="#9aa0a6"></rect>
+        <rect x="8" y="80" width="44" height="2" rx=".8" fill="#1f4fbf"></rect>
+        <rect x="8" y="84.5" width="96" height="1.3" rx=".65" fill="#9aa0a6"></rect>
+        <rect x="8" y="88" width="70" height="1.3" rx=".65" fill="#9aa0a6"></rect>
+      </g>
+    </defs>
+  </svg>
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <symbol id="rc-i-edge" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="7" fill="url(#rc-edge-g)"></circle>
+      <path d="M3.4 9.6C3.6 5.4 9.6 3.4 12.2 7.3C10.9 6.3 7.3 6.5 7 9C6.8 10.8 9 12.4 11.7 11.5C9.7 13.7 4.4 13.5 3.4 9.6Z" fill="#fff" fill-opacity=".88"></path>
+    </symbol>
+    <symbol id="rc-i-outlook" viewBox="0 0 16 16">
+      <rect x="1" y="2" width="14" height="12" rx="2.6" fill="#0f6cbd"></rect>
+      <rect x="4" y="5.2" width="8" height="5.6" rx="1" fill="none" stroke="#fff" stroke-width="1.2"></rect>
+      <path d="M4.6 5.8L8 8.3L11.4 5.8" fill="none" stroke="#fff" stroke-width="1.1"></path>
+    </symbol>
+    <symbol id="rc-i-teams" viewBox="0 0 16 16">
+      <rect x="1" y="2" width="14" height="12" rx="2.6" fill="#5b5fc7"></rect>
+      <path d="M4.6 5.2H11.4Q12.4 5.2 12.4 6.2V9.2Q12.4 10.2 11.4 10.2H7.6L5.6 11.8V10.2H4.6Q3.6 10.2 3.6 9.2V6.2Q3.6 5.2 4.6 5.2Z" fill="#fff"></path>
+    </symbol>
+    <symbol id="rc-i-photos" viewBox="0 0 16 16">
+      <rect x="1" y="2" width="14" height="12" rx="2.6" fill="#2f8fdf"></rect>
+      <path d="M1 11.2L5.4 7.4L8.8 10.3L10.8 8.6L15 12.1V11.4Q15 14 12.4 14H3.6Q1 14 1 11.4Z" fill="#86d7ae"></path>
+      <circle cx="11.2" cy="5.6" r="1.4" fill="#fff"></circle>
+    </symbol>
+    <symbol id="rc-i-lens" viewBox="0 0 16 16">
+      <circle cx="6.8" cy="7.4" r="4.3" fill="none" stroke="currentColor" stroke-width="1.3"></circle>
+      <path d="M10 10.6L13.8 14.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
+    </symbol>
+    <symbol id="rc-i-chev" viewBox="0 0 16 16">
+      <path d="M6 3.5L10.5 8L6 12.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+    </symbol>
+    <symbol id="rc-i-more" viewBox="0 0 16 16">
+      <circle cx="3.5" cy="8" r="1.05" fill="currentColor"></circle>
+      <circle cx="8" cy="8" r="1.05" fill="currentColor"></circle>
+      <circle cx="12.5" cy="8" r="1.05" fill="currentColor"></circle>
+    </symbol>
+    <symbol id="rc-i-cal" viewBox="0 0 16 16">
+      <rect x="2" y="3" width="12" height="11" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <path d="M2.4 6.6H13.6M5.5 1.6V4.2M10.5 1.6V4.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
+      <rect x="5" y="9" width="2.2" height="2.2" rx=".5" fill="currentColor"></rect>
+    </symbol>
+    <symbol id="rc-i-ptr" viewBox="0 0 13 20">
+      <path d="M1 1V16.2L4.9 12.6L7.6 18.6L10.1 17.5L7.5 11.6H12.6Z" fill="#fff" stroke="#000" stroke-width="1" stroke-linejoin="round"></path>
+    </symbol>
+  </svg>
+
   <div class="win">
-    <div class="bar">
-      <span class="logo" aria-hidden="true"></span>
-      <div class="q">
-        <svg class="lens" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-        <span class="typed"><span data-step data-at="400">gr</span><span data-step data-at="650">een</span><span data-step data-at="900"> ja</span><span data-step data-at="1150">cket</span></span><span class="caret" aria-hidden="true"></span>
+    <div class="tbar">
+      <div class="tleft">
+        <svg class="back" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3.5M7.6 3.8L3.4 8L7.6 12.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <svg class="rmark" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 1.6L13.6 4.8L8 8L2.4 4.8Z" fill="#8fe2ff" stroke="#8fe2ff" stroke-width=".8" stroke-linejoin="round"></path>
+          <path d="M2.4 4.8L8 8V14.4L2.4 11.2Z" fill="#2a8ff0" stroke="#2a8ff0" stroke-width=".8" stroke-linejoin="round"></path>
+          <path d="M13.6 4.8L8 8V14.4L13.6 11.2Z" fill="#0a5cc4" stroke="#0a5cc4" stroke-width=".8" stroke-linejoin="round"></path>
+        </svg>
+        <span class="app">Recall</span>
+      </div>
+
+      <div class="search">
+        <svg class="lens" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="6.6" cy="7.6" r="4.2" fill="none" stroke="url(#rc-ai-g)" stroke-width="1.4"></circle>
+          <path d="M9.8 10.8L13.6 14.6" stroke="#5a5fe0" stroke-width="1.5" stroke-linecap="round"></path>
+          <path d="M12.6 1L13.2 2.8L15 3.4L13.2 4L12.6 5.8L12 4L10.2 3.4L12 2.8Z" fill="#9a55e6"></path>
+        </svg>
+        <div class="field">
+          <span class="ph">Search your history</span>
+          <span class="q"><span class="ch1" data-step data-at="800">g</span><span data-step data-at="880">r</span><span data-step data-at="950">e</span><span data-step data-at="1030">e</span><span data-step data-at="1110">n</span><span data-step data-at="1200">&nbsp;</span><span data-step data-at="1330">j</span><span data-step data-at="1410">a</span><span data-step data-at="1480">c</span><span data-step data-at="1560">k</span><span data-step data-at="1640">e</span><span data-step data-at="1720">t</span><i class="caret c1"></i><span class="ghost" data-step data-at="1880">&nbsp;on a shopping site</span><i class="caret c2"></i></span>
+        </div>
+        <svg class="mic" viewBox="0 0 16 16" aria-hidden="true">
+          <rect x="6" y="1.8" width="4" height="7.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+          <path d="M3.8 7.6A4.2 4.2 0 0 0 12.2 7.6M8 11.8V14.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
+        </svg>
+        <i class="glow"></i>
+
+        <div class="sug">
+          <div class="si s1">
+            <svg class="sl"><use href="#rc-i-lens"></use></svg>
+            <i class="skl"></i>
+            <span class="st" data-step data-at="1640">green jacket <b>on a shopping site</b></span>
+            <svg class="ptr p1" data-step data-at="2250"><use href="#rc-i-ptr"></use></svg>
+          </div>
+          <div class="si">
+            <svg class="sl"><use href="#rc-i-lens"></use></svg>
+            <i class="skl"></i>
+            <span class="st" data-step data-at="1720">green jacket <b>in an email</b></span>
+          </div>
+          <div class="si">
+            <svg class="sl"><use href="#rc-i-lens"></use></svg>
+            <i class="skl"></i>
+            <span class="st" data-step data-at="1800">green jacket <b>last week</b></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="caps" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path d="M3 8.5H13" stroke="currentColor" stroke-width="1"></path></svg>
+        <svg viewBox="0 0 16 16"><rect x="3.5" y="3.5" width="9" height="9" rx="1.6" fill="none" stroke="currentColor" stroke-width="1"></rect></svg>
+        <svg viewBox="0 0 16 16"><path d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5" stroke="currentColor" stroke-width="1"></path></svg>
       </div>
     </div>
-    <ul class="suggest" data-step data-at="1400">
-      <li class="s1" data-step data-at="1500">green jacket <em>on a shopping site</em><span class="pick" data-step data-at="2900"></span></li>
-      <li data-step data-at="1700">green jacket <em>in an email</em></li>
-      <li data-step data-at="1900">green jacket <em>last week</em></li>
-    </ul>
-    <span class="go" data-step data-at="3700"></span>
-    <div class="results" data-step data-at="3800">
-      <div class="filters" data-step data-at="4500">
-        <span class="chip f1">in Edge<span class="on" data-step data-at="5600"></span></span>
-        <span class="chip f2">last week<span class="on" data-step data-at="7000"></span></span>
-        <span class="chip">shopping</span>
-        <span class="count"><span class="n0">38 moments</span><span class="n1">9 moments</span><span class="n2">2 moments</span></span>
+
+    <div class="navr" aria-hidden="true">
+      <span class="ri rhome">
+        <svg viewBox="0 0 16 16"><path d="M2.6 7.1L8 2.6L13.4 7.1V13.1Q13.4 14 12.5 14H10.1V9.9H5.9V14H3.5Q2.6 14 2.6 13.1Z" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"></path></svg>
+        <span>Home</span>
+      </span>
+      <span class="ri">
+        <svg viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.1"><rect x="1.6" y="2.4" width="3.4" height="5" rx=".8"></rect><rect x="6.3" y="2.4" width="3.4" height="5" rx=".8"></rect><rect x="11" y="2.4" width="3.4" height="5" rx=".8"></rect><path d="M2 11.8H14M4 10.1L2 11.8L4 13.5M12 10.1L14 11.8L12 13.5" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+        <span>Timeline</span>
+      </span>
+      <span class="ri low">
+        <svg viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="6" cy="6.4" r="2.3"></circle><path d="M2 13.6Q2 9.8 6 9.8Q10 9.8 10 13.6"></path><path d="M9.6 1.8H14Q14.6 1.8 14.6 2.4V5.4Q14.6 6 14 6H12L10.6 7.2V6H9.6Q9 6 9 5.4V2.4Q9 1.8 9.6 1.8Z"></path></g></svg>
+        <span>Feedback</span>
+      </span>
+      <span class="ri">
+        <svg viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><circle cx="8" cy="8" r="2.2"></circle><circle cx="8" cy="8" r="5"></circle><path d="M8 1.4V3M8 13V14.6M1.4 8H3M13 8H14.6M3.3 3.3L4.5 4.5M11.5 11.5L12.7 12.7M3.3 12.7L4.5 11.5M11.5 4.5L12.7 3.3"></path></g></svg>
+        <span>Settings</span>
+      </span>
+    </div>
+
+    <div class="main">
+      <div class="home">
+        <p class="hi">Good afternoon</p>
+        <p class="date">March 18</p>
+        <div class="group">
+          <p class="gt">Recent snapshots</p>
+          <div class="gthumbs">
+            <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-chat"></use></svg><span class="badge"><svg><use href="#rc-i-teams"></use></svg>Teams</span></div>
+            <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-mail"></use></svg><span class="badge"><svg><use href="#rc-i-outlook"></use></svg>Outlook</span></div>
+            <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-article"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+          </div>
+        </div>
       </div>
-      <div class="grid">
-        <div class="tile m1 m2 hit"><i class="shot jacket"></i><span>Edge · last week</span><span class="found" data-step data-at="8400">found it</span></div>
-        <div class="tile"><i class="shot mail"></i><span>Outlook · 2 weeks ago</span></div>
-        <div class="tile m1 m2"><i class="shot jacket alt"></i><span>Edge · last week</span></div>
-        <div class="tile"><i class="shot chat"></i><span>Teams · yesterday</span></div>
-        <div class="tile m1"><i class="shot page"></i><span>Edge · March</span></div>
-        <div class="tile"><i class="shot photo"></i><span>Photos · last week</span></div>
+
+      <div class="res">
+        <div class="rhead">
+          <p class="rt">Results</p>
+          <span class="count"><span class="n n38" data-step data-at="3900">38 moments</span><span class="n n9">9 moments</span><span class="n n2">2 moments</span></span>
+        </div>
+        <div class="fchips">
+          <span class="fchip all" data-step data-at="3900">All</span>
+          <span class="fchip edge" data-step data-at="3950"><svg><use href="#rc-i-edge"></use></svg>Edge<svg class="ptr p2" data-step data-at="5100"><use href="#rc-i-ptr"></use></svg></span>
+          <span class="fchip" data-step data-at="4000"><svg><use href="#rc-i-outlook"></use></svg>Outlook</span>
+          <span class="fchip teams" data-step data-at="4050"><svg><use href="#rc-i-teams"></use></svg>Teams</span>
+          <i class="vsep" data-step data-at="4075"></i>
+          <span class="fchip week" data-step data-at="4125"><svg><use href="#rc-i-cal"></use></svg>Last week<svg class="ptr p3" data-step data-at="6900"><use href="#rc-i-ptr"></use></svg></span>
+        </div>
+
+        <p class="sec">Text matches<svg><use href="#rc-i-chev"></use></svg></p>
+        <div class="rw">
+          <div class="row">
+            <div class="slot x1">
+              <div class="rcard">
+                <i class="sk"><i></i><i></i><i></i></i>
+                <div class="cc" data-step data-at="3950">
+                  <div class="ch"><span class="ct">Found <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                  <span class="ago">1d ago</span>
+                  <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-chat"></use></svg><span class="badge"><svg><use href="#rc-i-teams"></use></svg>Teams</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="slot kp">
+              <div class="rcard">
+                <i class="sk"><i></i><i></i><i></i></i>
+                <div class="cc" data-step data-at="4020">
+                  <div class="ch"><span class="ct">Found <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                  <span class="ago">4d ago</span>
+                  <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-grid"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="slot x1">
+              <div class="rcard">
+                <i class="sk"><i></i><i></i><i></i></i>
+                <div class="cc" data-step data-at="4090">
+                  <div class="ch"><span class="ct">Found <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                  <span class="ago">2d ago</span>
+                  <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-mail"></use></svg><span class="badge"><svg><use href="#rc-i-outlook"></use></svg>Outlook</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="slot kp">
+              <div class="rcard hit">
+                <i class="sk"><i></i><i></i><i></i></i>
+                <div class="cc" data-step data-at="4160">
+                  <div class="ch"><span class="ct">Found <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                  <span class="ago">6d ago</span>
+                  <div class="thumb">
+                    <svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-shop"></use></svg>
+                    <span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span>
+                    <span class="fi" data-step data-at="9200"><svg viewBox="0 0 16 16"><path d="M3.5 8.4L6.6 11.3L12.5 4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>Found it</span>
+                    <svg class="ptr p4" data-step data-at="8700"><use href="#rc-i-ptr"></use></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slot x2">
+              <div class="rcard">
+                <i class="sk"><i></i><i></i><i></i></i>
+                <div class="cc" data-step data-at="4230">
+                  <div class="ch"><span class="ct">Found <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                  <span class="ago">19d ago</span>
+                  <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-article"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="slot x2">
+              <div class="rcard">
+                <i class="sk"><i></i><i></i><i></i></i>
+                <div class="cc" data-step data-at="4300">
+                  <div class="ch"><span class="ct">Found <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                  <span class="ago">22d ago</span>
+                  <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-serp"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="nxt"><svg><use href="#rc-i-chev"></use></svg></span>
+        </div>
+
+        <div class="vis">
+          <div class="vin">
+            <p class="sec">Visual matches<svg><use href="#rc-i-chev"></use></svg></p>
+            <div class="rw">
+              <div class="row">
+                <div class="slot x2">
+                  <div class="rcard">
+                    <i class="sk"><i></i><i></i><i></i></i>
+                    <div class="cc" data-step data-at="4060">
+                      <div class="ch"><span class="ct">Close match to <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                      <span class="ago">26d ago</span>
+                      <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-serp"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slot x1">
+                  <div class="rcard">
+                    <i class="sk"><i></i><i></i><i></i></i>
+                    <div class="cc" data-step data-at="4130">
+                      <div class="ch"><span class="ct">Close match to <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                      <span class="ago">15d ago</span>
+                      <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-photo"></use></svg><span class="badge"><svg><use href="#rc-i-photos"></use></svg>Photos</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slot x2">
+                  <div class="rcard">
+                    <i class="sk"><i></i><i></i><i></i></i>
+                    <div class="cc" data-step data-at="4200">
+                      <div class="ch"><span class="ct">Close match to <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                      <span class="ago">12d ago</span>
+                      <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-grid"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slot x1">
+                  <div class="rcard">
+                    <i class="sk"><i></i><i></i><i></i></i>
+                    <div class="cc" data-step data-at="4270">
+                      <div class="ch"><span class="ct">Close match to <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                      <span class="ago">9d ago</span>
+                      <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-chat"></use></svg><span class="badge"><svg><use href="#rc-i-teams"></use></svg>Teams</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slot x2">
+                  <div class="rcard">
+                    <i class="sk"><i></i><i></i><i></i></i>
+                    <div class="cc" data-step data-at="4340">
+                      <div class="ch"><span class="ct">Close match to <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                      <span class="ago">11d ago</span>
+                      <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-shop"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slot x2">
+                  <div class="rcard">
+                    <i class="sk"><i></i><i></i><i></i></i>
+                    <div class="cc" data-step data-at="4380">
+                      <div class="ch"><span class="ct">Close match to <b>green jacket</b></span><svg class="more"><use href="#rc-i-more"></use></svg></div>
+                      <span class="ago">17d ago</span>
+                      <div class="thumb"><svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice"><use href="#rc-article"></use></svg><span class="badge"><svg><use href="#rc-i-edge"></use></svg>Edge</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="nxt"><svg><use href="#rc-i-chev"></use></svg></span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <i class="mk m-focus" data-step data-at="450"></i>
+  <i class="mk m-sug" data-step data-at="1430"></i>
+  <i class="mk m-hov1" data-step data-at="2450"></i>
+  <i class="mk m-press1" data-step data-at="2750"></i>
+  <i class="mk m-accept" data-step data-at="2900"></i>
+  <i class="mk m-close" data-step data-at="3000"></i>
+  <i class="mk m-go" data-step data-at="3250"></i>
+  <i class="mk m-loaded" data-step data-at="4300"></i>
+  <i class="mk m-hov2" data-step data-at="5300"></i>
+  <i class="mk m-press2" data-step data-at="5550"></i>
+  <i class="mk m-f1" data-step data-at="5700"></i>
+  <i class="mk m-hov3" data-step data-at="7100"></i>
+  <i class="mk m-press3" data-step data-at="7350"></i>
+  <i class="mk m-f2" data-step data-at="7500"></i>
+  <i class="mk m-grow" data-step data-at="7750"></i>
+  <i class="mk m-hov4" data-step data-at="8900"></i>
+  <i class="mk m-found" data-step data-at="9000"></i>
+  <i class="mk m-out" data-step data-at="13300"></i>
+
   <span class="illustration-tag">illustration</span>
 </div>
 
 <style>
-  .demo-gs {
+  /* Palette, type ramp and radii follow Windows 11 (WinUI light theme tokens, Segoe UI Variable, 8px windows and flyouts). */
+  .demo-rc {
+    --rc-accent: #005fb8;
+    --rc-ink: #1b1b1b;
+    --rc-ink-2: #5d6066;
+    --rc-ink-3: #8b8f96;
+    --rc-ease: cubic-bezier(0.1, 0.9, 0.2, 1);
+    --rc-move: cubic-bezier(0.33, 0, 0.1, 1);
+    --rc-display: 'Segoe UI Variable Display', 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --pad: 1.2em;
+    --gap: 0.8em;
+    --n: 4.25;
+    --ng: 4;
     position: relative;
     width: 100%;
     height: 100%;
     display: grid;
-    place-items: center;
-    padding: 5cqh 6cqw;
-    font-size: clamp(9px, 2cqw, 16px);
-    line-height: 1.3;
-    color: var(--ink);
+    padding: var(--pad);
+    overflow: hidden;
+    font-family: 'Segoe UI Variable Text', 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    font-size: clamp(9px, 1.62cqw, 13.5px);
+    line-height: 1.35;
+    color: var(--rc-ink);
+    text-align: left;
+    -webkit-font-smoothing: antialiased;
     background:
-      radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 45%),
-      radial-gradient(circle at 88% 85%, color-mix(in srgb, var(--highlight) 32%, transparent), transparent 45%),
-      var(--bg-soft);
+      radial-gradient(70% 90% at 78% 118%, rgba(28, 98, 214, 0.5), transparent 70%),
+      radial-gradient(55% 80% at 16% 122%, rgba(86, 156, 238, 0.42), transparent 70%),
+      linear-gradient(180deg, #dce9f5, #bcd3ea);
+  }
+
+  .defs {
+    position: absolute;
+    width: 0;
+    height: 0;
     overflow: hidden;
   }
 
-  .win {
-    position: relative;
-    width: min(100%, 62em);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8em;
-    padding: 1em 1.1em;
-    border-radius: 1em;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-    overflow: hidden;
+  .mk {
+    position: absolute;
+    width: 0;
+    height: 0;
   }
 
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 0.7em;
-  }
-
-  .logo {
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 0.4em;
-    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, var(--highlight)));
+  svg {
+    display: block;
     flex: none;
   }
 
-  .q {
-    flex: 1;
+  /* Window on Mica: the wallpaper tints it blue, with the Bloom colors glowing at the bottom. */
+  .win {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    border-radius: 0.65em;
+    overflow: hidden;
+    background:
+      radial-gradient(60% 45% at 6% 108%, rgba(255, 199, 216, 0.5), transparent 70%),
+      radial-gradient(55% 45% at 50% 112%, rgba(200, 234, 196, 0.42), transparent 70%),
+      radial-gradient(50% 45% at 97% 106%, rgba(216, 199, 247, 0.55), transparent 70%),
+      linear-gradient(180deg, #d7e5f0, #dae2f0 72%, #dfe0f1);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09), 0 14px 34px rgba(16, 52, 96, 0.3), 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .tbar {
+    grid-column: 1 / -1;
+    position: relative;
+    z-index: 4;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 27em) minmax(0, 1fr);
+    align-items: center;
+    gap: 1em;
+    height: 3em;
+    padding-left: 0.95em;
+  }
+
+  .tleft {
     display: flex;
     align-items: center;
-    gap: 0.5em;
-    padding: 0.55em 0.8em;
-    border-radius: 999px;
-    border: 1.5px solid color-mix(in srgb, var(--accent) 55%, var(--line));
-    background: var(--bg);
+    gap: 0.75em;
+    min-width: 0;
+  }
+
+  .back {
+    width: 1.1em;
+    height: 1.1em;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .rmark {
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .app {
+    font-size: max(9px, 0.86em);
+    white-space: nowrap;
+  }
+
+  .caps {
+    justify-self: end;
+    display: flex;
+    height: 100%;
+  }
+
+  .caps svg {
+    width: 3.5em;
+    height: 100%;
+    padding: 0 1.35em;
+  }
+
+  /* Search box: pill shaped, AI search glyph, and the blue to pink underline Recall shows on focus. */
+  .search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    height: 2.25em;
+    padding: 0 0.95em 0 0.8em;
+    border-radius: 1.125em;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.075);
+    transition: background-color 0.3s;
   }
 
   .lens {
-    width: 1.1em;
-    height: 1.1em;
-    color: var(--muted);
-    flex: none;
+    width: 1.15em;
+    height: 1.15em;
+  }
+
+  .mic {
+    width: 1.05em;
+    height: 1.05em;
+    color: var(--rc-ink-2);
+  }
+
+  .field {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .ph,
+  .q {
+    grid-area: 1 / 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.25s;
+  }
+
+  .ph {
+    color: var(--rc-ink-2);
+  }
+
+  .glow {
+    position: absolute;
+    left: 1.1em;
+    right: 1.1em;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #0a74d8, #5a52ec 48%, #b263d9 76%, #f2959d);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.5s var(--rc-ease);
+  }
+
+  .glow::after,
+  .skl::after,
+  .sk i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    transform: translateX(-100%);
+  }
+
+  .q > [data-step] {
+    transition: none;
+  }
+
+  .demo-rc:global(.seq-on) .q > [data-step]:not(:global(.is-on)) {
+    display: none;
+  }
+
+  .q > .ghost[data-step] {
+    color: var(--rc-ink-3);
+    transition: color 0.25s;
   }
 
   .caret {
-    width: 1.5px;
+    display: inline-block;
+    width: 1px;
     height: 1.1em;
-    background: var(--accent);
-    animation: blink 1s steps(1) infinite;
+    margin: 0 -0.5px;
+    vertical-align: -0.18em;
+    background: var(--rc-ink);
+    opacity: 0;
   }
 
-  @keyframes blink {
+  /* Suggestions flyout: acrylic, 8px corners, flyout shadow, list items with the Windows selection pill. */
+  .sug {
+    position: absolute;
+    top: calc(100% + 0.35em);
+    left: 0;
+    right: 0;
+    z-index: 5;
+    padding: 0.3em 0;
+    border-radius: 0.65em;
+    background: rgba(250, 251, 252, 0.9);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 2px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.5em);
+    transition: opacity 0.18s, transform 0.3s var(--rc-ease), visibility 0s 0.3s;
+  }
+
+  .si {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+    height: 2.35em;
+    margin: 0 0.3em;
+    padding: 0 0.7em;
+    border-radius: 0.3em;
+    white-space: nowrap;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .si::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 1.15em;
+    margin-top: -0.575em;
+    border-radius: 2px;
+    background: var(--rc-accent);
+    transform: scaleY(0);
+    transition: transform 0.25s var(--rc-ease);
+  }
+
+  .sl {
+    width: 1.05em;
+    height: 1.05em;
+    color: var(--rc-ink-2);
+  }
+
+  .st {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .st b,
+  .ct b {
+    font-weight: 600;
+  }
+
+  .skl {
+    position: absolute;
+    left: 2.45em;
+    top: 50%;
+    width: 55%;
+    height: 0.6em;
+    margin-top: -0.3em;
+    border-radius: 0.3em;
+    background: rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    transition: opacity 0.2s;
+  }
+
+  .si:has(.st:global(.is-on)) .skl {
+    opacity: 0;
+  }
+
+  /* Navigation rail: the selected item is a white tile with an accent pill and no label. */
+  .navr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35em;
+    width: 5em;
+    padding: 0.2em 0 1em;
+  }
+
+  .ri {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    width: 3.9em;
+    padding: 0.5em 0 0.4em;
+    border-radius: 0.45em;
+    color: var(--rc-ink-2);
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  }
+
+  .ri svg {
+    width: 1.4em;
+    height: 1.4em;
+    transition: transform 0.35s var(--rc-ease);
+  }
+
+  .ri span {
+    margin-top: 0.2em;
+    font-size: max(9px, 0.74em);
+    transition: opacity 0.2s;
+  }
+
+  .ri::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 1.25em;
+    margin-top: -0.625em;
+    border-radius: 2px;
+    background: var(--rc-accent);
+    transform: scaleY(0);
+    transition: transform 0.3s var(--rc-ease);
+  }
+
+  .ri.low {
+    margin-top: auto;
+  }
+
+  .ri.rhome {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--rc-accent);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .ri.rhome::before {
+    transform: scaleY(1);
+  }
+
+  .ri.rhome svg {
+    transform: translateY(0.5em);
+  }
+
+  .ri.rhome span {
+    opacity: 0;
+  }
+
+  .main {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    padding: 0.5em 1.6em 1.8em 0.7em;
+    overflow: hidden;
+  }
+
+  /* Home: greeting and recent snapshots, shown before the search runs. */
+  .home {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    min-height: 0;
+    padding-top: 1.1em;
+    transition: opacity 0.18s ease-in, transform 0.3s ease-in;
+  }
+
+  .hi {
+    margin: 0;
+    font: 600 2.15em/1.2 var(--rc-display);
+  }
+
+  .date {
+    margin: 0.1em 0 0;
+    font-size: 1.15em;
+    color: var(--rc-ink-2);
+  }
+
+  .group {
+    width: min(100%, 44em);
+    margin-top: 1.5em;
+    padding: 0.85em 1em 1em;
+    border-radius: 0.9em;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+
+  .gt {
+    margin: 0 0 0.7em;
+    font-size: 1.08em;
+    font-weight: 600;
+  }
+
+  .gthumbs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75em;
+  }
+
+  /* Results page. */
+  .res {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    opacity: 0;
+    transform: translateY(0.8em);
+    transition: opacity 0.3s 0.2s, transform 0.55s 0.2s var(--rc-ease);
+  }
+
+  .rhead {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8em;
+  }
+
+  .rt {
+    margin: 0;
+    font: 600 1.85em/1.2 var(--rc-display);
+  }
+
+  .count {
+    display: inline-grid;
+    overflow: hidden;
+    color: var(--rc-ink-2);
+  }
+
+  .n {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+  }
+
+  .count .n {
+    transition: opacity 0.3s, transform 0.4s var(--rc-ease);
+  }
+
+  .n9,
+  .n2 {
+    opacity: 0;
+    transform: translateY(1em);
+  }
+
+  .fchips {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-top: 0.7em;
+    min-width: 0;
+  }
+
+  .fchip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    flex: none;
+    height: 2.2em;
+    padding: 0 0.95em 0 0.75em;
+    border-radius: 1.1em;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(0, 0, 0, 0.065);
+    font-size: max(9px, 0.93em);
+    white-space: nowrap;
+  }
+
+  .fchips .fchip[data-step] {
+    transition: opacity 0.35s, transform 0.45s var(--rc-ease), background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .fchip svg {
+    width: 1.2em;
+    height: 1.2em;
+  }
+
+  .fchip.all {
+    padding: 0 1.05em;
+  }
+
+  .fchip.all,
+  .demo-rc:has(:global(.m-f1.is-on)) .fchip.edge,
+  .demo-rc:has(:global(.m-f2.is-on)) .fchip.week {
+    background: var(--rc-accent);
+    border-color: var(--rc-accent);
+    color: #fff;
+  }
+
+  .vsep {
+    flex: none;
+    width: 1px;
+    height: 1.4em;
+    margin: 0 0.25em;
+    background: rgba(0, 0, 0, 0.14);
+  }
+
+  .sec {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    margin: 1em 0 0;
+    font-size: 1.08em;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .sec svg {
+    width: 0.95em;
+    height: 0.95em;
+  }
+
+  /* Card rows behave like Recall's carousels. Cards that a filter removes collapse, the rest slide over. */
+  .rw {
+    position: relative;
+  }
+
+  .row {
+    --cw: calc((100cqw - var(--ng) * var(--gap)) / var(--n));
+    display: flex;
+    margin: 0.35em -0.4em 0;
+    padding: 0.4em;
+    overflow-x: clip;
+    container-type: inline-size;
+  }
+
+  .slot {
+    flex: 0 0 var(--cw);
+    min-width: 0;
+    margin-right: var(--gap);
+    transition: flex-basis 0.6s 0.1s var(--rc-move), margin-right 0.6s 0.1s var(--rc-move), opacity 0.22s;
+  }
+
+  .slot.x1,
+  .slot.x2 {
+    overflow-x: clip;
+  }
+
+  .rcard {
+    position: relative;
+    width: 100%;
+    min-width: var(--cw);
+    padding: 0.55em 0.6em 0.6em;
+    border-radius: 0.8em;
+    background: rgba(255, 255, 255, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 1px 2px rgba(20, 40, 70, 0.06);
+    transition: background-color 0.25s, box-shadow 0.35s, transform 0.35s var(--rc-ease);
+  }
+
+  .ch {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: max(9px, 0.86em);
+    white-space: nowrap;
+  }
+
+  .ct {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .more {
+    width: 1.15em;
+    height: 1.15em;
+    color: var(--rc-ink-2);
+  }
+
+  .ago {
+    display: block;
+    font-size: max(9px, 0.8em);
+    color: var(--rc-ink-2);
+  }
+
+  .thumb {
+    position: relative;
+    margin-top: 0.45em;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.5em;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07);
+  }
+
+  .thumb > svg:first-child {
+    width: 100%;
+    height: 100%;
+  }
+
+  .badge {
+    position: absolute;
+    left: 0.45em;
+    bottom: 0.45em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.2em 0.6em 0.2em 0.3em;
+    border-radius: 1em;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+    font-size: max(9px, 0.76em);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .badge svg {
+    width: 1.25em;
+    height: 1.25em;
+  }
+
+  .sk {
+    position: absolute;
+    inset: 0.55em 0.6em 0.6em;
+    transition: opacity 0.3s;
+  }
+
+  .sk i {
+    position: absolute;
+    left: 0;
+    overflow: hidden;
+    border-radius: 0.3em;
+    background: rgba(0, 0, 0, 0.065);
+  }
+
+  .sk i:nth-child(1) {
+    top: 0.25em;
+    width: 70%;
+    height: 0.7em;
+  }
+
+  .sk i:nth-child(2) {
+    top: 1.45em;
+    width: 30%;
+    height: 0.6em;
+  }
+
+  .sk i:nth-child(3) {
+    bottom: 0;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.5em;
+  }
+
+  .rcard:has(.cc:global(.is-on)) .sk {
+    opacity: 0;
+  }
+
+  .nxt {
+    position: absolute;
+    right: -0.15em;
+    top: 58%;
+    display: grid;
+    place-items: center;
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14), 0 0 1px rgba(0, 0, 0, 0.2);
+    color: var(--rc-ink);
+    transition: opacity 0.3s;
+  }
+
+  .nxt svg {
+    width: 0.95em;
+    height: 0.95em;
+  }
+
+  .fi {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.28em 0.7em 0.28em 0.5em;
+    border-radius: 1em;
+    background: var(--rc-accent);
+    color: #fff;
+    font-size: max(9px, 0.86em);
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 60, 130, 0.35);
+    transform-origin: 85% 50%;
+  }
+
+  .fi svg {
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .thumb .fi[data-step] {
+    transition: opacity 0.2s, transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+
+  .demo-rc:global(.seq-on) .thumb .fi[data-step]:not(:global(.is-on)) {
+    transform: scale(0.5);
+  }
+
+  /* Pointer: one per target, each glides in from the direction of the last one. */
+  .ptr {
+    position: absolute;
+    z-index: 6;
+    width: 1.05em;
+    height: 1.6em;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.3));
+    transform-origin: 8% 5%;
+  }
+
+  .ptr[data-step] {
+    transition: opacity 0.25s, transform 0.6s var(--rc-ease);
+  }
+
+  .demo-rc:not(:global(.seq-on)) .ptr {
+    display: none;
+  }
+
+  .p1 {
+    right: 16%;
+    top: 48%;
+  }
+
+  .p2 {
+    left: 58%;
+    top: 52%;
+  }
+
+  .p3 {
+    left: 52%;
+    top: 52%;
+  }
+
+  .p4 {
+    left: 36%;
+    top: 42%;
+  }
+
+  .demo-rc:global(.seq-on) .p1[data-step]:not(:global(.is-on)) {
+    transform: translate(2.5em, 2.5em);
+  }
+
+  .demo-rc:global(.seq-on) .p2[data-step]:not(:global(.is-on)) {
+    transform: translate(6em, -4em);
+  }
+
+  .demo-rc:global(.seq-on) .p3[data-step]:not(:global(.is-on)) {
+    transform: translate(-7em, 0.5em);
+  }
+
+  .demo-rc:global(.seq-on) .p4[data-step]:not(:global(.is-on)) {
+    transform: translate(-5em, -6em);
+  }
+
+  .ptr[data-step] {
+    transition: opacity 0.25s, transform 0.6s var(--rc-ease), scale 0.12s;
+  }
+
+  .vis {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.55s var(--rc-move), opacity 0.3s;
+  }
+
+  .vin {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ---------- timeline states ---------- */
+  .demo-rc:has(:global(.m-focus.is-on)) .search {
+    background: #fff;
+  }
+
+  .demo-rc:has(:global(.m-focus.is-on)) .glow {
+    transform: scaleX(1);
+  }
+
+  .demo-rc:has(:global(.ch1.is-on)) .ph {
+    opacity: 0;
+    transition: none;
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-focus.is-on)):not(:has(:global(.m-accept.is-on))) .c1,
+  .demo-rc:global(.seq-on):has(:global(.m-accept.is-on)):not(:has(:global(.m-go.is-on))) .c2 {
+    opacity: 1;
+    animation: rc-blink 1.06s steps(1) infinite;
+  }
+
+  .demo-rc:has(:global(.m-accept.is-on)) .q > .ghost {
+    color: var(--rc-ink);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-sug.is-on)):not(:has(:global(.m-close.is-on))) .sug {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.18s, transform 0.35s var(--rc-ease), visibility 0s;
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-sug.is-on)):not(:has(:global(.m-close.is-on))) .skl::after,
+  .demo-rc:global(.seq-on):has(:global(.m-go.is-on)):not(:has(:global(.m-loaded.is-on))) .glow::after,
+  .demo-rc:global(.seq-on):has(:global(.m-go.is-on)):not(:has(:global(.m-loaded.is-on))) .sk i::after {
+    animation: rc-sweep 0.9s linear infinite;
+  }
+
+  .demo-rc:has(:global(.m-hov1.is-on)) .s1 {
+    background: rgba(0, 0, 0, 0.045);
+  }
+
+  .demo-rc:has(:global(.m-hov1.is-on)) .s1::before {
+    transform: scaleY(1);
+  }
+
+  .demo-rc:has(:global(.m-press1.is-on)):not(:has(:global(.m-accept.is-on))) .s1 {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--rc-ink-2);
+  }
+
+  .demo-rc:has(:global(.m-press1.is-on)):not(:has(:global(.m-accept.is-on))) .p1,
+  .demo-rc:has(:global(.m-press2.is-on)):not(:has(:global(.m-f1.is-on))) .p2,
+  .demo-rc:has(:global(.m-press3.is-on)):not(:has(:global(.m-f2.is-on))) .p3 {
+    scale: 0.85;
+  }
+
+  .demo-rc:has(:global(.p3.is-on)) .p2,
+  .demo-rc:has(:global(.p4.is-on)) .p3 {
+    opacity: 0;
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .home {
+    opacity: 0;
+    transform: translateY(-0.4em);
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .res {
+    opacity: 1;
+    transform: none;
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .back {
+    opacity: 1;
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .ri.rhome {
+    background: transparent;
+    color: var(--rc-ink-2);
+    box-shadow: none;
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .ri.rhome::before {
+    transform: scaleY(0);
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .ri.rhome svg {
+    transform: none;
+  }
+
+  .demo-rc:has(:global(.m-go.is-on)) .ri.rhome span {
+    opacity: 1;
+  }
+
+  .demo-rc:has(:global(.m-hov2.is-on)):not(:has(:global(.m-press2.is-on))) .fchip.edge,
+  .demo-rc:has(:global(.m-hov3.is-on)):not(:has(:global(.m-press3.is-on))) .fchip.week {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .demo-rc:has(:global(.m-press2.is-on)):not(:has(:global(.m-f1.is-on))) .fchip.edge,
+  .demo-rc:has(:global(.m-press3.is-on)):not(:has(:global(.m-f2.is-on))) .fchip.week {
+    background: rgba(255, 255, 255, 0.35);
+    color: var(--rc-ink-2);
+  }
+
+  .demo-rc:has(:global(.m-f1.is-on)) .fchip.all {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(0, 0, 0, 0.065);
+    color: var(--rc-ink);
+  }
+
+  .demo-rc:has(:global(.m-f1.is-on)) .slot.x1,
+  .demo-rc:has(:global(.m-f2.is-on)) .slot.x2 {
+    flex-basis: 0;
+    margin-right: 0;
+    opacity: 0;
+  }
+
+  .demo-rc:has(:global(.m-f1.is-on)) .n38 {
+    opacity: 0;
+    transform: translateY(-1em);
+  }
+
+  .demo-rc:has(:global(.m-f1.is-on)) .n9 {
+    opacity: 1;
+    transform: none;
+  }
+
+  .demo-rc:has(:global(.m-f2.is-on)) .n9 {
+    opacity: 0;
+    transform: translateY(-1em);
+  }
+
+  .demo-rc:has(:global(.m-f2.is-on)) .n2 {
+    opacity: 1;
+    transform: none;
+  }
+
+  .demo-rc:has(:global(.m-f2.is-on)) .vis {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .demo-rc:has(:global(.m-grow.is-on)) .slot.kp {
+    flex-basis: calc((100cqw - 2 * var(--gap)) / 2);
+  }
+
+  .demo-rc:has(:global(.m-grow.is-on)) .nxt {
+    opacity: 0;
+  }
+
+  .demo-rc:has(:global(.m-hov4.is-on)) .rcard.hit {
+    background: rgba(255, 255, 255, 0.62);
+  }
+
+  .demo-rc:has(:global(.m-found.is-on)) .rcard.hit {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 2px var(--rc-accent), 0 6px 14px rgba(0, 60, 130, 0.18);
+    transform: translateY(-0.2em);
+  }
+
+  /* Loop: fade back to the home page so the restart is seamless. Only while running. */
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .res {
+    opacity: 0;
+    transform: none;
+    transition: opacity 0.4s;
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .home {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.45s 0.2s, transform 0.55s 0.2s var(--rc-ease);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .q,
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .back,
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .ptr {
+    opacity: 0;
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .ph {
+    opacity: 1;
+    transition: opacity 0.3s 0.3s;
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .search {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .glow {
+    transform: scaleX(0);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .ri.rhome {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--rc-accent);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .ri.rhome::before {
+    transform: scaleY(1);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .ri.rhome svg {
+    transform: translateY(0.5em);
+  }
+
+  .demo-rc:global(.seq-on):has(:global(.m-out.is-on)) .ri.rhome span {
+    opacity: 0;
+  }
+
+  @keyframes rc-blink {
     50% {
       opacity: 0;
     }
   }
 
-  /* Typed characters and the dropdown take no space until they appear. */
-  .demo-gs:global(.seq-on) .typed [data-step]:not(:global(.is-on)),
-  .demo-gs:global(.seq-on) .suggest:not(:global(.is-on)),
-  .demo-gs:global(.seq-on) .results:not(:global(.is-on)) {
-    display: none;
+  @keyframes rc-sweep {
+    to {
+      transform: translateX(100%);
+    }
   }
 
-  .typed [data-step] {
-    transition: none;
+  /* ---------- compact frames (phones) ---------- */
+  @container (max-width: 599px) {
+    .demo-rc {
+      --pad: 0.55em;
+      --n: 2.25;
+      --ng: 2;
+    }
+
+    .navr,
+    .back,
+    .mic,
+    .vis {
+      display: none;
+    }
+
+    .win {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tbar {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.7em;
+      padding-left: 0.75em;
+    }
+
+    .caps svg {
+      width: 2.5em;
+      padding: 0 0.8em;
+    }
+
+    .main {
+      padding: 0.45em 0.9em 1.3em;
+    }
+
+    .rt {
+      font-size: 1.5em;
+    }
+
+    .hi {
+      font-size: 1.75em;
+    }
+
+    .group {
+      margin-top: 1.1em;
+      padding: 0.7em 0.8em 0.8em;
+    }
+
+    .gthumbs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gthumbs .thumb:nth-child(3) {
+      display: none;
+    }
   }
 
-  .suggest {
-    list-style: none;
-    margin: -0.4em 0 0 2.2em;
-    padding: 0.35em;
-    border-radius: 0.8em;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    box-shadow: var(--shadow);
+  @container (max-width: 420px) {
+    .fchip.teams {
+      display: none;
+    }
   }
 
-  .suggest li {
-    position: relative;
-    padding: 0.45em 0.7em;
-    border-radius: 0.55em;
+  /* Short desktop frames: one row of larger snapshots instead of two rows. */
+  @container (min-width: 600px) and (max-height: 399px) {
+    .demo-rc {
+      --n: 3.25;
+      --ng: 3;
+    }
+
+    .vis {
+      display: none;
+    }
   }
 
-  .suggest em {
-    font-style: normal;
-    color: var(--muted);
+  /* Square frames: taller snapshots fill the extra height. */
+  @container (max-aspect-ratio: 6 / 5) {
+    .thumb,
+    .sk i:nth-child(3) {
+      aspect-ratio: 4 / 3;
+    }
+
+    .sec {
+      margin-top: 1.3em;
+    }
+
+    .group {
+      margin-top: 1.4em;
+    }
   }
 
-  .s1:has(:global(.pick.is-on)) {
-    background: var(--accent-soft);
-  }
+  @container (max-width: 330px) {
+    .caps svg:not(:last-child) {
+      display: none;
+    }
 
-  .demo-gs:has(:global(.go.is-on)) .suggest {
-    display: none;
-  }
+    .fchips {
+      gap: 0.35em;
+    }
 
-  .go {
-    position: absolute;
-  }
-
-  .results {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7em;
-    min-height: 0;
-  }
-
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.45em;
-  }
-
-  .chip {
-    position: relative;
-    padding: 0.25em 0.75em;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--bg);
-    font-size: 0.92em;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-
-  .chip:has(:global(.on.is-on)) {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--on-accent);
-  }
-
-  .count {
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: 0.85em;
-    color: var(--muted);
-  }
-
-  .n1,
-  .n2 {
-    display: none;
-  }
-
-  .demo-gs:has(:global(.f1 .on.is-on)) .n0 {
-    display: none;
-  }
-
-  .demo-gs:has(:global(.f1 .on.is-on)) .n1 {
-    display: inline;
-  }
-
-  .demo-gs:has(:global(.f2 .on.is-on)) .n1 {
-    display: none;
-  }
-
-  .demo-gs:has(:global(.f2 .on.is-on)) .n2 {
-    display: inline;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.6em;
-  }
-
-  .tile {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3em;
-    font-size: 0.82em;
-    color: var(--muted);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
-
-  .shot {
-    display: block;
-    aspect-ratio: 16 / 9;
-    border-radius: 0.45em;
-    border: 1px solid var(--line);
-    background: var(--bg-soft);
-  }
-
-  .shot.jacket {
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M38 14 50 22 62 14 84 26 78 52 69 48 69 90 31 90 31 48 22 52 16 26Z' fill='%239ccc3d'/%3E%3Cpath d='M50 22v68' stroke='%237aa52c' stroke-width='2.5'/%3E%3Cpath d='M38 14 50 30 62 14' fill='none' stroke='%237aa52c' stroke-width='2.5'/%3E%3C/svg%3E") left 14% center / auto 82% no-repeat,
-      linear-gradient(90deg, transparent 52%, var(--line) 52% 54%, transparent 54%),
-      repeating-linear-gradient(180deg, transparent 0 0.55em, color-mix(in srgb, var(--ink) 9%, transparent) 0.55em 0.7em) right / 40% 60% no-repeat,
-      #f5f7f2;
-  }
-
-  .shot.jacket.alt {
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M38 14 50 22 62 14 84 26 78 52 69 48 69 90 31 90 31 48 22 52 16 26Z' fill='%239ccc3d'/%3E%3Cpath d='M50 22v68' stroke='%237aa52c' stroke-width='2.5'/%3E%3Cpath d='M38 14 50 30 62 14' fill='none' stroke='%237aa52c' stroke-width='2.5'/%3E%3C/svg%3E") right 16% center / auto 74% no-repeat,
-      repeating-linear-gradient(180deg, transparent 0 0.55em, color-mix(in srgb, var(--ink) 9%, transparent) 0.55em 0.7em) left 12% center / 45% 55% no-repeat,
-      #f3f5f8;
-  }
-
-  .shot.mail {
-    background:
-      linear-gradient(90deg, color-mix(in srgb, var(--accent) 25%, transparent) 0 28%, transparent 28%),
-      repeating-linear-gradient(180deg, transparent 0 0.5em, color-mix(in srgb, var(--ink) 10%, transparent) 0.5em 0.62em),
-      #f6f6f9;
-  }
-
-  .shot.chat {
-    background:
-      radial-gradient(ellipse 30% 14% at 30% 30%, color-mix(in srgb, var(--accent) 30%, transparent) 0 98%, transparent 100%),
-      radial-gradient(ellipse 30% 14% at 70% 62%, color-mix(in srgb, var(--ink) 14%, transparent) 0 98%, transparent 100%),
-      #f4f3f8;
-  }
-
-  .shot.page {
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--ink) 16%, transparent) 0 18%, transparent 18%),
-      repeating-linear-gradient(180deg, transparent 0 0.5em, color-mix(in srgb, var(--ink) 8%, transparent) 0.5em 0.6em),
-      #f7f7f7;
-  }
-
-  .shot.photo {
-    background: linear-gradient(160deg, #f2c96b, #e98a5f 55%, #7c6fd0);
-  }
-
-  .demo-gs:has(:global(.f1 .on.is-on)) .tile:not(.m1),
-  .demo-gs:has(:global(.f2 .on.is-on)) .tile:not(.m2) {
-    opacity: 0.16;
-  }
-
-  .hit:has(:global(.found.is-on)) .shot {
-    outline: 2.5px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  .found {
-    position: absolute;
-    top: 0.4em;
-    left: 0.4em;
-    padding: 0.1em 0.5em;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--on-accent);
-    font-family: var(--font-mono);
-    font-size: 0.85em;
+    .fchip {
+      padding: 0 0.8em 0 0.6em;
+    }
   }
 </style>

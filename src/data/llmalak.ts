@@ -27,7 +27,7 @@ const quine = { label: 'quine', href: '/work/quine/' };
 const recall = { label: 'recall', href: '/work/recall/' };
 const diagnostics = { label: 'copilot diagnostics', href: '/work/copilot-diagnostics/' };
 const trusted = { label: 'trusted answers', href: '/work/copilot-trusted-answers/' };
-const uber = { label: 'uberx share', href: '/work/uber/' };
+const uber = { label: 'uber', href: '/work/uber/' };
 const pcc = { label: 'pointclickcare', href: '/work/pointclickcare/' };
 const about = { label: 'about', href: '/about/' };
 const ai = { label: 'how i use ai', href: '/ai/' };
@@ -97,17 +97,25 @@ export const answers: Answer[] = [
     id: 'microsoft-ai',
     ask: "what did you do at microsoft ai?",
     keys: ['!microsoft', 'microsoft ai', 'mai', 'windows ai'],
-    text: "I've been at Microsoft since 2024. Today I'm a research product manager at Microsoft Research on [Quine](/work/quine/) and [multiplayer AI](/work/multiplayer/), and before that I spent almost 2 years as a product manager at Microsoft AI. There I led [Recall](/work/recall/)'s onboarding and retail launch, owned [Copilot diagnostics](/work/copilot-diagnostics/), and grounded [commercial Copilot](/work/copilot-trusted-answers/) in trusted sources with evals that decided when an answer was ready to ship.",
+    text: "I've been at Microsoft since 2024. Today I'm a research product manager at Microsoft Research on [Quine](/work/quine/) and [multiplayer AI](/work/multiplayer/), and before that I spent almost 2 years as a product manager at Microsoft AI. There I drove [Recall](/work/recall/) to general availability and shipped its search, first run and enterprise controls, owned [Copilot diagnostics](/work/copilot-diagnostics/), and grounded [commercial Copilot](/work/copilot-trusted-answers/) in trusted sources with evals that decided when an answer was ready to ship.",
     sources: [recall, diagnostics, trusted],
     next: ['recall', 'diagnostics', 'trusted'],
   },
   {
     id: 'recall',
     ask: "what did you ship on recall?",
-    keys: ['!recall', 'windows recall', '!copilot pc', 'windows', 'onboarding', 'first run', 'retail', 'store', 'in store', 'demo', 'opt in', 'conversion', 'snapshot', 'privacy', 'security', 'guardrail', 'classifier', 'insider'],
-    text: "I led Recall's onboarding and its retail launch. Letting people try Recall before committing raised opt-in 15%, and the in-store demo reached 30M+ interactions a month at a 2.5% sales conversion. I also built guardrails into the release, with risk classifiers at a 98% true positive rate and 0.95 F1, and Recall went from Insider preview in November 2024 to general availability in April 2025.",
+    keys: ['!recall', 'windows recall', '!copilot pc', 'windows', 'onboarding', 'first run', 'enterprise controls', 'retail', 'store', 'in store', 'demo', 'opt in', 'conversion', 'snapshot', 'privacy', 'security', 'guardrail', 'classifier', 'insider'],
+    text: "I drove Recall from development to general availability across 5+ teams. I shipped its search, first-run experience and enterprise controls, led the Responsible AI release with risk classifiers at a 98% true positive rate and 0.95 F1, and launched the in-store demo, which reached 30M+ monthly interactions at a 2.5% sales conversion. Letting people try Recall before committing raised opt-in 15%.",
     sources: [recall],
-    next: ['recall-research', 'diagnostics', 'trusted'],
+    next: ['recall-search', 'recall-research', 'diagnostics'],
+  },
+  {
+    id: 'recall-search',
+    ask: "how did you improve recall's search?",
+    keys: ['recall search', 'search', 'searching', 'guided search', 'suggestion', 'suggestions', 'autocomplete', 'type ahead', 'filter', 'filters', 'second search', 'search again', 'refine'],
+    text: "Search is Recall's product, since it only works if you can find what you saw. First-try success matched other personal search tools, but success after a second search reached only about 30%, against the 50% to 60% those tools usually see, because people who missed weren't finding a better query. I ran guided search experiments to close that gap: a small model that suggests completions while you type, and filters that adapt to the results so you narrow a search instead of starting over.",
+    sources: [recall],
+    next: ['recall', 'recall-research', 'trusted'],
   },
   {
     id: 'recall-research',
@@ -145,7 +153,7 @@ export const answers: Answer[] = [
     id: 'uber',
     ask: "what did you do at uber?",
     keys: ['!uber', 'uberx', 'uberx share', 'shared ride', 'shared rides', 'rideshare', 'ride', 'rider', 'cancel', 'cancellation', 'server driven', 'server driven ui', 'sdui', 'new york', 'ride matching', 'matching', 'adoption', 'market'],
-    text: "I was a software engineer on UberX Share in New York. I built rider flows that explain shared rides before people cancel over them, ran opt-in experiments that lifted shared-ride adoption 4.5%, and cut MapStore's average query time 40%. I also onboarded server-driven UI to our microservice so we could change flows without an app release, then pitched it to the wider shared rides and ride matching org.",
+    text: "I was a software engineer on two Uber teams. On UberX Share I built rider flows that explain shared rides before people cancel over them, ran opt-in experiments that lifted shared-ride adoption 4.5%, led the rollout across 4 markets, and onboarded server-driven UI so we could change flows without an app release. On MapStore, the map data service other engineering teams query, I cut average query time 40%.",
     sources: [uber],
     next: ['mapstore', 'pointclickcare', 'hybrid'],
   },
@@ -153,7 +161,7 @@ export const answers: Answer[] = [
     id: 'mapstore',
     ask: "how did you make mapstore 40% faster?",
     keys: ['!mapstore', 'map store', 'map', 'query', 'sql', 'pagination', 'paginate', 'paginated', 'payload', 'latency', 'performance', 'optimize', 'optimization', 'faster', 'speed', 'slow', '40'],
-    text: "MapStore is an internal Uber service other engineering teams use for map data. I redesigned its service interface and query architecture: paginated responses that used to return entire result sets, rewrote the slowest SQL queries, and trimmed payloads so the tools built on it loaded faster. Average query time dropped 40% for the teams that depend on it.",
+    text: "I was on Uber's MapStore team. MapStore is an internal service other engineering teams use for map data, and I redesigned its service interface and query architecture: paginated responses that used to return entire result sets, rewrote the slowest SQL queries, and trimmed payloads so the tools built on it loaded faster. Average query time dropped 40% for the teams that depend on it.",
     sources: [uber],
     next: ['uber', 'pointclickcare', 'hybrid'],
   },

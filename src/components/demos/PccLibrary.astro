@@ -1,195 +1,1313 @@
 ---
-// Illustrative: a shared component library and a CI pipeline getting 30% faster.
+// Illustration in the style of PointClickCare's clinical web apps, not the real UI. Parts from the provider portal's
+// shared UI library fly out of a component sheet and snap into the slots of a unit's resident list, then a CI pipeline
+// runs before and after the speedup. Palette from PointClickCare's 2025 brand and web apps: kelp nav rail, sage
+// selection, chiffon accents, outlined status badges, uppercase pill buttons.
+// Every box sits on a fixed stage measured in em, one stage per frame shape, so a flight can start exactly on its
+// sheet specimen and land exactly in its slot. The stage's em is sized from the container, like an SVG viewBox.
+
+type Box = { x: number; y: number; w: number; h: number };
+type Key = 'select' | 'button' | 'search' | 'badge' | 'row';
+
+const T = {
+  spec: { select: 150, button: 270, badge: 390, search: 510, row: 630 } as Record<Key, number>,
+  fly: { select: 1200, button: 1700, search: 2200, row: 2700, badge: 3300 } as Record<Key, number>,
+  clone: 4250,
+  swap: 5500,
+  before: 6000,
+  beforeDone: 8400,
+  marker: 8550,
+  after: 8750,
+  afterDone: 10430,
+  gain: 10550,
+  reset: 13350,
+  cycle: 14000,
+};
+
+const residents = [
+  { ini: 'RB', name: 'Rose B.', room: 'Rm 214', task: 'Progress note', status: 'due' },
+  { ini: 'WK', name: 'Walt K.', room: 'Rm 216', task: 'Sign orders', status: 'done' },
+  { ini: 'IM', name: 'Ida M.', room: 'Rm 221', task: 'Med review', status: 'due' },
+  { ini: 'LP', name: 'Lou P.', room: 'Rm 223', task: 'Vitals check', status: 'done' },
+];
+const statusText = { due: 'Due today', done: 'Done' } as const;
+
+// Relative stage durations. The after run is the same pipeline at 70% of the time.
+const stages = [
+  { name: 'install', f: 17 },
+  { name: 'lint', f: 9 },
+  { name: 'test', f: 31 },
+  { name: 'build', f: 22 },
+  { name: 'deploy', f: 21 },
+];
+
+const SEL_W = 8.6;
+const BTN_W = 6.8;
+const BADGE_W = 5.4;
+const BADGE_H = 1.55;
+const SEARCH_SW = 9;
+
+type Spec = {
+  query: string | null;
+  W: number; H: number; m: number; gap: number; trayH: number; trayPad: number;
+  bar: number; rail: number; pad: number; cardPad: number; hpad: number; vgap: number; tgap: number;
+  ch: number; rowH: number; nRows: number; oneLine: boolean; title: boolean; thead: boolean; searchW: number;
+  room: number; task: number; ks: number; kt: number; railLabels: boolean; captions: boolean;
+  // Sheet: lines of specimens. With an inline head, the tray title shares the first line.
+  lines: Key[][]; headInline: number; lineTop: number; lineGap: number; rowSw: number; specGap: number; tested: boolean;
+  // CI rows. The pill sits in the gap the faster run leaves, or in the tray head when the gap is too narrow.
+  ciTop: number; ciH: number; ciGap: number; ciLbl: number; ciPadR: number; pillInGap: boolean; afterLabels: boolean;
+};
+
+const base = {
+  m: 1, gap: 0.8, trayPad: 1.1, bar: 2.3, rail: 3, pad: 0.7, cardPad: 0.9, hpad: 0.75, vgap: 0.7, tgap: 0.8,
+  ch: 2.1, rowH: 2.3, oneLine: false, title: true, thead: true, searchW: 14.5, room: 4.6, task: 0, ks: 0.86, kt: 0.92,
+  railLabels: false, captions: false, lines: [['select', 'button', 'badge'], ['search', 'row']] as Key[][], headInline: 0,
+  lineTop: 2.45, lineGap: 0.65, rowSw: 17, specGap: 1, tested: true, ciTop: 2.15, ciH: 1.8, ciGap: 0.6, ciLbl: 3.6,
+  ciPadR: 0.9, pillInGap: true, afterLabels: false,
+};
+
+// The 4:3 desktop tile is the default. The others switch in by container shape and size. Each keeps its smallest text
+// at 9px or more over the sizes it covers, and keeps the bottom-right corner, where the illustration tag sits, clear.
+const specs: Spec[] = [
+  { ...base, query: null, W: 42, H: 31.5, trayH: 8.4, nRows: 3, rowH: 2.6 },
+  {
+    ...base, query: "(min-aspect-ratio: 29/20) and (min-width: 760px)", W: 64, H: 36, m: 1.4, gap: 1, trayH: 9.6,
+    trayPad: 1.3, bar: 2.6, rail: 4.6, pad: 0.9, cardPad: 1.1, hpad: 0.95, tgap: 1, ch: 2.3, rowH: 2.95, nRows: 4,
+    oneLine: true, searchW: 15, room: 6, task: 9, ks: 0.8, kt: 0.9, railLabels: true, captions: true,
+    lines: [['select', 'button', 'search', 'badge', 'row']], lineTop: 2.5, specGap: 1.6,
+    ciTop: 2.7, ciH: 2, ciGap: 0.9, ciLbl: 4.4, afterLabels: true,
+  },
+  {
+    ...base, query: "(min-aspect-ratio: 29/20) and (max-width: 759.98px)", W: 48, H: 27, trayH: 8, rowH: 2.3, nRows: 3,
+    oneLine: true, searchW: 11.4, room: 4.6, task: 7.4, ciH: 1.7, afterLabels: true,
+  },
+  {
+    ...base, query: "(max-aspect-ratio: 29/20) and (min-aspect-ratio: 23/20) and (max-width: 439.98px)", W: 31, H: 23.25,
+    m: 0.8, gap: 0.6, trayH: 7.6, trayPad: 0.85, bar: 2, rail: 2.4, pad: 0.6, cardPad: 0.7, hpad: 0.6, ch: 2, rowH: 2.2,
+    nRows: 2, title: false, thead: false, searchW: 12.5, room: 0, ks: 0.9,
+    lines: [['select', 'button', 'search'], ['row', 'badge']], lineTop: 2.25, lineGap: 0.6, rowSw: 14.4, specGap: 0.6,
+    ciTop: 2.25, ciH: 1.6, ciGap: 0.55, ciLbl: 3.3, pillInGap: false,
+  },
+  {
+    ...base, query: "(max-aspect-ratio: 29/20) and (min-aspect-ratio: 23/20) and (max-width: 319.98px)", W: 28.5, H: 21.4,
+    m: 0.55, gap: 0.45, trayH: 7.5, trayPad: 0.75, bar: 1.9, rail: 2.2, pad: 0.5, cardPad: 0.6, hpad: 0.45, vgap: 0.45,
+    tgap: 0.5, ch: 1.9, rowH: 2, nRows: 2, title: false, thead: false, searchW: 11, room: 0, ks: 0.93, kt: 0.94,
+    lines: [['select', 'button'], ['search', 'badge'], ['row']], headInline: 6.4, lineTop: 0.45, lineGap: 0.45,
+    rowSw: 13.4, specGap: 0.5, tested: false, ciTop: 2.8, ciH: 1.45, ciGap: 0.45, ciLbl: 3.2, ciPadR: 3.2, pillInGap: false,
+  },
+  {
+    ...base, query: "(max-aspect-ratio: 23/20)", W: 27.6, H: 27.6, m: 0.7, gap: 0.55, trayH: 7.7, trayPad: 0.8, bar: 2,
+    rail: 2.4, pad: 0.55, cardPad: 0.65, hpad: 0.55, ch: 2, rowH: 2.2, nRows: 3, title: false, searchW: 12, room: 4.2,
+    ks: 0.9, lines: [['select', 'button'], ['search', 'badge'], ['row']], headInline: 6.4, lineTop: 0.45, lineGap: 0.45,
+    rowSw: 15.2, specGap: 0.6, tested: false, ciTop: 2.8, ciH: 1.6, ciGap: 0.5, ciLbl: 3.3, ciPadR: 2.5, pillInGap: false,
+  },
+];
+
+const e = (v: number) => `${Math.round(v * 1000) / 1000}em`;
+const u = (v: number) => `calc(var(--u) * ${Math.round(v * 1000) / 1000})`;
+const at = (b: Box) => `left:${e(b.x)};top:${e(b.y)};width:${e(b.w)};height:${e(b.h)}`;
+const keys: Key[] = ['select', 'button', 'search', 'badge', 'row'];
+
+function layoutCss(s: Spec) {
+  const win: Box = { x: s.m, y: s.m, w: s.W - 2 * s.m, h: s.H - 2 * s.m - s.gap - s.trayH };
+  const tray: Box = { x: s.m, y: win.y + win.h + s.gap, w: win.w, h: s.trayH };
+  const card: Box = { x: win.x + s.rail + s.pad, y: win.y + s.bar + s.pad, w: win.w - s.rail - 2 * s.pad, h: win.h - s.bar - 2 * s.pad };
+  const ix = card.x + s.cardPad;
+  const iw = card.w - 2 * s.cardPad;
+
+  // The list card: header controls, then the table.
+  const slot = {} as Record<Key, Box>;
+  let y = card.y + s.hpad;
+  let x = ix;
+  const title: Box = { x, y, w: 6.6, h: s.ch };
+  if (s.title) x += 6.6 + 0.8;
+  slot.select = { x, y, w: SEL_W, h: s.ch };
+  x += SEL_W + 0.8;
+  slot.button = { x: ix + iw - BTN_W, y, w: BTN_W, h: s.ch };
+  if (!s.oneLine) {
+    y += s.ch + s.vgap;
+    x = ix;
+  }
+  slot.search = { x, y, w: s.searchW, h: s.ch };
+  const filter: Box = { x: x + s.searchW + 0.45, y, w: s.ch, h: s.ch };
+  y += s.ch + s.tgap;
+  const thead: Box = { x: card.x, y, w: card.w, h: 1.5 };
+  if (s.thead) y += 1.5;
+  const rows: Box[] = residents.map((_, i) => ({ x: card.x, y: y + i * s.rowH, w: card.w, h: s.rowH }));
+  slot.row = rows[0];
+  slot.badge = { x: card.x + card.w - s.cardPad - BADGE_W, y: rows[0].y + (s.rowH - BADGE_H) / 2, w: BADGE_W, h: BADGE_H };
+
+  // The component sheet in the tray, line by line.
+  const size: Record<Key, [number, number]> = {
+    select: [SEL_W, s.ch], button: [BTN_W, s.ch], badge: [BADGE_W, BADGE_H], search: [SEARCH_SW, s.ch], row: [s.rowSw, s.rowH],
+  };
+  const spec = {} as Record<Key, Box>;
+  const capShift = {} as Record<Key, number>;
+  const lineH = (line: Key[]) => Math.max(...line.map((k) => size[k][1]));
+  let sy = tray.y + s.lineTop + (s.captions ? 1.4 : 0);
+  s.lines.forEach((line, i) => {
+    const lh = lineH(line);
+    let sx = tray.x + s.trayPad + (i === 0 ? s.headInline : 0);
+    for (const k of line) {
+      const [w, h] = size[k];
+      spec[k] = { x: sx, y: sy + (lh - h) / 2, w, h };
+      capShift[k] = (lh - h) / 2;
+      sx += w + s.specGap;
+    }
+    sy += lh + s.lineGap + (s.captions ? 1.4 : 0);
+  });
+  const headH = s.headInline ? lineH(s.lines[0]) : 1.6;
+  const head: Box = { x: tray.x + s.trayPad, y: tray.y + (s.headInline ? s.lineTop : 0.55), w: tray.w - 2 * s.trayPad, h: headH };
+  const ci: Box = { x: tray.x + s.trayPad, y: tray.y + s.ciTop, w: tray.w - 2 * s.trayPad, h: 2 * s.ciH + s.ciGap };
+
+  const P = '.demo-pcc';
+  const vars = [
+    `--u:min(calc(100cqw / ${s.W}), calc(100cqh / ${s.H}))`, `--ks:${s.ks}`, `--kt:${s.kt}`, `--pc-bar:${e(s.bar)}`,
+    `--pc-rail:${e(s.rail)}`, `--cpad:${u(s.cardPad)}`, `--col-room:${u(s.room)}`, `--col-task:${u(s.task)}`,
+    `--ci-h:${e(s.ciH)}`, `--ci-gap:${e(s.ciGap)}`, `--ci-lbl:${e(s.ciLbl)}`, `--ci-pad:${e(s.ciPadR)}`,
+    `--rail-labels:${s.railLabels ? 'block' : 'none'}`, `--caps:${s.captions ? 'block' : 'none'}`,
+    `--tested:${s.tested ? 'flex' : 'none'}`, `--gain-gap:${s.pillInGap ? 'flex' : 'none'}`,
+    `--gain-head:${s.pillInGap ? 'none' : 'inline-flex'}`, `--after-labels:${s.afterLabels ? 1 : 0}`,
+  ];
+  const r = [
+    `${P}{${vars.join(';')}}`,
+    `${P} .pc-stage{width:${e(s.W)};height:${e(s.H)}}`,
+    `${P} .pc-win{${at(win)}}`,
+    `${P} .pc-tray{${at(tray)}}`,
+    `${P} .pc-card{${at(card)}}`,
+    `${P} .pc-title{${at(title)};display:${s.title ? 'flex' : 'none'}}`,
+    `${P} .pc-filter{${at(filter)}}`,
+    `${P} .pc-thead{${at(thead)};display:${s.thead ? 'block' : 'none'}}`,
+    `${P} .pc-c-rm{display:${s.room ? 'block' : 'none'}}`,
+    `${P} .pc-c-tk{display:${s.task ? 'block' : 'none'}}`,
+    `${P} .pc-th{${at(head)}}`,
+    `${P} .pc-ci{${at(ci)}}`,
+  ];
+  for (const k of keys) {
+    const a = slot[k];
+    const b = spec[k];
+    r.push(`${P} .pc-p-${k}{${at(a)};--dx:${e(b.x - a.x)};--dy:${e(b.y - a.y)};--sw:${e(b.w)}}`, `${P} .pc-sp-${k}{${at(b)};--cs:${e(capShift[k])}}`);
+    if (k !== 'badge' && k !== 'row') r.push(`${P} .pc-s-${k}{${at(a)}}`);
+  }
+  rows.forEach((b, i) => {
+    const show = i < s.nRows;
+    if (i > 0) r.push(`${P} .pc-c-row${i}{${at(b)};--cy:${e(-i * s.rowH)};display:${show ? 'block' : 'none'}}`);
+    r.push(`${P} .pc-s-row${i}{${at({ x: b.x + 0.45, y: b.y + 0.22, w: b.w - 0.9, h: b.h - 0.44 })};display:${show ? 'block' : 'none'}}`);
+  });
+  const css = r.join('');
+  return s.query ? `@container ${s.query}{${css}}` : css;
+}
+
+const layoutStyles = specs.map(layoutCss).join('\n');
+
+const icon = {
+  chev: "M3.5 6l4.5 4.5L12.5 6",
+  people: "M7 9.2a2.9 2.9 0 1 0 0-5.8 2.9 2.9 0 0 0 0 5.8Zm6.6.4a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6ZM1.5 16.2c.4-3 2.6-4.9 5.5-4.9s5.1 1.9 5.5 4.9Zm12.3 0c-.2-1.7-.8-3.1-1.8-4.1.6-.3 1.2-.4 1.8-.4 2.3 0 3.9 1.7 4.2 4.5Z",
+  clip: "M7 2.5h6v2H7zM5 3.5h1.2v2.2h7.6V3.5H15c.8 0 1.5.7 1.5 1.5v11.5c0 .8-.7 1.5-1.5 1.5H5c-.8 0-1.5-.7-1.5-1.5V5c0-.8.7-1.5 1.5-1.5Zm2 6v1.6h6V9.5Zm0 3.4v1.6h4.2v-1.6Z",
+  chart: "M3 16.5h14v1.5H3zM4.5 10h2.6v5.2H4.5zm4.2-5h2.6v10.2H8.7zm4.2 3h2.6v7.2h-2.6z",
+  gear: "M10 6.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8Zm7 4.6v-2.4l-2-.4a5 5 0 0 0-.6-1.4l1.1-1.7-1.7-1.7-1.7 1.1a5 5 0 0 0-1.4-.6l-.4-2H7.9l-.4 2a5 5 0 0 0-1.4.6L4.4 3.6 2.7 5.3l1.1 1.7a5 5 0 0 0-.6 1.4l-2 .4v2.4l2 .4c.1.5.3 1 .6 1.4l-1.1 1.7 1.7 1.7 1.7-1.1c.4.3.9.5 1.4.6l.4 2h2.4l.4-2c.5-.1 1-.3 1.4-.6l1.7 1.1 1.7-1.7-1.1-1.7c.3-.4.5-.9.6-1.4Z",
+};
 ---
 
-<div class="demo demo-pcc" data-seq data-cycle="12000" role="img" aria-label="Illustration: a shared UI component library assembling, and a CI pipeline shrinking from 100 percent to 70 percent of its original duration.">
-  <div class="lib">
-    <div class="lib-head">ui library</div>
-    <div class="tiles">
-      <div class="tile" data-step data-at="200"><span class="t-btn">Save</span><span class="cap">button</span></div>
-      <div class="tile" data-step data-at="500"><span class="t-input">Resident name</span><span class="cap">input</span></div>
-      <div class="tile" data-step data-at="800"><span class="t-select">Unit 3B ▾</span><span class="cap">select</span></div>
-      <div class="tile" data-step data-at="1100"><span class="t-badge">due today</span><span class="cap">badge</span></div>
-      <div class="tile wide" data-step data-at="1400">
-        <span class="t-table"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="cap">table</span>
+<div
+  class="demo demo-pcc"
+  data-seq
+  data-cycle={T.cycle}
+  role="img"
+  aria-label="Illustration in the style of PointClickCare's provider portal. Parts from a shared UI library, a unit select, a New note button, a search box, a resident row and a due today badge, fly out of a component sheet and snap into place to build a unit's resident list. Then a CI pipeline of install, lint, test, build and deploy runs before and after, and the after run finishes 30% sooner, labeled 30% faster CI."
+>
+  <style is:inline set:html={layoutStyles}></style>
+  <span class="pc-halo" aria-hidden="true"></span>
+  <div class="pc-stage" aria-hidden="true">
+    <div class="pc-win">
+      <div class="pc-bar">
+        <span class="pc-mark"></span>
+        <span class="pc-prod">Provider Portal</span>
+        <span class="pc-bar-icons">
+          <svg viewBox="0 0 20 20"><path d="M4 4h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 16 14H8l-3.5 3v-3H4a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 4 4Z" /></svg>
+          <svg viewBox="0 0 20 20"><path d="M10 1.8a8.2 8.2 0 1 0 0 16.4 8.2 8.2 0 0 0 0-16.4Zm0 3.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Zm0 11.5a6.5 6.5 0 0 1-4.9-2.2c1-1.4 2.8-2.2 4.9-2.2s3.9.8 4.9 2.2a6.5 6.5 0 0 1-4.9 2.2Z" /></svg>
+        </span>
+      </div>
+      <div class="pc-rail">
+        <span class="pc-nav pc-on"><i><svg viewBox="0 0 20 20"><path d={icon.people} /></svg></i><b>Residents</b></span>
+        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.clip} /></svg></i><b>Orders</b></span>
+        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.chart} /></svg></i><b>Insights</b></span>
+        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.gear} /></svg></i><b>Settings</b></span>
       </div>
     </div>
-  </div>
-  <div class="ci">
-    <div class="lib-head">ci pipeline</div>
-    <div class="row" data-step data-at="2600">
-      <span class="lbl">before</span>
-      <span class="bar before"><i style="--w:18%"></i><i style="--w:14%"></i><i style="--w:30%"></i><i style="--w:22%"></i><i style="--w:16%"></i></span>
+    <div class="pc-card"></div>
+    <div class="pc-title"><span>Residents</span></div>
+    <div class="pc-filter"><svg viewBox="0 0 16 16"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3" /></svg></div>
+    <div class="pc-thead">
+      <div class="pc-cols"><span class="pc-c-av"></span><span class="pc-c-nm">Resident</span><span class="pc-c-rm">Room</span><span class="pc-c-tk">Next</span><span class="pc-c-st">Status</span></div>
     </div>
-    <div class="row" data-step data-at="4200">
-      <span class="lbl">after</span>
-      <span class="bar after"><i style="--w:12.6%"></i><i style="--w:9.8%"></i><i style="--w:21%"></i><i style="--w:15.4%"></i><i style="--w:11.2%"></i></span>
+
+    <span class="pc-slot pc-s-select"></span>
+    <div class="pc-part pc-p-select" data-step data-at={T.fly.select}>
+      <div class="pc-pv"><div class="pc-ctl pc-select"><span class="pc-tx">Unit 2 West</span><svg viewBox="0 0 16 16"><path d={icon.chev} /></svg></div></div>
     </div>
-    <div class="legend">install · lint · test · build · deploy</div>
-    <div class="delta" data-step data-at="6200">30% faster</div>
+    <span class="pc-slot pc-pill-slot pc-s-button"></span>
+    <div class="pc-part pc-p-button" data-step data-at={T.fly.button}>
+      <div class="pc-pv"><div class="pc-ctl pc-btn"><span class="pc-tx">New note</span></div></div>
+    </div>
+    <span class="pc-slot pc-s-search"></span>
+    <div class="pc-part pc-p-search" data-step data-at={T.fly.search}>
+      <div class="pc-pv"><div class="pc-ctl pc-search"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6" /><path d="M10.4 10.4 14 14" /></svg><span class="pc-tx">Search name</span></div></div>
+    </div>
+    <span class="pc-slot pc-s-row0"></span>
+    <div class="pc-part pc-p-row" data-step data-at={T.fly.row}>
+      <div class="pc-pv">
+        <div class="pc-row">
+          <span class="pc-c-av"><i class="pc-av"><b>{residents[0].ini}</b></i></span>
+          <span class="pc-c-nm">{residents[0].name}</span>
+          <span class="pc-c-rm">{residents[0].room}</span>
+          <span class="pc-c-tk">{residents[0].task}</span>
+          <span class="pc-c-st"><i class="pc-ph"></i></span>
+        </div>
+      </div>
+    </div>
+    {residents.slice(1).map((r, j) => (
+      <>
+        <span class={`pc-slot pc-s-row${j + 1}`}></span>
+        <div class={`pc-clone pc-c-row${j + 1}`} data-step data-at={T.clone + j * 130}>
+          <div class="pc-row">
+            <span class="pc-c-av"><i class="pc-av"><b>{r.ini}</b></i></span>
+            <span class="pc-c-nm">{r.name}</span>
+            <span class="pc-c-rm">{r.room}</span>
+            <span class="pc-c-tk">{r.task}</span>
+            <span class="pc-c-st"><span class={`pc-ctl pc-badge pc-${r.status}`}><span class="pc-tx">{statusText[r.status as keyof typeof statusText]}</span></span></span>
+          </div>
+        </div>
+      </>
+    ))}
+    <div class="pc-part pc-p-badge" data-step data-at={T.fly.badge}>
+      <div class="pc-pv"><span class="pc-ctl pc-badge pc-due"><span class="pc-tx">Due today</span></span></div>
+    </div>
+
+    <div class="pc-tray"></div>
+    <div class="pc-th">
+      <span class="pc-th-ci" data-step data-at={T.swap}><svg viewBox="0 0 20 20"><circle cx="4" cy="10" r="2.2" /><circle cx="16" cy="10" r="2.2" /><path d="M6.2 10h7.6" /></svg>CI pipeline</span>
+      <span class="pc-th-lib"><svg viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" rx="1.2" /><rect x="11" y="3" width="6" height="6" rx="1.2" /><rect x="3" y="11" width="6" height="6" rx="1.2" /><rect x="11" y="11" width="6" height="6" rx="3" /></svg>UI library</span>
+      <span class="pc-th-r">
+        <span class="pc-tested"><i class="pc-tick"></i>tested</span>
+        <span class="pc-gain-head pc-pill" data-step data-at={T.gain}>30% faster CI</span>
+      </span>
+    </div>
+
+    <div class="pc-spec pc-sp-select" data-step data-at={T.spec.select}>
+      <span class="pc-cap">Select</span>
+      <div class="pc-ctl pc-select"><span class="pc-tx">Unit 2 West</span><svg viewBox="0 0 16 16"><path d={icon.chev} /></svg></div>
+    </div>
+    <div class="pc-spec pc-sp-button" data-step data-at={T.spec.button}>
+      <span class="pc-cap">Button</span>
+      <div class="pc-ctl pc-btn"><span class="pc-tx">New note</span></div>
+    </div>
+    <div class="pc-spec pc-sp-search" data-step data-at={T.spec.search}>
+      <span class="pc-cap">Search</span>
+      <div class="pc-ctl pc-search"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6" /><path d="M10.4 10.4 14 14" /></svg><span class="pc-tx">Search name</span></div>
+    </div>
+    <div class="pc-spec pc-sp-badge" data-step data-at={T.spec.badge}>
+      <span class="pc-cap">Badge</span>
+      <span class="pc-ctl pc-badge pc-due"><span class="pc-tx">Due today</span></span>
+    </div>
+    <div class="pc-spec pc-sp-row" data-step data-at={T.spec.row}>
+      <span class="pc-cap">Table row</span>
+      <div class="pc-row">
+        <span class="pc-c-av"><i class="pc-av"><b>{residents[0].ini}</b></i></span>
+        <span class="pc-c-nm">{residents[0].name}</span>
+        <span class="pc-c-rm">{residents[0].room}</span>
+        <span class="pc-c-tk">{residents[0].task}</span>
+        <span class="pc-c-st"><i class="pc-ph"></i></span>
+      </div>
+    </div>
+
+    <div class="pc-ci" data-step data-at={T.swap}>
+      <span class="pc-ci-lbl">Before</span>
+      <div class="pc-lane">
+        <div class="pc-track">
+          <div class="pc-fill pc-f-before" data-step data-at={T.before}>
+            {stages.map((st) => <i style={`--f:${st.f}`}>{st.name}</i>)}
+          </div>
+          <span class="pc-pass" data-step data-at={T.beforeDone}><svg viewBox="0 0 16 16"><path d="M4 8.4 6.8 11 12 5.2" /></svg></span>
+          <span class="pc-head"></span>
+        </div>
+      </div>
+      <span class="pc-ci-lbl pc-lbl-after">After</span>
+      <div class="pc-lane pc-lane-after">
+        <span class="pc-marker" data-step data-at={T.marker}></span>
+        <span class="pc-saved" data-step data-at={T.gain}></span>
+        <div class="pc-track pc-t-after">
+          <div class="pc-fill pc-f-after" data-step data-at={T.after}>
+            {stages.map((st) => <i style={`--f:${st.f}`}>{st.name}</i>)}
+          </div>
+          <span class="pc-pass" data-step data-at={T.afterDone}><svg viewBox="0 0 16 16"><path d="M4 8.4 6.8 11 12 5.2" /></svg></span>
+          <span class="pc-head"></span>
+        </div>
+        <span class="pc-gain" data-step data-at={T.gain}><span class="pc-pill"><svg viewBox="0 0 16 16"><path d="M9.2 1.5 3.5 9h4l-1 5.5L12.5 7h-4Z" /></svg>30% faster CI</span></span>
+      </div>
+    </div>
+    <i class="pc-k-reset" data-step data-at={T.reset}></i>
   </div>
   <span class="illustration-tag">illustration</span>
 </div>
 
-<style>
+<style is:global>
   .demo-pcc {
+    --kelp: #435030;
+    --kelp-deep: #2f3b21;
+    --chiffon: #e7feb6;
+    --lime: #d4ec5a;
+    --sage: #c8d4b7;
+    --sage-pale: #e3e9db;
+    --t-xs: calc(var(--u) * var(--ks));
+    --t-sm: calc(var(--u) * var(--kt));
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    font-family: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: var(--u);
+    line-height: 1.2;
+    color: #262626;
+    background: linear-gradient(160deg, #fbfdf5 0%, #f1f7e4 100%);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* PointClickCare's concentric rounded-square motif, in chiffon. */
+  .demo-pcc .pc-halo {
+    position: absolute;
+    right: -16cqw;
+    top: -34cqh;
+    width: 62cqw;
+    aspect-ratio: 1;
+    border-radius: 32%;
+    background: #e9f8c9;
+    box-shadow: 0 0 0 6cqmin #eff9d8, 0 0 0 12cqmin #f4fbe6;
+  }
+
+  .demo-pcc .pc-stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+  }
+
+  .demo-pcc .pc-stage > * {
+    position: absolute;
+    box-sizing: border-box;
+  }
+
+  .demo-pcc svg {
+    display: block;
+    flex: none;
+  }
+
+  /* ---------- the app window ---------- */
+  .demo-pcc .pc-win {
+    z-index: 1;
+    overflow: hidden;
+    border-radius: 0.55em;
+    background: #f2f2f1;
+    box-shadow:
+      0 0 0 1px rgb(40 50 25 / 0.1),
+      0 0.15em 0.4em rgb(40 50 25 / 0.08),
+      0 1.2em 2.4em -0.8em rgb(40 50 25 / 0.3);
+  }
+
+  .demo-pcc .pc-bar {
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--pc-bar);
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0 0.85em 0 calc((var(--pc-rail) - 1.2em) / 2);
+    background: #fff;
+    border-bottom: 1px solid #e4e4df;
+  }
+
+  .demo-pcc .pc-mark {
+    position: relative;
+    flex: none;
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 0.32em;
+    background: var(--kelp);
+  }
+
+  .demo-pcc .pc-mark::after {
+    content: '';
+    position: absolute;
+    right: 0.2em;
+    bottom: 0.2em;
+    width: 0.42em;
+    height: 0.42em;
+    border-radius: 50%;
+    background: var(--lime);
+  }
+
+  .demo-pcc .pc-prod {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1d1d1b;
+    white-space: nowrap;
+  }
+
+  .demo-pcc .pc-bar-icons {
+    display: flex;
+    gap: 0.7em;
+    margin-left: auto;
+    color: #4a4a46;
+  }
+
+  .demo-pcc .pc-bar-icons svg {
+    width: 1.15em;
+    height: 1.15em;
+    fill: currentColor;
+  }
+
+  .demo-pcc .pc-rail {
+    position: absolute;
+    left: 0;
+    top: var(--pc-bar);
+    bottom: 0;
+    width: var(--pc-rail);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55em;
+    padding-top: 0.6em;
+    background: var(--kelp);
+  }
+
+  .demo-pcc .pc-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #dfe7d3;
+  }
+
+  .demo-pcc .pc-nav i {
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    gap: 4cqw;
-    padding: 7cqh 5cqw;
-    font-size: clamp(9px, 2.1cqw, 19px);
-    color: var(--ink);
-    background:
-      radial-gradient(circle at 10% 90%, color-mix(in srgb, var(--highlight) 30%, transparent), transparent 45%),
-      var(--bg-soft);
+    place-items: center;
+    width: calc(var(--pc-rail) - 0.9em);
+    max-width: 2.6em;
+    height: 1.7em;
+    border-radius: 0.35em;
+  }
+
+  .demo-pcc .pc-nav.pc-on i {
+    background: var(--sage);
+    color: #2c3a17;
+  }
+
+  .demo-pcc .pc-nav svg {
+    width: 1.05em;
+    height: 1.05em;
+    fill: currentColor;
+  }
+
+  .demo-pcc .pc-nav b {
+    display: var(--rail-labels);
+    margin-top: 0.25em;
+    font-size: var(--t-xs);
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .demo-pcc .pc-card {
+    z-index: 2;
+    border-radius: 0.4em;
+    background: #fff;
+    box-shadow: 0 0 0 1px #e2e2dc, 0 1px 2px rgb(0 0 0 / 0.04);
+  }
+
+  .demo-pcc .pc-title {
+    z-index: 3;
+    align-items: center;
+  }
+
+  .demo-pcc .pc-title span {
+    font-size: 1.25em;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: #1d1d1b;
+  }
+
+  .demo-pcc .pc-filter {
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    color: #4a4a46;
+  }
+
+  .demo-pcc .pc-filter svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  .demo-pcc .pc-thead {
+    z-index: 3;
+  }
+
+  /* ---------- library parts: controls, badge and the table row ---------- */
+  .demo-pcc .pc-ctl {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  .demo-pcc .pc-ctl .pc-tx {
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  .demo-pcc .pc-select,
+  .demo-pcc .pc-search {
+    gap: 0.45em;
+    padding: 0 0.6em 0 0.7em;
+    border: 1px solid #b9b9b1;
+    border-radius: 0.3em;
+    background: #fff;
+  }
+
+  .demo-pcc .pc-select {
+    justify-content: space-between;
+  }
+
+  .demo-pcc .pc-select .pc-tx {
+    font-size: var(--t-sm);
+    font-weight: 500;
+    color: #262626;
+  }
+
+  .demo-pcc .pc-select svg {
+    width: 0.95em;
+    height: 0.95em;
+    fill: none;
+    stroke: var(--kelp);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .demo-pcc .pc-search .pc-tx {
+    font-size: var(--t-sm);
+    color: #7c7c75;
+  }
+
+  .demo-pcc .pc-search svg {
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: #5b5b55;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+  }
+
+  .demo-pcc .pc-btn {
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--kelp);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgb(231 254 182 / 0.22);
+  }
+
+  .demo-pcc .pc-btn .pc-tx {
+    font-size: var(--t-xs);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .demo-pcc .pc-badge {
+    justify-content: center;
+    border: 1px solid;
+    border-radius: 0.28em;
+  }
+
+  .demo-pcc .pc-badge .pc-tx {
+    font-size: var(--t-xs);
+    font-weight: 500;
+  }
+
+  .demo-pcc .pc-badge.pc-due {
+    border-color: #f0a274;
+    background: #fff4ec;
+    color: #b0501a;
+  }
+
+  .demo-pcc .pc-badge.pc-done {
+    border-color: #9dbe63;
+    background: #f2f7e7;
+    color: #4b6b1c;
+  }
+
+  /* Column sizes use the stage unit, so the header (smaller type) lines up with the rows. */
+  .demo-pcc .pc-cols,
+  .demo-pcc .pc-row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--u) * 0.7);
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 var(--cpad);
+    white-space: nowrap;
+  }
+
+  .demo-pcc .pc-cols {
+    border-bottom: 1px solid #e2e2dc;
+    font-size: var(--t-xs);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6b6b65;
+  }
+
+  .demo-pcc .pc-row {
+    background: #fff;
+    border-bottom: 1px solid #ecece7;
+  }
+
+  .demo-pcc .pc-c-av {
+    flex: none;
+    width: calc(var(--u) * 1.75);
+  }
+
+  .demo-pcc .pc-c-nm {
+    flex: 1 0 auto;
+    font-weight: 500;
+    color: #1f1f1d;
+  }
+
+  .demo-pcc .pc-cols .pc-c-nm {
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .demo-pcc .pc-c-rm,
+  .demo-pcc .pc-c-tk {
+    min-width: 0;
     overflow: hidden;
   }
 
-  .lib-head {
-    font-family: var(--font-mono);
-    color: var(--accent-ink);
-    margin-bottom: 0.7em;
+  .demo-pcc .pc-c-rm {
+    flex: 0 1 var(--col-room);
   }
 
-  .tiles {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.6em;
+  .demo-pcc .pc-c-tk {
+    flex: 0 1 var(--col-task);
   }
 
-  .tile {
+  .demo-pcc .pc-row .pc-c-rm,
+  .demo-pcc .pc-row .pc-c-tk {
+    font-size: var(--t-sm);
+    color: #66665f;
+  }
+
+  /* On the sheet a row shows only what fits. The landed row grows into the table's width and its other columns
+     fade in once it is nearly there. */
+  .demo-pcc .pc-spec :is(.pc-c-rm, .pc-c-tk),
+  .demo.demo-pcc.seq-on .pc-p-row:not(.is-on) :is(.pc-c-rm, .pc-c-tk) {
+    display: none;
+  }
+
+  .demo.demo-pcc.seq-on .pc-p-row.is-on :is(.pc-c-rm, .pc-c-tk) {
+    animation: pcc-fade 0.35s ease 0.6s both;
+  }
+
+  @keyframes pcc-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .demo-pcc .pc-c-st {
+    flex: none;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.5em;
-    min-height: 4.4em;
-    padding: 0.7em;
-    border-radius: 0.7em;
-    background: var(--surface);
-    border: 1px solid var(--line);
+    width: calc(var(--u) * 5.6);
   }
 
-  .tile.wide {
-    grid-column: span 2;
+  .demo-pcc .pc-c-st .pc-badge {
+    width: 5.6em;
+    height: 1.55em;
   }
 
-  .cap {
-    font-family: var(--font-mono);
-    font-size: 0.85em;
-    color: var(--muted);
-  }
-
-  .t-btn {
-    align-self: flex-start;
-    padding: 0.3em 0.9em;
-    border-radius: 0.4em;
-    background: var(--accent);
-    color: var(--on-accent);
-    font-weight: 600;
-  }
-
-  .t-input,
-  .t-select {
-    padding: 0.3em 0.6em;
-    border-radius: 0.4em;
-    border: 1px solid var(--line);
-    color: var(--muted);
-  }
-
-  .t-badge {
-    align-self: flex-start;
-    padding: 0.15em 0.6em;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--highlight) 45%, transparent);
-    color: var(--ink);
-  }
-
-  .t-table {
+  .demo-pcc .pc-av {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 0.35em;
-  }
-
-  .t-table i {
-    height: 0.55em;
-    border-radius: 0.3em;
-    background: var(--line);
-  }
-
-  .t-tabs {
-    display: flex;
-    gap: 0.9em;
-  }
-
-  .t-tabs b {
-    font-weight: 600;
-    border-bottom: 2px solid var(--accent);
-  }
-
-  .t-tabs em {
+    place-items: center;
+    width: 1.75em;
+    height: 1.75em;
+    border-radius: 50%;
+    background: var(--sage-pale);
+    color: #34421f;
     font-style: normal;
-    color: var(--muted);
   }
 
-  .ci {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.9em;
+  .demo-pcc .pc-av b {
+    font-size: var(--t-xs);
+    font-weight: 600;
   }
 
-  .row {
-    display: grid;
-    grid-template-columns: 3.6em 1fr;
-    align-items: center;
-    gap: 0.6em;
+  .demo-pcc .pc-ph {
+    width: 5.6em;
+    height: 1.55em;
+    box-sizing: border-box;
+    border: 1px dashed #a9b893;
+    border-radius: 0.28em;
+    background: rgb(227 233 219 / 0.4);
+    transition: border-color 0.25s, background-color 0.25s;
   }
 
-  .lbl {
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    color: var(--muted);
+  /* Empty slots on the screen, shown only while the screen is being assembled. */
+  .demo-pcc .pc-slot {
+    z-index: 3;
+    border: 1.5px dashed #b2bf9e;
+    border-radius: 0.32em;
+    background: rgb(227 233 219 / 0.35);
+    opacity: 0;
   }
 
-  .bar {
-    display: flex;
-    height: 1.4em;
-    gap: 2px;
-  }
-
-  .bar i {
-    width: 0;
-    height: 100%;
-    border-radius: 0.3em;
-    background: color-mix(in srgb, var(--ink) 25%, transparent);
-    transition: width 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .bar.after i {
-    background: var(--accent);
-  }
-
-  .row.is-on .bar i {
-    width: var(--w);
-  }
-
-  .legend {
-    font-family: var(--font-mono);
-    font-size: 0.8em;
-    color: var(--muted);
-    padding-left: 4.4em;
-  }
-
-  .delta {
-    align-self: flex-start;
-    margin-left: 4.4em;
-    padding: 0.35em 0.9em;
+  .demo-pcc .pc-pill-slot {
     border-radius: 999px;
-    background: var(--ink);
-    color: var(--bg);
-    font-family: var(--font-mono);
+  }
+
+  .demo.demo-pcc.seq-on .pc-slot {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .demo.demo-pcc.seq-on .pc-slot:has(+ .is-on) {
+    border-color: #b5d23b;
+    background: rgb(231 254 182 / 0.6);
+    opacity: 0;
+    transition: border-color 0.2s, background-color 0.2s, opacity 0.25s 0.8s;
+  }
+
+  /* The row's own badge slot lights up as the badge flies in, then hides under it. */
+  .demo.demo-pcc.seq-on:has(.pc-p-badge.is-on) .pc-p-row .pc-ph {
+    border-color: #b5d23b;
+    background: rgb(231 254 182 / 0.7);
+    opacity: 0;
+    transition: border-color 0.2s, background-color 0.2s, opacity 0.25s 0.8s;
+  }
+
+  .demo.demo-pcc:not(.seq-on) .pc-p-row .pc-ph {
+    opacity: 0;
+  }
+
+  /* A part flies from its specimen on the sheet to its slot: X on the outer box, Y and width on the inner one,
+     so the path arcs and the row stretches to the table's width as it lands. */
+  .demo.demo-pcc .pc-part {
+    z-index: 6;
+    transition: translate 0.85s cubic-bezier(0.55, 0, 0.25, 1), opacity 0.2s ease;
+  }
+
+  .demo.demo-pcc .pc-pv {
+    width: 100%;
+    height: 100%;
+    transition: translate 0.85s cubic-bezier(0.3, 0.7, 0.3, 1.12), width 0.85s cubic-bezier(0.55, 0, 0.25, 1);
+  }
+
+  .demo.demo-pcc.seq-on .pc-part:not(.is-on) {
+    opacity: 0;
+    transform: none;
+    translate: var(--dx) 0;
+  }
+
+  .demo.demo-pcc.seq-on .pc-part:not(.is-on) .pc-pv {
+    translate: 0 var(--dy);
+    width: var(--sw);
+  }
+
+  .demo.demo-pcc.seq-on .pc-part.is-on .pc-pv {
+    animation: pcc-lift 0.85s ease-in-out both;
+  }
+
+  .demo.demo-pcc.seq-on .pc-part.is-on .pc-pv > * {
+    animation: pcc-shadow 0.85s ease-in-out both;
+  }
+
+  .demo-pcc .pc-part::after {
+    content: '';
+    position: absolute;
+    inset: -0.28em;
+    border: 0.14em solid var(--lime);
+    border-radius: 0.5em;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .demo-pcc .pc-p-button::after {
+    border-radius: 999px;
+  }
+
+  .demo.demo-pcc.seq-on .pc-part.is-on::after {
+    animation: pcc-snap 0.6s ease-out 0.78s both;
+  }
+
+  /* On the sheet the row is a rounded card. In the table it squares off and gets its divider. */
+  .demo-pcc .pc-p-row .pc-row {
+    transition: border-radius 0.4s ease 0.6s, border-color 0.4s ease 0.6s;
+  }
+
+  .demo.demo-pcc.seq-on .pc-p-row:not(.is-on) .pc-row,
+  .demo-pcc .pc-spec .pc-row {
+    border-radius: 0.3em;
+    border-bottom-color: transparent;
+  }
+
+  /* More rows of the same component cascade out from the first. */
+  .demo.demo-pcc .pc-clone {
+    z-index: 4;
+    transition: translate 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+  }
+
+  .demo.demo-pcc.seq-on .pc-clone:not(.is-on) {
+    opacity: 0;
+    transform: none;
+    translate: 0 var(--cy);
+  }
+
+  @keyframes pcc-lift {
+    0%,
+    100% {
+      scale: 1;
+    }
+
+    45% {
+      scale: 1.06;
+    }
+  }
+
+  @keyframes pcc-shadow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 rgb(20 28 10 / 0);
+    }
+
+    45% {
+      box-shadow: 0 0.7em 1.4em rgb(20 28 10 / 0.32);
+    }
+  }
+
+  @keyframes pcc-snap {
+    0% {
+      opacity: 0;
+      scale: 0.97;
+    }
+
+    25% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      scale: 1.07;
+    }
+  }
+
+  /* ---------- the tray: component sheet, then CI ---------- */
+  .demo-pcc .pc-tray {
+    z-index: 1;
+    border-radius: 0.6em;
+    background:
+      radial-gradient(circle, rgb(231 254 182 / 0.13) 0 1px, transparent 1.5px) 0 0 / 1.1em 1.1em,
+      var(--kelp-deep);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.06),
+      0 1em 2em -0.9em rgb(30 40 15 / 0.5);
+  }
+
+  .demo-pcc .pc-th {
+    z-index: 3;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    color: var(--chiffon);
+  }
+
+  .demo-pcc .pc-th-ci,
+  .demo-pcc .pc-th-lib {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .demo-pcc .pc-th svg {
+    width: 1.1em;
+    height: 1.1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+
+  .demo.demo-pcc .pc-th-lib {
+    transition: opacity 0.35s ease;
+  }
+
+  .demo.demo-pcc .pc-th-ci.is-on ~ .pc-th-lib,
+  .demo.demo-pcc .pc-th-ci.is-on ~ .pc-th-r .pc-tested {
+    opacity: 0;
+  }
+
+  /* The tested legend and the CI result take turns in the same spot. */
+  .demo-pcc .pc-th-r {
+    grid-area: 1 / 2;
+    display: grid;
+    justify-items: end;
+    align-items: center;
+  }
+
+  .demo-pcc .pc-th-r > * {
+    grid-area: 1 / 1;
+  }
+
+  .demo-pcc .pc-tested {
+    display: var(--tested);
+    align-items: center;
+    gap: 0.4em;
+    font-size: var(--t-xs);
+    font-weight: 500;
+    color: #c3d0ae;
+    transition: opacity 0.35s ease;
+  }
+
+  .demo-pcc .pc-tick,
+  .demo-pcc .pc-spec::after {
+    flex: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4 6.8 11 12 5.2' fill='none' stroke='%23263312' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 72% no-repeat;
+  }
+
+  .demo-pcc .pc-gain-head {
+    display: var(--gain-head);
+  }
+
+  .demo-pcc .pc-spec {
+    z-index: 3;
+  }
+
+  .demo-pcc .pc-spec::after {
+    content: '';
+    position: absolute;
+    top: -0.42em;
+    right: -0.42em;
+    box-shadow: 0 0 0 0.14em var(--kelp-deep);
+  }
+
+  .demo-pcc .pc-cap {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 0.35em + var(--cs, 0em));
+    display: var(--caps);
+    font-size: var(--t-xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #b8c6a3;
+    white-space: nowrap;
+  }
+
+  .demo.demo-pcc .pc-spec {
+    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.2), visibility 0s;
+  }
+
+  .demo.demo-pcc.seq-on .pc-spec:not(.is-on) {
+    transform: translateY(0.5em) scale(0.94);
+  }
+
+  .demo.demo-pcc:has(.pc-ci.is-on) .pc-spec {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0s 0.35s;
+  }
+
+  .demo-pcc .pc-ci {
+    z-index: 3;
+    display: grid;
+    grid-template-columns: var(--ci-lbl) minmax(0, 1fr);
+    grid-template-rows: var(--ci-h) var(--ci-h);
+    row-gap: var(--ci-gap);
+    column-gap: 0.5em;
+    align-items: center;
+    padding-right: var(--ci-pad);
+  }
+
+  .demo-pcc .pc-ci-lbl {
+    font-size: var(--t-sm);
+    font-weight: 500;
+    color: #c3d0ae;
+  }
+
+  .demo-pcc .pc-ci-lbl.pc-lbl-after {
+    color: var(--chiffon);
+  }
+
+  .demo-pcc .pc-lane {
+    position: relative;
+    height: 100%;
+  }
+
+  .demo-pcc .pc-track {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 100%;
+    border-radius: 0.35em;
+    background: rgb(255 255 255 / 0.07);
+  }
+
+  /* The after run gets the same empty track as the before run, so it visibly stops short of the end. */
+  .demo-pcc .pc-track.pc-t-after {
+    width: 70%;
+    background: none;
+  }
+
+  .demo-pcc .pc-lane-after::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.35em;
+    background: rgb(255 255 255 / 0.07);
+  }
+
+  .demo-pcc .pc-fill {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    gap: 2px;
+    overflow: hidden;
+    border-radius: 0.35em;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .demo-pcc .pc-fill i {
+    flex: var(--f) 1 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-size: var(--t-xs);
+    font-style: normal;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* The run's check mark overlaps the end of the last stage, so its label centers in what stays visible. */
+  .demo-pcc .pc-fill i:last-child {
+    padding-right: 0.7em;
+  }
+
+  .demo-pcc .pc-f-before i {
+    color: #f3f6ee;
+    background: #5e6d48;
+  }
+
+  .demo-pcc .pc-f-before i:nth-child(even) {
+    background: #687852;
+  }
+
+  /* Compact frames have no room for labels in the shorter bar, so they shrink to nothing there. */
+  .demo-pcc .pc-f-after i {
+    font-size: calc(var(--t-xs) * var(--after-labels));
+    color: #263312;
+    background: #e7feb6;
+  }
+
+  .demo-pcc .pc-f-after i:nth-child(even) {
+    background: #d3ef8a;
+  }
+
+  .demo.demo-pcc.seq-on .pc-fill:not(.is-on) {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .demo.demo-pcc.seq-on .pc-f-before.is-on {
+    transition: clip-path 2.4s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  .demo.demo-pcc.seq-on .pc-f-after.is-on {
+    transition: clip-path 1.68s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  /* The playhead rides the leading edge of the run. */
+  .demo-pcc .pc-head {
+    position: absolute;
+    inset: -0.3em 0;
+    translate: -100% 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .demo-pcc .pc-head::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    border-radius: 2px;
+    background: #f4ffd9;
+    box-shadow: 0 0 0.5em 0.1em rgb(212 236 90 / 0.85);
+  }
+
+  .demo.demo-pcc.seq-on .pc-f-before.is-on ~ .pc-head {
+    opacity: 1;
+    translate: 0 0;
+    transition: translate 2.4s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.2s;
+  }
+
+  .demo.demo-pcc.seq-on .pc-f-after.is-on ~ .pc-head {
+    opacity: 1;
+    translate: 0 0;
+    transition: translate 1.68s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.2s;
+  }
+
+  .demo.demo-pcc.seq-on .pc-pass.is-on ~ .pc-head {
+    opacity: 0;
+  }
+
+  .demo-pcc .pc-pass {
+    position: absolute;
+    right: -0.55em;
+    top: 50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 1.1em;
+    height: 1.1em;
+    margin-top: -0.55em;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 0.15em var(--kelp-deep);
+  }
+
+  .demo-pcc .pc-pass svg {
+    width: 0.85em;
+    height: 0.85em;
+    fill: none;
+    stroke: #263312;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .demo.demo-pcc .pc-pass {
+    transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .demo.demo-pcc.seq-on .pc-pass:not(.is-on) {
+    transform: scale(0.4);
+  }
+
+  .demo-pcc .pc-marker {
+    position: absolute;
+    left: 100%;
+    top: calc(-1 * (var(--ci-h) + var(--ci-gap)) - 0.25em);
+    bottom: -0.25em;
+    border-left: 1.5px dashed rgb(231 254 182 / 0.6);
+  }
+
+  .demo-pcc .pc-saved {
+    position: absolute;
+    left: 70%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 0.35em;
+    background: repeating-linear-gradient(-45deg, rgb(212 236 90 / 0.24) 0 0.2em, transparent 0.2em 0.5em);
+    box-shadow: inset 0 0 0 1px rgb(212 236 90 / 0.4);
+  }
+
+  .demo-pcc .pc-gain {
+    position: absolute;
+    left: 70%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    display: var(--gain-gap);
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.45em;
+  }
+
+  .demo-pcc .pc-pill {
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.28em 0.7em 0.28em 0.55em;
+    border-radius: 999px;
+    background: var(--chiffon);
+    color: #232f10;
+    font-size: var(--t-sm);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 0.3em 0.8em rgb(0 0 0 / 0.3);
+  }
+
+  .demo-pcc .pc-gain .pc-pill {
+    display: inline-flex;
+  }
+
+  .demo-pcc .pc-pill svg {
+    width: 1em;
+    height: 1em;
+    fill: #435030;
+  }
+
+  .demo.demo-pcc .pc-gain,
+  .demo.demo-pcc .pc-gain-head {
+    transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .demo.demo-pcc.seq-on .pc-gain:not(.is-on),
+  .demo.demo-pcc.seq-on .pc-gain-head:not(.is-on) {
+    transform: scale(0.6);
+  }
+
+  .demo.demo-pcc .pc-saved,
+  .demo.demo-pcc .pc-marker {
+    transition: opacity 0.5s ease;
+  }
+
+  .demo.demo-pcc.seq-on .pc-saved:not(.is-on),
+  .demo.demo-pcc.seq-on .pc-marker:not(.is-on) {
+    transform: none;
+  }
+
+  .demo-pcc .pc-k-reset {
+    display: none;
+  }
+
+  /* Before the loop restarts, the built screen and the CI results fade so the next lap starts from empty slots. */
+  .demo.demo-pcc.seq-on:has(.pc-k-reset.is-on) :is(.pc-part, .pc-clone, .pc-ci, .pc-th-ci, .pc-gain-head) {
+    opacity: 0;
+    transition: opacity 0.55s ease;
+  }
+
+  .demo.demo-pcc.seq-on:has(.pc-k-reset.is-on) .pc-slot {
+    opacity: 1;
+    border-color: #b2bf9e;
+    background: rgb(227 233 219 / 0.35);
+    transition: opacity 0.55s ease;
+  }
+
+  .demo.demo-pcc.seq-on:has(.pc-k-reset.is-on) :is(.pc-th-lib, .pc-tested) {
+    opacity: 1;
+    transition: opacity 0.55s ease 0.3s;
   }
 </style>
