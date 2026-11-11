@@ -95,7 +95,7 @@ Not everything needs a case study. Work that can't clear the bar, and community 
 
 ## Media sources
 
-- **Dots and Scout**: demo videos and screens copied from [ericdachen.com/design](https://ericdachen.com/design), from the projects Malak built with Eric Chen.
+- **Dots and Scout**: demo videos and screens copied from [ericdachen.com/design](https://ericdachen.com/design).
 - **Career Compass**: a 17-second cut of Malak's own screen recording (September 2025), with the landing page, the analysis steps and a sample pathway. Her email was patched out of the results header, and the recording's login, postal code and LinkedIn pages aren't used.
 - **Quine**: the official [Microsoft Research announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) video (YouTube) and figure animations, embedded from microsoft.com rather than re-hosted.
 - **Recall**: the official Windows video, Microsoft ExpertZone's retail video, and the first-run screenshot from the Windows Insider Blog, all embedded from their sources. The home card loops a 12-second cut of the Windows video (3.1s to 15.4s, product footage only) as a self-hosted MP4, so YouTube's player overlay never shows.

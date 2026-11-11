@@ -200,8 +200,8 @@ export const answers: Answer[] = [
   {
     id: 'suelo',
     ask: "what is suelo?",
-    keys: ['!suelo', '!swiftzone', 'swift zone', 'real estate', 'land', 'land acquisition', 'site selection', 'zoning', 'diligence', 'property'],
-    text: "Suelo builds agents that research candidate sites for real estate developers and prepare the next round of diligence. I co-founded it as SwiftZone, and we've since narrowed it to the first decision in development, whether a site is worth pursuing. More is coming soon.",
+    keys: ['!suelo', 'real estate', 'land', 'land acquisition', 'site selection', 'zoning', 'diligence', 'property'],
+    text: "Suelo builds agents that research candidate sites for real estate developers and prepare the next round of diligence. I co-founded it, and it focuses on the first decision in development, whether a site is worth pursuing. More is coming soon.",
     sources: [{ label: 'suelo', href: '/side/#suelo' }],
     next: ['built', 'scout', 'ai-stack'],
   },
@@ -224,8 +224,8 @@ export const answers: Answer[] = [
   {
     id: 'dots',
     ask: "what is dots?",
-    keys: ['!dots', 'uxl', 'hackathon', 'loneliness', 'lonely', 'friend', 'friends', 'maple mavericks', 'eric chen', 'eric', 'plan', 'plans', 'hangout', 'win', 'won', 'winner'],
-    text: "Dots fights loneliness by turning your friends' free time into plans, and it won the UXL 2024 hackathon. I built it with Eric Chen and our team, Maple Mavericks, and my focus was user research, prototyping and motion.",
+    keys: ['!dots', 'uxl', 'hackathon', 'loneliness', 'lonely', 'friend', 'friends', 'maple mavericks', 'plan', 'plans', 'hangout', 'win', 'won', 'winner'],
+    text: "Dots fights loneliness by turning your friends' free time into plans, and it won the UXL 2024 hackathon. I built it with our team, Maple Mavericks, and my focus was user research, prototyping and motion.",
     sources: [{ label: 'dots', href: '/work/dots/' }],
     next: ['built', 'scout', 'recall-research'],
   },
