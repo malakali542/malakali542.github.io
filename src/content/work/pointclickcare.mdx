@@ -27,20 +27,16 @@ links:
     href: https://pointclickcare.com/
 ---
 
-## The problem
+## The provider portal
 
-PointClickCare builds cloud software for senior care and post-acute providers, so the people using it are clinicians in the middle of a shift. A slow page or a form that behaves differently from the last one takes time away from a resident, which makes frontend quality part of the product. I was a software engineer on the provider portal, one of PointClickCare's web apps for healthcare providers, and two things decided how fast it could improve: how screens were built, and how long every change waited on CI.
+PointClickCare makes cloud software for senior care and post-acute providers, and it describes its EHR as the top senior care EHR in North America ([PointClickCare](https://pointclickcare.com/company/about-us/)). The people using it are clinicians partway through a shift, so a slow page or a form that behaves differently from the last one takes time away from a resident, which makes frontend quality part of the product.
 
-## The calls I made
+I was a software engineer on the provider portal, one of PointClickCare's web apps for healthcare providers. Two things decided how fast the portal could get better: how its screens were built, and how long every change waited in CI. I worked on both.
 
-### One component library instead of many copies
+## One UI library for every screen
 
-I built the portal's UI component library, the shared components every screen is assembled from. Instead of each team rebuilding the same pieces slightly differently, the portal got one set of components that look and behave the same everywhere, and new screens start from parts that are already tested.
+Without a shared library, the same pieces tend to get rebuilt a little differently on every screen, and users feel those differences even when nobody planned them. I built the portal's UI component library, the shared components every screen is assembled from. A button, a form field or a table now looks and behaves the same everywhere, and a new screen starts from parts that are already tested.
 
-### Treat CI time as product time
+## Cutting CI time 30%
 
-Every engineer waits on CI before they know whether a change is safe to merge, so its run time is a tax on everything the team ships. I optimized the CI pipelines and cut their run time **30%**.
-
-## What I learned
-
-Shared components and fast CI solve the same problem from two ends. Both make the right way to build something the fastest way too, and teams follow the fast path. For software clinicians use mid-shift, that meant a consistent screen and a fix that reached them sooner.
+Every engineer waits on CI before they know a change is safe to merge, so CI time comes out of everything the team ships. I optimized the CI pipelines and cut their run time **30%**, so every change spent less time waiting before it could merge.

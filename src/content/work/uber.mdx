@@ -42,42 +42,30 @@ links:
 
 import DemoBlock from '../../components/DemoBlock.astro';
 
-At Uber I worked on two teams with very different users. **UberX Share** is the shared-rides product in the Rider app, where the user is a rider deciding whether to share a car with a stranger. **MapStore** is an internal service that other engineering teams use for map data, where the user is an engineer waiting on a query.
+At Uber I was a software engineer on two teams with very different users. On **UberX Share**, the user was a rider deciding whether to share a car with a stranger. On **MapStore**, an internal service for map data, the user was another engineer waiting on a query.
 
 ## UberX Share
 
-### The problem
+Uber paused shared rides in 2020 and spent the time after that rebuilding them. The new UberX Share came with a clear trade. You might pick up a co-rider heading the same way, and in return you get an upfront discount, up to 20% off if you're matched, and arrive no more than 8 minutes later than a regular UberX. It launched across U.S. cities including New York ([Uber Newsroom](https://www.uber.com/us/en/newsroom/uberx-share/)).
 
-UberX Share brought shared rides back after Uber paused them in 2020. The trade is simple on paper: you might pick up a co-rider heading the same way, and in exchange you get an upfront discount, up to 20% off if you're matched, and arrive no more than 8 minutes later than a regular UberX ([Uber Newsroom](https://www.uber.com/us/en/newsroom/uberx-share/)). In the app it wasn't always simple. A rider who didn't understand the trade would see an unexpected stop or a stranger getting in, and cancel.
+### Riders cancelling rides they didn't understand
 
-### Explain the ride before it surprises you
+On paper the trade is simple. In the app, a rider who hadn't understood it would see an unexpected stop or a stranger getting in, and cancel. A lot of those cancellations had nothing to do with price or wait time, because they came from riders who didn't know what they'd booked.
 
-Some cancellations had nothing to do with price or wait time. They came from riders who didn't understand what they had booked. I built flows to cut those cancellations, including the **first-time-user experience for UberX Share in the Rider app**, so the trade is explained before the ride instead of discovered during it.
+I built rider flows to cut those cancellations, including the first-time-user experience for UberX Share in the Rider app, so the trade is explained before the ride instead of discovered during it. I also ran A/B experiments on the opt-in funnels and turned what the research and data showed into feature changes that shipped, which lifted shared-ride adoption **4.5%**.
 
-### Let experiments decide the opt-in flow
+### Changing flows without waiting on an app release
 
-I ran **A/B experiments on the opt-in funnels** and turned the research and data analysis into feature changes that shipped, lifting shared-ride adoption **4.5%**.
+Testing changes to rider flows was slow, because every change had to wait for an app release. I onboarded server-driven UI to our microservice, so the backend describes what a screen shows and we could change and test a flow without shipping a new version of the app. Once it was working for us, I pitched it to the wider shared rides and ride matching org.
 
-### Change flows without an app release
+### Rolling out market by market
 
-Rider flows change constantly, and every change that waits on an app release is slow to test. I **onboarded server-driven UI to our microservice**, so the backend describes what a screen shows and we could change and test flows without shipping a new app version. Once it worked for us, I pitched it to the wider shared rides and ride matching org.
-
-### Roll out market by market
-
-I led the rollout across **4 markets**, coordinating legal, policy and operations so the technical implementation matched each market's regulatory requirements.
+I led the rollout across **4 markets**, working with legal, policy and operations so the technical implementation matched each market's regulations.
 
 ## MapStore
 
-### The problem
+Engineering teams across Uber build internal tools on MapStore's map data, so those tools are only as fast as its queries. Queries returned entire result sets in a single response, and the tools on top of them loaded slowly as a result.
 
-Engineering teams across Uber build internal tools on MapStore's map data, so every slow query gets paid for by every team that calls it. Queries returned entire result sets in one response, and the tools on top of them loaded slowly as a result.
-
-### Make every query cheaper
-
-I redesigned MapStore's service interface and query architecture. Responses that used to return everything became **paginated**, I **rewrote the slowest SQL queries**, and I trimmed payloads so the tools built on MapStore **loaded faster**. Average query time dropped **40%** for the teams that depend on it.
+I redesigned MapStore's service interface and query architecture. Responses that used to return everything became paginated, I rewrote the slowest SQL queries, and I trimmed payloads so the tools built on MapStore loaded faster. Average query time dropped **40%** for the teams that depend on it.
 
 <DemoBlock name="mapstore" caption="Illustration: the same map query before and after the redesign. Not the real interface." />
-
-## What I learned
-
-The cheapest fix for a confusing product is often an explanation at the right moment, not a new feature. Internal infrastructure is a product too: MapStore's users were engineers on other teams, and they noticed a 40% faster query as much as riders notice a faster pickup.
