@@ -1,6 +1,6 @@
 ---
 // Illustration in the style of PointClickCare's clinical web apps, not the real UI. Parts from the provider portal's
-// shared UI library fly out of a component sheet and snap into the slots of a unit's resident list, then a CI pipeline
+// shared UI library fly out of a component sheet and snap into the slots of a unit's prescription orders, then a CI pipeline
 // runs before and after the speedup. Palette from PointClickCare's 2025 brand and web apps: kelp nav rail, sage
 // selection, chiffon accents, outlined status badges, uppercase pill buttons.
 // Every box sits on a fixed stage measured in em, one stage per frame shape, so a flight can start exactly on its
@@ -25,12 +25,12 @@ const T = {
 };
 
 const residents = [
-  { ini: 'RB', name: 'Rose B.', room: 'Rm 214', task: 'Progress note', status: 'due' },
-  { ini: 'WK', name: 'Walt K.', room: 'Rm 216', task: 'Sign orders', status: 'done' },
-  { ini: 'IM', name: 'Ida M.', room: 'Rm 221', task: 'Med review', status: 'due' },
-  { ini: 'LP', name: 'Lou P.', room: 'Rm 223', task: 'Vitals check', status: 'done' },
+  { ini: 'RB', name: 'Rose B.', room: 'Rm 214', task: 'Refill', status: 'due' },
+  { ini: 'WK', name: 'Walt K.', room: 'Rm 216', task: 'New Rx', status: 'done' },
+  { ini: 'IM', name: 'Ida M.', room: 'Rm 221', task: 'Refill', status: 'due' },
+  { ini: 'LP', name: 'Lou P.', room: 'Rm 223', task: 'New Rx', status: 'done' },
 ];
-const statusText = { due: 'Due today', done: 'Done' } as const;
+const statusText = { due: 'Pending', done: 'Delivered' } as const;
 
 // Relative stage durations. The after run is the same pipeline at 70% of the time.
 const stages = [
@@ -215,7 +215,7 @@ const icon = {
   data-seq
   data-cycle={T.cycle}
   role="img"
-  aria-label="Illustration in the style of PointClickCare's provider portal. Parts from a shared UI library, a unit select, a New note button, a search box, a resident row and a due today badge, fly out of a component sheet and snap into place to build a unit's resident list. Then a CI pipeline of install, lint, test, build and deploy runs before and after, and the after run finishes 30% sooner, labeled 30% faster CI."
+  aria-label="Illustration in the style of PointClickCare's provider portal, where providers order prescriptions and refills and track their supply. Parts from a shared UI library, a unit select, a New order button, a search box, an order row and a pending badge, fly out of a component sheet and snap into place to build a unit's prescription orders. Then a CI pipeline of install, lint, test, build and deploy runs before and after, and the after run finishes 30% sooner, labeled 30% faster CI."
 >
   <style is:inline set:html={layoutStyles}></style>
   <span class="pc-halo" aria-hidden="true"></span>
@@ -230,17 +230,17 @@ const icon = {
         </span>
       </div>
       <div class="pc-rail">
-        <span class="pc-nav pc-on"><i><svg viewBox="0 0 20 20"><path d={icon.people} /></svg></i><b>Residents</b></span>
-        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.clip} /></svg></i><b>Orders</b></span>
-        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.chart} /></svg></i><b>Insights</b></span>
+        <span class="pc-nav pc-on"><i><svg viewBox="0 0 20 20"><path d={icon.clip} /></svg></i><b>Orders</b></span>
+        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.chart} /></svg></i><b>Supply</b></span>
+        <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.people} /></svg></i><b>Residents</b></span>
         <span class="pc-nav"><i><svg viewBox="0 0 20 20"><path d={icon.gear} /></svg></i><b>Settings</b></span>
       </div>
     </div>
     <div class="pc-card"></div>
-    <div class="pc-title"><span>Residents</span></div>
+    <div class="pc-title"><span>Orders</span></div>
     <div class="pc-filter"><svg viewBox="0 0 16 16"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3" /></svg></div>
     <div class="pc-thead">
-      <div class="pc-cols"><span class="pc-c-av"></span><span class="pc-c-nm">Resident</span><span class="pc-c-rm">Room</span><span class="pc-c-tk">Next</span><span class="pc-c-st">Status</span></div>
+      <div class="pc-cols"><span class="pc-c-av"></span><span class="pc-c-nm">Resident</span><span class="pc-c-rm">Room</span><span class="pc-c-tk">Order</span><span class="pc-c-st">Status</span></div>
     </div>
 
     <span class="pc-slot pc-s-select"></span>
@@ -249,7 +249,7 @@ const icon = {
     </div>
     <span class="pc-slot pc-pill-slot pc-s-button"></span>
     <div class="pc-part pc-p-button" data-step data-at={T.fly.button}>
-      <div class="pc-pv"><div class="pc-ctl pc-btn"><span class="pc-tx">New note</span></div></div>
+      <div class="pc-pv"><div class="pc-ctl pc-btn"><span class="pc-tx">New order</span></div></div>
     </div>
     <span class="pc-slot pc-s-search"></span>
     <div class="pc-part pc-p-search" data-step data-at={T.fly.search}>
@@ -282,7 +282,7 @@ const icon = {
       </>
     ))}
     <div class="pc-part pc-p-badge" data-step data-at={T.fly.badge}>
-      <div class="pc-pv"><span class="pc-ctl pc-badge pc-due"><span class="pc-tx">Due today</span></span></div>
+      <div class="pc-pv"><span class="pc-ctl pc-badge pc-due"><span class="pc-tx">Pending</span></span></div>
     </div>
 
     <div class="pc-tray"></div>
@@ -301,7 +301,7 @@ const icon = {
     </div>
     <div class="pc-spec pc-sp-button" data-step data-at={T.spec.button}>
       <span class="pc-cap">Button</span>
-      <div class="pc-ctl pc-btn"><span class="pc-tx">New note</span></div>
+      <div class="pc-ctl pc-btn"><span class="pc-tx">New order</span></div>
     </div>
     <div class="pc-spec pc-sp-search" data-step data-at={T.spec.search}>
       <span class="pc-cap">Search</span>
@@ -309,7 +309,7 @@ const icon = {
     </div>
     <div class="pc-spec pc-sp-badge" data-step data-at={T.spec.badge}>
       <span class="pc-cap">Badge</span>
-      <span class="pc-ctl pc-badge pc-due"><span class="pc-tx">Due today</span></span>
+      <span class="pc-ctl pc-badge pc-due"><span class="pc-tx">Pending</span></span>
     </div>
     <div class="pc-spec pc-sp-row" data-step data-at={T.spec.row}>
       <span class="pc-cap">Table row</span>

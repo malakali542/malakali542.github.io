@@ -31,20 +31,20 @@ links:
 
 ## Help answers no better than a search
 
-Commercial customers use Copilot for help with the tools they run their business on, and a lot of those questions come from IT admins. When an admin asks how to configure something across a fleet of company laptops, they act on the answer, so a wrong one costs them hours or a broken rollout.
+Commercial customers use Copilot for help with the tools they run their business on, and a lot of those questions come from IT admins: how to set a device policy across a fleet, how to lock down sign-in, how to roll out a change without breaking anyone's morning. Admins act on the answer, so a wrong one costs them hours, or a broken rollout across hundreds of laptops.
 
-What they had before was a web search that returns forum threads and stale docs, or a general model that sounds just as sure of itself when it's wrong. Copilot's help answers weren't much better than either. For an answer to be worth using, it had to come from a source the customer could trust, and someone had to have measured that it was right often enough to rely on.
+What they had before was a web search or a general model. A web search returns forum threads and docs written for a different version of the product, and a general model sounds just as sure of itself when it's wrong. Copilot's help answers weren't much better than either. For an answer to be worth acting on, it had to come from a source the customer could trust, and someone had to have measured that it was right often enough to rely on.
 
 ## Grounding answers in trusted sources
 
-I connected Copilot's help answers to trusted sources, so responses come from content we can vouch for instead of whatever ranked well on the web ([how grounding works](https://support.microsoft.com/en-us/microsoft-365-copilot/how-grounding-works-with-a-work-or-school-account)). That fixed where answers came from, but it couldn't tell us on its own whether they had gotten better.
+I connected Copilot's help answers to trusted sources, so responses come from content we can vouch for instead of whatever ranked well on the web ([how grounding works](https://support.microsoft.com/en-us/microsoft-365-copilot/how-grounding-works-with-a-work-or-school-account)). That fixed where answers came from, but on its own it couldn't tell us whether they had gotten better.
 
 ## Evals that decide when an answer ships
 
 So I built the LLM-as-judge evaluation strategy for Copilot's help experiences: the methodology, the scoring criteria and the release thresholds. Every answer is scored on two things. Tool-invocation accuracy asks whether Copilot reached for the right source or tool for the question, and response quality asks whether the answer is correct, complete and safe to act on. We kept the two scores separate because a wrong tool call and a wrong answer need different fixes, and a single blended score hides which one you have.
 
-A judge model is only worth trusting if it agrees with the people it stands in for. With Applied Science, I calibrated the judge against domain-expert assessments and ran offline evals before letting it gate a release. From then on, a change to sources or prompts had to clear the thresholds to ship, which gave the team a number to argue about instead of an impression.
+A judge model is only worth trusting if it agrees with the people it stands in for. With Applied Science, I calibrated the judge against domain-expert assessments, comparing its scores with experts' grades on the same answers, and ran offline evals before letting it gate a release. From then on, a change to sources or prompts had to clear the thresholds to ship, which gave the team a number to argue about instead of an impression.
 
 ## What changed
 
-Session success rose **7 percentage points**, and every later change to sources or prompts had to pass an eval calibrated to expert judgment before it reached customers.
+Session success rose **7 percentage points**. Just as useful, every later change to sources or prompts had to pass an eval calibrated to expert judgment before it reached customers, so quality stopped depending on whoever happened to test a change last.

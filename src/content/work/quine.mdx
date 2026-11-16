@@ -56,7 +56,7 @@ import DemoBlock from '../../components/DemoBlock.astro';
 
 ## Why biology needs shorter loops
 
-Biology runs on slow loops. A scientist proposes something, waits weeks for an experiment, and spends scarce samples on the answer even when the answer is no. Quine is Microsoft Research's attempt to shorten those loops, and it has two parts built together: a world model of biology that learns shared representations across genomics, proteins, chemistry, RNA and cell state, and imaging, and a harness that connects the model to scientific tools, the literature, the wet lab and the scientists using it.
+Biology runs on slow loops. A scientist proposes something, waits weeks for an experiment, and spends scarce samples on the answer even when the answer is no. Microsoft Research has worked where computation meets biology for more than two decades, and Quine is its attempt to shorten those loops. It has two parts built together: a world model of biology that learns shared representations across genomics, proteins, chemistry, RNA and cell state, and imaging, and a harness that connects the model to scientific tools, the literature, the wet lab and the scientists using it.
 
 The [public announcement](https://www.microsoft.com/en-us/research/blog/introducing-quine-an-ai-research-system-designed-for-the-complexity-of-biology/) shows what that looks like when it works. With collaborators at the Broad Institute, Quine ranked thousands of compounds by their predicted ability to shift pancreatic cancer cells between states. In the lab, the top-ranked compounds produced the largest intended shifts, and narrowing the search took one weekend.
 
@@ -79,7 +79,7 @@ Alongside Quine, I'm defining how teams of scientists work with AI together, thr
 
 ## Turning failures into training data
 
-Most of what I do comes back to one loop: find where the model fails in real work, turn that failure into training data, and ship a better checkpoint to the people who found it.
+Most of what I do comes back to one loop: find where the model fails in real work, turn that failure into training data, and ship a better checkpoint to the people who found it. If a partner's biologists can label cell types the model keeps getting wrong, for example, those labels become training data for the next round, and the next checkpoint goes back to the same partner to check.
 
 <DemoBlock name="quine-loop" caption="How a failure in the field becomes what Quine learns next. A diagram, with numbers from this page." />
 
@@ -101,7 +101,7 @@ I'm the product lead for the multi-agent research workbench on top of the model,
 
 I led deployments of the research system to four academic labs and of the model to four enterprises, with telemetry, evals and benchmarks I defined together with the researchers involved. Those feedback loops cut the time to generate and rank candidates by 15%. For enterprise use I specified the protected managed environments, the access APIs and the evaluation requirements. I also run the wet-lab validation loop with four contract research organizations, so predictions get tested in assays and the results come back as training and evaluation data. That loop surfaced novel candidate pathways in pancreatic cancer and metastasis, which are now prioritized for wet-lab validation.
 
-Quine launched publicly in September 2026. I drove its go-to-market and led the launch, which reached 5,000+ researchers and 15 media outlets.
+Quine launched publicly in September 2026. I drove its go-to-market and led the launch, which reached 5,000+ researchers and 15 media outlets. The launch also opened the [Quine Research Fellowship](https://microsoft.github.io/quine/#fellowship), which gives a cohort of scientists access to the system in exchange for scientific feedback, and Microsoft plans to widen access through products like Microsoft Discovery.
 
 ## Biosafety as a release gate
 

@@ -22,17 +22,20 @@ facts:
     value: Copilot Tasks on Windows
   - label: owned
     value: product definition, consent flows, model readiness, guardrails
+links:
+  - label: 'Microsoft FY25 Q4 earnings: Copilot apps pass 100 million monthly active users'
+    href: https://www.microsoft.com/en-us/investor/events/fy-2025/earnings-fy-2025-q4
 ---
 
 ## Why Copilot was bad at fixing PCs
 
-A lot of what people ask Copilot on Windows is about the PC itself: why the laptop is slow, why the Wi-Fi keeps dropping, why the battery drains overnight. Copilot did poorly on these. It answered from the outside with the same checklist a search engine would give you (restart, update your drivers, run the troubleshooter), and people had usually tried all of that already.
+Copilot reaches a lot of people. Microsoft's Copilot apps passed 100 million monthly active users in 2025 ([Microsoft FY25 Q4 earnings](https://www.microsoft.com/en-us/investor/events/fy-2025/earnings-fy-2025-q4)), and on Windows a lot of what people ask is about the PC itself: why the laptop is slow, why the Wi-Fi keeps dropping, why the battery drains overnight, where the disk space went.
 
-The answer to most PC problems sits in local state a chat model can't see, like event logs, driver versions, battery reports, disk usage and adapter settings. A smarter model wouldn't have fixed this on its own, because Copilot had no way to look at the machine it was supposed to help with.
+Copilot did poorly on these. It answered from the outside with the same checklist a search engine would give you (restart, update your drivers, run the troubleshooter), and by the time someone asks an assistant, they've usually tried all of that already. The real answer sits in local state a chat model can't see, like event logs, driver versions, battery reports, disk usage and adapter settings. A smarter model wouldn't have fixed this on its own, because Copilot had no way to look at the machine it was supposed to help with.
 
 ## What I owned
 
-I owned product definition for diagnostics in Copilot Tasks, the capability that lets Copilot generate code and run it locally on someone's Windows PC. Copilot writes a diagnostic, runs it on the device, reads what comes back and answers from what it found.
+I owned product definition for diagnostics in Copilot Tasks, the capability that lets Copilot generate code and run it locally on someone's Windows PC. Instead of guessing, Copilot writes a diagnostic, runs it on the device, reads what comes back and answers from what it found.
 
 Take Wi-Fi that drops every few minutes. Copilot offers to check the network adapter and recent connection events with a script that only reads. Before anything runs, the person sees what the script will read and that it changes nothing, and decides whether to allow it. Copilot then comes back with something specific about that PC, for example that Windows keeps switching the adapter off to save power, and if there's a fix, it asks again before changing anything. The illustration at the top of this page walks through that flow.
 
@@ -40,9 +43,11 @@ Take Wi-Fi that drops every few minutes. Copilot offers to check the network ada
 
 Running code a model wrote on someone's personal computer is a big ask, so most of the product work was deciding when Copilot gets to do it and how the person stays in control.
 
-Consent came first. I designed the flows so Copilot asks before it runs anything and says in plain language what the script will read and what it will change. Before real users saw any of it, a model had to meet a readiness bar I defined, backed by evals, because a wrong diagnostic wastes someone's afternoon and an unsafe one does worse.
+Consent came first. I designed the flows so Copilot asks before it runs anything and says in plain language what the script will read and what it will change. Reading a battery report and changing a power setting are very different requests, and the flow treats them differently.
 
-I also drew the line between what Copilot can do on its own and what always needs a person's approval. That meant setting the execution guardrails and the human-approval boundaries, including the MCP permission patterns for exposing OS capabilities to the agent as tools. Separately, I shipped Copilot and Windows integrations that give Copilot richer system context, so its answers start from the PC's real state.
+Before real users saw any of it, a model had to meet a readiness bar I defined, backed by evals, because a wrong diagnostic wastes someone's afternoon and an unsafe one does worse. I also drew the line between what Copilot can do on its own and what always needs a person's approval. That meant setting the execution guardrails and the human-approval boundaries, including the MCP permission patterns that decide which OS capabilities are exposed to the agent as tools and which calls need a person to say yes.
+
+Separately, I shipped Copilot and Windows integrations that give Copilot richer system context, so its answers start from the PC's real state instead of a guess.
 
 ## Where it landed
 

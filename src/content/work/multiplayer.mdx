@@ -7,7 +7,7 @@ period: 2026 - now
 order: 1.5
 group: work
 badge: 300+ users in month one
-summary: Most AI tools are single-player, so what one person works out stays in their own session. I'm defining a multiplayer system for scientific discovery where teammates see each other's sessions, build on each other's work and change the system's code, and the system improves itself every week. It started as one team's project, and in its first month across the org it reached 35% adoption, 300+ users and more than 100,000 sessions.
+summary: Most AI tools are single-player, so what one person works out stays in their own session. I'm defining a multiplayer system for scientific discovery that works across a team's sessions, pulls in a teammate's context when it's needed and keeps a knowledge graph of the team's work, with deterministic workflows for the steps that have to run the same way every time. It started as one team's project, and in its first month across the org it reached 35% adoption, 300+ users and more than 100,000 sessions.
 card:
   kind: demo
   name: multiplayer
@@ -24,6 +24,8 @@ metrics:
 facts:
   - label: what it is
     value: a multiplayer, self-improving AI system for teams of scientists
+  - label: built on
+    value: the team's shared sessions, a knowledge graph, deterministic workflows
   - label: I own
     value: product features, success measures, the vision for where it goes
   - label: rollout
@@ -32,24 +34,34 @@ facts:
     value: scientist user studies, observation studies, workflow mapping
 ---
 
-## Why single-player AI wasn't enough
+## The problem with single-player AI in a lab
 
-AI assistants are built for one person at a time. Each session starts from a blank prompt, what one person works out stays in their own history, and a fix that helps one teammate never reaches the next. Science is done in teams, so a lab that works this way gets faster one person at a time and never together.
+Science happens in teams, but AI assistants are built for one person at a time. Every session starts from a blank prompt, and whatever one person works out stays in their own history. In a lab that looks like two people on the same team asking related questions in separate chats, each rebuilding context the other already has, while a fix that helps one scientist never reaches the next. The team gets faster one person at a time and never together.
 
-## How it works
+## What the system does
 
-On this system you can see your teammates' sessions and build on them instead of starting from scratch. Anyone using it can also change its code base, so whoever runs into a gap can close it themselves. And the system learns from how the team uses it, improving itself in a weekly cycle, so it gets better the more people work in it.
+The system works across the team's sessions instead of inside one. When you ask it something, it can pull in context from a teammate's session when that context matters, so a result someone found last week shows up in your work without anyone having to forward it. Underneath the sessions sits a knowledge graph of the team's work, and that graph is how the system connects the dots between people, questions and findings that would otherwise live in separate chats.
 
-## What I did
+Teammates can also open each other's sessions and build on them directly. Anyone using the system can change its code base, so whoever runs into a gap can close it, and the system learns from how the team uses it in a weekly self-improvement cycle.
 
-I own its product features and the vision for where it goes. To work out what scientists needed from a shared system, I ran user studies and observation studies with them and mapped the deterministic parts of their workflows, the steps that run the same way every time. From there I ran rapid experiments and built and shipped **5+ collaboration features** myself, without engineering support.
+## Finding the work worth hardening
 
-I also defined how we know it's working, with session success rate, LLM-as-judge evaluation and regression tracking as the measures, and I managed the system's data privacy boundaries as it spread across teams.
+Before deciding what to build, I watched how the scientists actually worked. I ran user studies and observation studies and mapped their workflows step by step. Some of that work is exploratory and different every time, which is where an agent helps most. Other parts run the same way on every project, and there an agent's flexibility is a liability, because a step that should be identical every time shouldn't depend on how a model reads the prompt that day. So I built deterministic workflows on top of the system to harden those steps, and left the agents to the exploratory work.
+
+## Building it myself
+
+I own the product features and the vision for where the system goes. Running rapid experiments with the teams using it, I also built and shipped **5+ collaboration features** myself, without engineering support, which meant an idea could reach scientists without waiting for a slot on anyone's roadmap.
+
+## Knowing whether it works
+
+A system that changes itself every week needs a way to catch itself getting worse. I defined how we measure it: session success rate for whether people got what they came for, LLM-as-judge evaluation for the quality of what the system produced, and regression tracking so a weekly improvement can't quietly break something that used to work.
+
+Sharing by default only works if people trust what's being shared. As the system spread from one team to many, I managed its data privacy boundaries, deciding what moves across teams and what stays with the team that produced it.
 
 ## From one team to the org
 
-It started as one team's project. We rolled it out across the whole org, more than 1,000 people, and in its first month it reached **35% adoption**, with **300+ users** across 5+ teams running **more than 100,000 sessions**.
+It started as one team's project. Once it was working there, we rolled it out across the whole org, more than 1,000 people, and in its first month it reached **35% adoption**, with **300+ users** across 5+ teams running **more than 100,000 sessions**.
 
 ## What I'm working out
 
-Single-player AI made each of us faster, and the question I'm working on now is what makes a team faster. Most of it comes down to defaults and trust: which work should be shared automatically, and how a team trusts a change someone else made to a system everyone depends on.
+Single-player AI made each of us faster, and the question I'm working on now is what makes a team faster. Most of it comes down to defaults and trust: which work should be shared automatically, how a team trusts a change someone else made to a system everyone depends on, and how a system that learns from everyone keeps working for each person.
