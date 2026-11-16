@@ -29,6 +29,8 @@ metrics:
 facts:
   - label: shipped
     value: search, first run, enterprise controls, the Responsible AI release, the retail demo
+  - label: research
+    value: user personas, user studies with my own prototypes, offline evals
   - label: teams
     value: 5+ across engineering, design, retail ops, content, partners
   - label: worked with
@@ -62,6 +64,10 @@ Its announcement in May 2024 drew public privacy and security concerns, and in J
 
 I worked on the two parts of Recall that decide whether anyone keeps using it. The first run is where people choose whether to turn it on at all, and search is where they find out whether it was worth it. Both had a gap we could measure.
 
+## Who we were building for
+
+A feature that remembers everything is for everyone in theory, which makes it easy to design for no one in particular. So I created personas for Recall's users, built from our research, and they gave engineering, design and research the same people to argue about instead of an average user. The moments they described were concrete: retracing a recipe you scrolled past on Sunday, finding the article you read for an assignment last week, or tracking down a chart someone shared in a meeting. Each of those people searches differently, and each would give up on Recall for different reasons.
+
 ## Search
 
 People don't search their own history the way they search the web. They remember fragments, like a color, a rough time or the app something was in, and type those in. Recall is only as good as its search, since a memory you can't search doesn't help anyone, so this was the part I cared about most.
@@ -71,6 +77,8 @@ The numbers showed where it was falling short. In personal search tools like thi
 I ran guided search experiments to close that gap. I added suggestions from a small model that complete your query in the search bar while you're still typing, so "jacket" becomes "green jacket on a shopping site" before you press enter. I also added dynamic filters, built from what a search returned, so people could narrow a broad result instead of starting over. Across those treatments, search success rose **15%**, meeting or beating the averages for similar search experiences.
 
 <DemoBlock name="guided-search" caption="Illustration: suggestions while you type, then filters that narrow the results. Not the shipped UI." />
+
+Live experiments only tell you what happened after users saw a change, so I also worked on offline evals for search. They scored a change against a fixed set of realistic queries, written with the personas in mind, before anyone saw it, which meant a weak ranking change could be caught on a test set instead of in someone's search history.
 
 To test ideas like these quickly, I built working prototypes myself with AI prototyping tools and ran my own user studies with them. Participants searched in something that actually responded instead of clicking through static mockups, and ideas reached users before engineering had to build anything.
 

@@ -1,28 +1,32 @@
 ---
-title: 'Copilot diagnostics: letting Copilot run code on your PC to find what''s wrong'
-short: Copilot diagnostics
+title: 'Copilot Tasks: letting Copilot run code on your PC to find what''s wrong'
+short: Copilot Tasks
 org: Microsoft AI
 role: product manager
 period: 2024 - 2026
 order: 3
 group: work
-summary: Copilot couldn't fix PCs because it couldn't see them. I owned diagnostics in Copilot Tasks, which lets Copilot write and run code on your PC with your consent, and shipped it to 10M+ Windows Copilot users.
+summary: Copilot couldn't fix PCs because it couldn't see them. I owned diagnostics in Copilot Tasks, which lets Copilot write and run code on your PC with your consent. I worked on the permissions framework, built the evals that decided when a model was ready, rolled it out in two tiers, from contained read-only scripts to generated code that can change settings, and shipped it to 10M+ Windows Copilot users.
 card:
   kind: demo
   name: copilot-diagnostics
 hero:
   kind: demo
   name: copilot-diagnostics
-  caption: An illustration of Copilot asking before it runs a read-only diagnostic, then asking again before it changes a setting. Not the shipped UI.
+  caption: An illustration of both tiers, a read-only diagnostic first and then a change that needs a second yes. Not the shipped UI.
 metrics:
   - value: 10M+
     label: Windows Copilot users the capability shipped to
 facts:
   - label: product
-    value: Copilot Tasks on Windows
+    value: Copilot Tasks on Windows, diagnostics
   - label: owned
-    value: product definition, consent flows, model readiness, guardrails
+    value: product definition, permissions framework, consent flows, evals, the staged rollout
+  - label: evals
+    value: expert evals, LLM-as-judge on reasoning quality, tool-call accuracy and session success
 links:
+  - label: 'Microsoft Support: Using Copilot Tasks'
+    href: https://support.microsoft.com/en-us/microsoft-365-copilot/using-copilot-tasks
   - label: 'Microsoft FY25 Q4 earnings: Copilot apps pass 100 million monthly active users'
     href: https://www.microsoft.com/en-us/investor/events/fy-2025/earnings-fy-2025-q4
 ---
@@ -33,19 +37,27 @@ Copilot reaches a lot of people. Microsoft's Copilot apps passed 100 million mon
 
 Copilot did poorly on these. It answered from the outside with the same checklist a search engine would give you (restart, update your drivers, run the troubleshooter), and by the time someone asks an assistant, they've usually tried all of that already. The real answer sits in local state a chat model can't see, like event logs, driver versions, battery reports, disk usage and adapter settings. A smarter model wouldn't have fixed this on its own, because Copilot had no way to look at the machine it was supposed to help with.
 
-## What I owned
+## Diagnostics in Copilot Tasks
 
-I owned product definition for diagnostics in Copilot Tasks, the capability that lets Copilot generate code and run it locally on someone's Windows PC. Instead of guessing, Copilot writes a diagnostic, runs it on the device, reads what comes back and answers from what it found.
+Copilot Tasks lets you describe a goal and have Copilot plan and carry out the steps, instead of walking through them one message at a time ([Microsoft Support](https://support.microsoft.com/en-us/microsoft-365-copilot/using-copilot-tasks)). I owned product definition for diagnostics in Copilot Tasks, the part that lets Copilot generate code and run it locally on someone's Windows PC. Instead of guessing, Copilot writes a diagnostic, runs it on the device, reads what comes back and answers from what it found.
 
-Take Wi-Fi that drops every few minutes. Copilot offers to check the network adapter and recent connection events with a script that only reads. Before anything runs, the person sees what the script will read and that it changes nothing, and decides whether to allow it. Copilot then comes back with something specific about that PC, for example that Windows keeps switching the adapter off to save power, and if there's a fix, it asks again before changing anything. The illustration at the top of this page walks through that flow.
+Take Wi-Fi that drops every few minutes. Copilot offers to check the network adapter and recent connection events with a script that only reads. Before anything runs, the person sees what the script will read and that it changes nothing, and decides whether to allow it. Copilot then comes back with something specific about that PC, for example that Windows keeps switching the adapter off to save power, and if there's a fix, it asks again before changing anything.
 
-## The decisions that took the most work
+## A permissions framework before anything runs
 
-Running code a model wrote on someone's personal computer is a big ask, so most of the product work was deciding when Copilot gets to do it and how the person stays in control.
+Running code a model wrote on someone's personal computer is a big ask, so the first thing to get right was who decides what. I worked on the permissions framework that sets what Copilot can do on its own and what always needs a person's approval. It covers the execution guardrails and the human-approval boundaries, including the MCP permission patterns that decide which OS capabilities are exposed to the agent as tools and which calls need a person to say yes.
 
-Consent came first. I designed the flows so Copilot asks before it runs anything and says in plain language what the script will read and what it will change. Reading a battery report and changing a power setting are very different requests, and the flow treats them differently.
+On top of that framework I designed the consent flows. Copilot asks before it runs anything and says in plain language what a script will read and what it will change. Reading a battery report and changing a power setting are very different requests, and the flow treats them differently.
 
-Before real users saw any of it, a model had to meet a readiness bar I defined, backed by evals, because a wrong diagnostic wastes someone's afternoon and an unsafe one does worse. I also drew the line between what Copilot can do on its own and what always needs a person's approval. That meant setting the execution guardrails and the human-approval boundaries, including the MCP permission patterns that decide which OS capabilities are exposed to the agent as tools and which calls need a person to say yes.
+## Rolling out in two tiers
+
+We didn't let generated code change anyone's PC on day one. The first tier was a contained list of scripts Copilot could run, mostly read-only checks like adapter status, battery health and recent system events. That let us learn how people responded to consent prompts, and where the diagnoses were right or wrong, while the worst case was a wrong answer rather than a changed setting.
+
+Once that tier held up, I rolled out a second tier of write scripts, where Copilot executes generated code locally to make a change, always behind the stricter approval the framework requires. The illustration at the top of this page shows both: a read-only diagnostic first, then a change that needs a second yes.
+
+## Evals that decide when a model is ready
+
+A wrong diagnostic wastes someone's afternoon, and an unsafe one does worse, so a model had to clear a readiness bar before real users saw it. I created expert evals, troubleshooting cases graded against how an expert would diagnose them, and I built the LLM-as-judge eval strategy that scored Copilot on reasoning quality, tool-call accuracy and session success rate. Scoring the reasoning separately mattered, because a diagnostic can land on the right answer for the wrong reasons, and luck like that doesn't hold up on the next PC.
 
 Separately, I shipped Copilot and Windows integrations that give Copilot richer system context, so its answers start from the PC's real state instead of a guess.
 

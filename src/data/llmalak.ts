@@ -25,7 +25,7 @@ export interface Answer {
 
 const quine = { label: 'quine', href: '/work/quine/' };
 const recall = { label: 'recall', href: '/work/recall/' };
-const diagnostics = { label: 'copilot diagnostics', href: '/work/copilot-diagnostics/' };
+const diagnostics = { label: 'copilot tasks', href: '/work/copilot-diagnostics/' };
 const trusted = { label: 'trusted answers', href: '/work/copilot-trusted-answers/' };
 const uber = { label: 'uber', href: '/work/uber/' };
 const pcc = { label: 'pointclickcare', href: '/work/pointclickcare/' };
@@ -97,7 +97,7 @@ export const answers: Answer[] = [
     id: 'microsoft-ai',
     ask: "what did you do at microsoft ai?",
     keys: ['!microsoft', 'microsoft ai', 'mai', 'windows ai'],
-    text: "I've been at Microsoft since 2024. Today I'm a research product manager at Microsoft Research on [Quine](/work/quine/) and [multiplayer AI](/work/multiplayer/), and before that I spent almost 2 years as a product manager at Microsoft AI. There I drove [Recall](/work/recall/) to general availability and shipped its search, first run and enterprise controls, owned [Copilot diagnostics](/work/copilot-diagnostics/), and grounded [commercial Copilot](/work/copilot-trusted-answers/) in trusted sources with evals that decided when an answer was ready to ship.",
+    text: "I've been at Microsoft since 2024. Today I'm a research product manager at Microsoft Research on [Quine](/work/quine/) and [multiplayer AI](/work/multiplayer/), and before that I spent almost 2 years as a product manager at Microsoft AI. There I drove [Recall](/work/recall/) to general availability and shipped its search, first run and enterprise controls, owned diagnostics in [Copilot Tasks](/work/copilot-diagnostics/), and grounded [commercial Copilot](/work/copilot-trusted-answers/) in trusted sources with evals that decided when an answer was ready to ship.",
     sources: [recall, diagnostics, trusted],
     next: ['recall', 'diagnostics', 'trusted'],
   },
@@ -120,16 +120,16 @@ export const answers: Answer[] = [
   {
     id: 'recall-research',
     ask: "how did you work with ux research?",
-    keys: ['ux research', 'user research', 'uxr', 'user study', 'user studies', 'usability', 'prototype', 'prototyping', 'experiment', 'experiments', 'designers', 'design partners', 'data science'],
-    text: "On Recall I ran 10+ experiments on the first-run flow with UX research, design and our data science partners, and one change stood out: letting people try Recall before committing to it. I also ran my own user studies, and to test ideas before asking engineering to build them, I built working interfaces myself with AI prototyping tools and put them in front of users.",
+    keys: ['ux research', 'user research', 'uxr', 'persona', 'personas', 'offline eval', 'offline evals', 'user study', 'user studies', 'usability', 'prototype', 'prototyping', 'experiment', 'experiments', 'designers', 'design partners', 'data science'],
+    text: "On Recall I created personas for our users from the research, ran 10+ experiments on the first-run flow with UX research, design and data science, and worked on offline evals that scored search changes before users saw them. I also ran my own user studies, and to test ideas before asking engineering to build them, I built working interfaces myself with AI prototyping tools and put them in front of users.",
     sources: [recall],
     next: ['recall', 'ai-stack', 'hybrid'],
   },
   {
     id: 'diagnostics',
-    ask: "what is copilot diagnostics?",
-    keys: ['!copilot diagnostics', 'diagnostic', 'diagnostics', 'troubleshoot', 'troubleshooting', 'fix', 'fixing', 'broken', 'pc', 'local code', 'code execution', 'run code', 'execute', 'copilot tasks', 'consent', 'system diagnostics', '10m'],
-    text: "Copilot couldn't fix PCs because it couldn't see them. I owned diagnostics in Copilot Tasks, which lets Copilot write a diagnostic, run it on your PC with your consent, read the output and reason from what it actually found. It shipped to 10M+ Windows Copilot users, and I owned the product definition, consent flows, model readiness and guardrails.",
+    ask: "what did you do on copilot tasks?",
+    keys: ['!copilot diagnostics', 'diagnostic', 'diagnostics', 'troubleshoot', 'troubleshooting', 'fix', 'fixing', 'broken', 'pc', 'local code', 'code execution', 'run code', 'execute', 'copilot tasks', '!tasks', 'consent', 'system diagnostics', '10m', 'permission', 'permissions', 'permissions framework', 'rollout', 'tier', 'tiers', 'read only', 'write scripts', 'reasoning quality', 'tool call'],
+    text: "Copilot couldn't fix PCs because it couldn't see them. I owned diagnostics in Copilot Tasks, which lets Copilot write a diagnostic, run it on your PC with your consent and answer from what it found. I worked on the permissions framework, created expert evals and an LLM-as-judge strategy scoring reasoning quality, tool-call accuracy and session success, and rolled it out in two tiers: contained, mostly read-only scripts first, then generated code that can change settings. It shipped to 10M+ Windows Copilot users.",
     sources: [diagnostics],
     next: ['trusted', 'recall', 'ai-stack'],
   },
@@ -145,7 +145,7 @@ export const answers: Answer[] = [
     id: 'copilot',
     ask: "what did you do on copilot?",
     keys: ['!copilot'],
-    text: "Two things. [Copilot diagnostics](/work/copilot-diagnostics/) lets Copilot write and run code on your PC, with your consent, to find out what's wrong, and it shipped to 10M+ Windows Copilot users. For [commercial Copilot](/work/copilot-trusted-answers/) I grounded answers in trusted sources and built the evals that decided when an answer was good enough to ship, which raised session success 7 points.",
+    text: "Two things. Diagnostics in [Copilot Tasks](/work/copilot-diagnostics/) lets Copilot write and run code on your PC, with your consent, to find out what's wrong, and it shipped to 10M+ Windows Copilot users. For [commercial Copilot](/work/copilot-trusted-answers/) I grounded answers in trusted sources and built the evals that decided when an answer was good enough to ship, which raised session success 7 points.",
     sources: [diagnostics, trusted],
     next: ['diagnostics', 'trusted', 'recall'],
   },
