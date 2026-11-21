@@ -1,6 +1,6 @@
 ---
-// A pixel cat that lives on the bottom bar. It walks, sits, hops, says something about the page, and curls up
-// asleep if you stay on one page long enough. Clicking it wakes it up. The art is 24x18, drawn as one path per
+// A pixel cat that lives in the rail's column, standing on the bottom bar under the menu. It walks, sits, hops,
+// says something about the page, and curls up asleep if you stay on one page long enough. Clicking it wakes it up. The art is 24x18, drawn as one path per
 // color per frame, and the palette follows the site theme.
 
 // o outline, f fur, s stripe, w white, p pink, e eye.
@@ -195,7 +195,7 @@ const paths = Object.entries(frames).map(([name, rows]) => {
   // Put the cat back where it was on the last page before the first paint, so page changes don't make it jump.
   (() => {
     try {
-      const saved = JSON.parse(sessionStorage.getItem('cat') || 'null');
+      const saved = JSON.parse(sessionStorage.getItem('cat-spot') || 'null');
       const cat = document.querySelector('[data-cat]');
       if (saved && cat && typeof saved.x === 'number') {
         cat.style.setProperty('--cat-x', saved.x + 'px');
@@ -223,7 +223,7 @@ const paths = Object.entries(frames).map(([name, rows]) => {
 
     let saved: { x?: number; face?: number } | null = null;
     try {
-      saved = JSON.parse(sessionStorage.getItem('cat') ?? 'null');
+      saved = JSON.parse(sessionStorage.getItem('cat-spot') ?? 'null');
     } catch {}
     let x = typeof saved?.x === 'number' ? saved.x : -1;
     let face = saved?.face === -1 ? -1 : 1;
@@ -236,12 +236,13 @@ const paths = Object.entries(frames).map(([name, rows]) => {
     let frameTimer = 0;
     let sayTimer = 0;
 
-    // On wide screens it stands on the bottom bar, to the right of the rail. On phones it walks along the
-    // bottom of the screen and keeps clear of the floating ask button.
+    // It never leaves the rail's column. On wide screens it stands on the bottom bar under the menu, inside the
+    // rail's text margins. On narrower screens the rail becomes a top bar, so it keeps to the same width in the
+    // bottom-left corner, clear of the floating ask button.
+    const rail = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail')) || 240;
     const bounds = () => {
-      const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail')) || 240;
-      const min = wide.matches ? rail + 20 : 8;
-      const max = window.innerWidth - SIZE - (wide.matches ? 24 : 172);
+      const min = wide.matches ? 22 : 8;
+      const max = Math.min(rail() - SIZE - 16, wide.matches ? Infinity : window.innerWidth - SIZE - 172);
       return [min, Math.max(min, max)] as const;
     };
     const clamp = (v: number) => {
@@ -251,16 +252,18 @@ const paths = Object.entries(frames).map(([name, rows]) => {
     const floor = () => (wide.matches ? (document.querySelector('.statusbar')?.getBoundingClientRect().height ?? 58) : 10);
     const save = () => {
       try {
-        sessionStorage.setItem('cat', JSON.stringify({ x: Math.round(x), face }));
+        sessionStorage.setItem('cat-spot', JSON.stringify({ x: Math.round(x), face }));
       } catch {}
     };
     const setFrame = (name: string) => {
       if (cat.dataset.frame !== name) cat.dataset.frame = name;
     };
+    // The bubble stays inside the rail's column too, sliding sideways while its tail keeps pointing at the cat.
     const aim = () => {
       const width = bubble.offsetWidth;
       const center = x + SIZE / 2;
-      const left = Math.min(Math.max(center - width / 2, 8), window.innerWidth - width - 8);
+      const edge = Math.min(window.innerWidth, rail()) - 8;
+      const left = Math.max(8, Math.min(center - width / 2, edge - width));
       bubble.style.setProperty('--say-shift', `${left - (center - width / 2)}px`);
     };
     const place = () => {
@@ -383,9 +386,10 @@ const paths = Object.entries(frames).map(([name, rows]) => {
         const roll = Math.random();
         const [min, max] = bounds();
         if (roll < 0.42) {
-          // Short strolls of a few seconds, turning back near the edges.
-          const dir = x - min < 80 ? 1 : max - x < 80 ? -1 : Math.random() < 0.5 ? -1 : 1;
-          walkTo(clamp(x + dir * rand(60, 240)));
+          // Short strolls of a second or two, turning back near the ends of its patch.
+          const span = max - min;
+          const dir = x - min < span / 3 ? 1 : max - x < span / 3 ? -1 : Math.random() < 0.5 ? -1 : 1;
+          walkTo(clamp(x + dir * rand(span / 4, span * 0.7)));
         }
         else if (roll < 0.66) sit();
         else if (roll < 0.8) jump();
@@ -418,7 +422,7 @@ const paths = Object.entries(frames).map(([name, rows]) => {
 
     const settle = () => {
       cat.style.setProperty('--cat-floor', `${floor()}px`);
-      x = clamp(x < 0 ? rand(bounds()[0], bounds()[0] + 180) : x);
+      x = clamp(x < 0 ? rand(...bounds()) : x);
       place();
     };
     settle();
@@ -457,10 +461,11 @@ const paths = Object.entries(frames).map(([name, rows]) => {
     position: fixed;
     left: 0;
     bottom: var(--cat-floor, 58px);
-    z-index: 16;
+    /* Above the rail (20), whose column it lives in, and below the theme toggle, LLMalak and the cursor. */
+    z-index: 21;
     width: 48px;
     height: 36px;
-    transform: translate3d(var(--cat-x, 280px), var(--cat-y, 0px), 0);
+    transform: translate3d(var(--cat-x, 96px), var(--cat-y, 0px), 0);
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
@@ -526,7 +531,7 @@ const paths = Object.entries(frames).map(([name, rows]) => {
     fill: var(--cat-e);
   }
 
-  /* A speech bubble with a hard pixel shadow. It shifts sideways to stay on screen near the edges, and its tail
+  /* A speech bubble with a hard pixel shadow. It slides sideways to stay inside the rail's column, and its tail
      keeps pointing at the cat. */
   .cat-say {
     position: absolute;
@@ -547,7 +552,10 @@ const paths = Object.entries(frames).map(([name, rows]) => {
     line-height: 1.35;
     text-wrap: balance;
     opacity: 0;
-    transform: translate(calc(-50% + var(--say-shift, 0px)), 6px);
+    /* The sideways shift sits on translate, which isn't animated, so the bubble stays inside the rail from its
+       first frame and keeps up with a walking cat. Only the rise on transform eases. */
+    translate: calc(-50% + var(--say-shift, 0px)) 0;
+    transform: translateY(6px);
     transition: opacity 0.2s ease, transform 0.3s var(--ease);
     pointer-events: none;
   }
@@ -568,7 +576,7 @@ const paths = Object.entries(frames).map(([name, rows]) => {
 
   .cat:global(.is-saying) .cat-say {
     opacity: 1;
-    transform: translate(calc(-50% + var(--say-shift, 0px)), 0);
+    transform: none;
   }
 
   .cat-zzz {

@@ -226,7 +226,8 @@ h4 {
   top: var(--top);
   left: 12px;
   right: 12px;
-  max-height: calc(100vh - var(--top) - 64px);
+  /* It stops short of the bottom bar and the cat standing on it (see Cat.astro). Longer contents lists scroll. */
+  max-height: calc(100vh - var(--top) - 108px);
   overflow-y: auto;
   scrollbar-width: none;
 }

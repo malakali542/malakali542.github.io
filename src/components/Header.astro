@@ -81,9 +81,15 @@ const dotStyle = `--i: ${currentIndex}`;
       const dot = nav && nav.querySelector('.rail-dot');
       if (!dot) return;
       let y = '';
+      const smooth = matchMedia('(prefers-reduced-motion: no-preference)').matches;
       const place = (glide) => {
         const link = nav.querySelector('a[aria-current]');
         if (!link) return;
+        // A long contents list scrolls inside the rail, so bring the current section back into view when it leaves.
+        if (link.offsetTop < nav.scrollTop || link.offsetTop + link.offsetHeight > nav.scrollTop + nav.clientHeight) {
+          const top = link.offsetTop - (nav.clientHeight - link.offsetHeight) / 2;
+          nav.scrollTo({ top, behavior: glide && smooth ? 'smooth' : 'auto' });
+        }
         const style = getComputedStyle(link);
         const line = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.45;
         const top = link.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop;
