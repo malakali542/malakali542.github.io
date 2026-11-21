@@ -295,11 +295,7 @@ h4 {
   view-transition-name: toc-dot;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-}
+/* The page-transition opt-in itself (@view-transition) sits inline in the head of Base.astro. */
 
 ::view-transition-group(rail-dot),
 ::view-transition-group(toc-dot) {

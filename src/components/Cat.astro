@@ -1,0 +1,649 @@
+---
+// A pixel cat that lives on the bottom bar. It walks, sits, hops, says something about the page, and curls up
+// asleep if you stay on one page long enough. Clicking it wakes it up. The art is 24x18, drawn as one path per
+// color per frame, and the palette follows the site theme.
+
+// o outline, f fur, s stripe, w white, p pink, e eye.
+const frames: Record<string, string[]> = {
+  stand: [
+    '........................',
+    '..............o.....o...',
+    '..oo.........ofo...ofo..',
+    '.offo........opfooofpo..',
+    'offfo........opfffffpo..',
+    'offo.........offffffffo.',
+    'offo........offeffefffo.',
+    'offo...ooooooffeffefffo.',
+    '.offooofsffsffffwpwfffo.',
+    '.offffffsffsffffwwwffo..',
+    '..offfffsffsffffffffo...',
+    '...offffffffffwwfooo....',
+    '...offfffffffffwffo.....',
+    '....offffffffffoffo.....',
+    '....offoffoooffoffo.....',
+    '....owwowwo.owwowwo.....',
+    '.....oo.oo...oo.oo......',
+    '........................',
+  ],
+  walk1: [
+    '........................',
+    '..............o.....o...',
+    '..oo.........ofo...ofo..',
+    '.offo........opfooofpo..',
+    'offfo........opfffffpo..',
+    'offo.........offffffffo.',
+    'offo........offeffefffo.',
+    'offo...ooooooffeffefffo.',
+    '.offooofsffsffffwpwfffo.',
+    '.offffffsffsffffwwwffo..',
+    '..offfffsffsffffffffo...',
+    '...offffffffffwwfooo....',
+    '...offfffffffffwfffo....',
+    '...offfffffffffooffo....',
+    '...offoooffoffo.offo....',
+    '...owwo.owwowwo.owwo....',
+    '....oo...oo.oo...oo.....',
+    '........................',
+  ],
+  walk2: [
+    '........................',
+    '..............o.....o...',
+    '..oo.........ofo...ofo..',
+    '.offo........opfooofpo..',
+    'offfo........opfffffpo..',
+    'offo.........offffffffo.',
+    'offo........offeffefffo.',
+    'offo...ooooooffeffefffo.',
+    '.offooofsffsffffwpwfffo.',
+    '.offffffsffsffffwwwffo..',
+    '..offfffsffsffffffffo...',
+    '...offffffffffwwfooo....',
+    '...offfffffffffwfo......',
+    '....oofffffffffffo......',
+    '.....offfooooofffo......',
+    '.....owwwo...owwwo......',
+    '......ooo.....ooo.......',
+    '........................',
+  ],
+  blink: [
+    '........................',
+    '..............o.....o...',
+    '..oo.........ofo...ofo..',
+    '.offo........opfooofpo..',
+    'offfo........opfffffpo..',
+    'offo.........offffffffo.',
+    'offo........offfffffffo.',
+    'offo...ooooooffoffofffo.',
+    '.offooofsffsffffwpwfffo.',
+    '.offffffsffsffffwwwffo..',
+    '..offfffsffsffffffffo...',
+    '...offffffffffwwfooo....',
+    '...offfffffffffwffo.....',
+    '....offffffffffoffo.....',
+    '....offoffoooffoffo.....',
+    '....owwowwo.owwowwo.....',
+    '.....oo.oo...oo.oo......',
+    '........................',
+  ],
+  sit: [
+    '...........o....oo......',
+    '..........ofo..offo.....',
+    '.........ofpfoofpfo.....',
+    '.........offffffffo.....',
+    '.........offffffffo.....',
+    '.........offeffeffo.....',
+    '.........offeffeffo.....',
+    '.......ooofffwpwffo.....',
+    '......offffffwwwffo.....',
+    '.....offsfsfffffoo......',
+    '....offfsfsffwwo........',
+    '....offfsfsfffffo.......',
+    '....offfsfsfffffo.......',
+    '.....offffffffffo.......',
+    '.....offffffffffo.......',
+    '......offfffwwwwo.......',
+    '.......ooooooooo........',
+    '........................',
+  ],
+  sit2: [
+    '...........o....oo......',
+    '..........ofo..offo.....',
+    '.........ofpfoofpfo.....',
+    '.........offffffffo.....',
+    '.........offffffffo.....',
+    '.........offeffeffo.....',
+    '.........offeffeffo.....',
+    '.......ooofffwpwffo.....',
+    '......offffffwwwffo.....',
+    '.....offsfsfffffoo......',
+    '....offfsfsffwwo........',
+    '.oo.offfsfsfffffo.......',
+    'offoofffsfsfffffo.......',
+    'offoooffffffffffo.......',
+    '.offffffffffffffo.......',
+    '..ooffoooooowwwwo.......',
+    '....oo......oooo........',
+    '........................',
+  ],
+  jump: [
+    '........................',
+    '..............oo....oo..',
+    '.o...........offooooffo.',
+    'ofo..........ofpffffpfo.',
+    'ffo..........offffffffo.',
+    'ffo..........offeffeffo.',
+    'ofo...ooooooooffeffeffo.',
+    'offoooffsffsfffffwpwffo.',
+    '.offffffsffsfffffwwwffo.',
+    '..offfffsffsfffffffffo..',
+    '...offffffffffffffooo...',
+    '..offffffffffffffffo....',
+    '..offoooooooooooofffo...',
+    '.offo............ofo....',
+    '..oo..............o.....',
+    '........................',
+    '........................',
+    '........................',
+  ],
+  sleep: [
+    '........................',
+    '........................',
+    '........................',
+    '........................',
+    '........................',
+    '.............o.....o....',
+    '............ofo...ofo...',
+    '............opooooffo...',
+    '............opffffppo...',
+    '......ooooooffffffffo...',
+    '....oofffffffffffffffo..',
+    '...offffsffsffoffofffo..',
+    '..offfffsffsfffwpwfffo..',
+    '..offfffsffsfffwwwffo...',
+    '..offffffffffffffffo....',
+    '...offfffffffffffoo.....',
+    '....ooffffffffffo.......',
+    '......oooooooooo........',
+  ],
+};
+
+const colors = ['o', 'f', 's', 'w', 'p', 'e'];
+const paths = Object.entries(frames).map(([name, rows]) => {
+  const byColor: Record<string, string> = {};
+  rows.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      const c = row[x];
+      let w = 1;
+      while (row[x + w] === c) w++;
+      if (c !== '.') byColor[c] = (byColor[c] ?? '') + `M${x} ${y}h${w}v1h-${w}z`;
+      x += w;
+    }
+  });
+  return { name, html: colors.filter((c) => byColor[c]).map((c) => `<path class="c-${c}" d="${byColor[c]}"/>`).join('') };
+});
+---
+
+<div class="cat" data-cat data-frame="stand" aria-hidden="true">
+  <p class="cat-say" data-cat-say></p>
+  <span class="cat-zzz"><i>z</i><i>z</i><i>z</i></span>
+  <svg class="cat-sprite" data-cat-sprite viewBox="0 0 24 18" shape-rendering="crispEdges">
+    {paths.map((frame) => <g class={`cf cf-${frame.name}`} set:html={frame.html} />)}
+  </svg>
+</div>
+<script is:inline>
+  // Put the cat back where it was on the last page before the first paint, so page changes don't make it jump.
+  (() => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('cat') || 'null');
+      const cat = document.querySelector('[data-cat]');
+      if (saved && cat && typeof saved.x === 'number') {
+        cat.style.setProperty('--cat-x', saved.x + 'px');
+        cat.style.setProperty('--cat-face', saved.face === -1 ? '-1' : '1');
+        cat.classList.add('is-on');
+      }
+    } catch {}
+  })();
+</script>
+
+<script>
+  import { linesFor, pokeLines, wakeLines } from '../data/cat';
+
+  const cat = document.querySelector<HTMLElement>('[data-cat]');
+  if (cat) {
+    const sprite = cat.querySelector<SVGSVGElement>('[data-cat-sprite]')!;
+    const bubble = cat.querySelector<HTMLElement>('[data-cat-say]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wide = window.matchMedia('(min-width: 900px)');
+    const SIZE = 48;
+    const SLEEP_AFTER = 45000;
+    const lines = linesFor(location.pathname, document.title.startsWith('not found'));
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    const pick = (list: string[]) => list[Math.floor(Math.random() * list.length)];
+
+    let saved: { x?: number; face?: number } | null = null;
+    try {
+      saved = JSON.parse(sessionStorage.getItem('cat') ?? 'null');
+    } catch {}
+    let x = typeof saved?.x === 'number' ? saved.x : -1;
+    let face = saved?.face === -1 ? -1 : 1;
+    let y = 0;
+    let state: 'idle' | 'walk' | 'sit' | 'jump' | 'sleep' = 'idle';
+    let lineIndex = 0;
+    let lastPoke = performance.now();
+    let raf = 0;
+    let timer = 0;
+    let frameTimer = 0;
+    let sayTimer = 0;
+
+    // On wide screens it stands on the bottom bar, to the right of the rail. On phones it walks along the
+    // bottom of the screen and keeps clear of the floating ask button.
+    const bounds = () => {
+      const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail')) || 240;
+      const min = wide.matches ? rail + 20 : 8;
+      const max = window.innerWidth - SIZE - (wide.matches ? 24 : 172);
+      return [min, Math.max(min, max)] as const;
+    };
+    const clamp = (v: number) => {
+      const [min, max] = bounds();
+      return Math.min(Math.max(v, min), max);
+    };
+    const floor = () => (wide.matches ? (document.querySelector('.statusbar')?.getBoundingClientRect().height ?? 58) : 10);
+    const save = () => {
+      try {
+        sessionStorage.setItem('cat', JSON.stringify({ x: Math.round(x), face }));
+      } catch {}
+    };
+    const setFrame = (name: string) => {
+      if (cat.dataset.frame !== name) cat.dataset.frame = name;
+    };
+    const aim = () => {
+      const width = bubble.offsetWidth;
+      const center = x + SIZE / 2;
+      const left = Math.min(Math.max(center - width / 2, 8), window.innerWidth - width - 8);
+      bubble.style.setProperty('--say-shift', `${left - (center - width / 2)}px`);
+    };
+    const place = () => {
+      cat.style.setProperty('--cat-x', `${x}px`);
+      cat.style.setProperty('--cat-y', `${-y}px`);
+      cat.style.setProperty('--cat-face', String(face));
+      if (cat.classList.contains('is-saying')) aim();
+    };
+    const say = (text: string, ms = 3800) => {
+      bubble.textContent = text;
+      cat.classList.add('is-saying');
+      aim();
+      window.clearTimeout(sayTimer);
+      sayTimer = window.setTimeout(() => cat.classList.remove('is-saying'), ms);
+    };
+    const talk = () => say(lines[lineIndex++ % lines.length]);
+    const stop = () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+      window.clearTimeout(frameTimer);
+    };
+
+    const walkTo = (target: number) => {
+      state = 'walk';
+      face = target >= x ? 1 : -1;
+      let last = performance.now();
+      let walked = 0;
+      const tick = (now: number) => {
+        const dt = Math.min(64, now - last);
+        last = now;
+        const dir = Math.sign(target - x);
+        x += (dir * 42 * dt) / 1000;
+        walked += dt;
+        if (dir === 0 || (dir > 0 && x >= target) || (dir < 0 && x <= target)) {
+          x = target;
+          place();
+          setFrame('stand');
+          state = 'idle';
+          save();
+          next();
+          return;
+        }
+        setFrame(Math.floor(walked / 150) % 2 ? 'walk2' : 'walk1');
+        place();
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+
+    const jump = () => {
+      state = 'jump';
+      const start = performance.now();
+      const from = x;
+      const to = clamp(x + face * rand(8, 40));
+      setFrame('jump');
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / 560);
+        y = 4 * 30 * t * (1 - t);
+        x = from + (to - from) * t;
+        place();
+        if (t < 1) {
+          raf = requestAnimationFrame(tick);
+          return;
+        }
+        y = 0;
+        place();
+        setFrame('sit');
+        save();
+        timer = window.setTimeout(() => {
+          setFrame('stand');
+          state = 'idle';
+          next();
+        }, 180);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+
+    const sit = () => {
+      state = 'sit';
+      setFrame('sit');
+      // The tail flicks now and then while it sits.
+      const flick = () => {
+        if (state !== 'sit') return;
+        setFrame('sit2');
+        frameTimer = window.setTimeout(() => {
+          if (state !== 'sit') return;
+          setFrame('sit');
+          frameTimer = window.setTimeout(flick, rand(900, 2000));
+        }, 380);
+      };
+      frameTimer = window.setTimeout(flick, rand(700, 1400));
+      timer = window.setTimeout(() => {
+        window.clearTimeout(frameTimer);
+        setFrame('stand');
+        state = 'idle';
+        next();
+      }, rand(3000, 6500));
+    };
+
+    const sleep = () => {
+      stop();
+      state = 'sleep';
+      y = 0;
+      place();
+      setFrame('sleep');
+      cat.classList.remove('is-saying');
+    };
+
+    // Pick what to do next, with a blink while it stands around deciding.
+    const next = () => {
+      if (state === 'sleep') return;
+      if (performance.now() - lastPoke > SLEEP_AFTER) return sleep();
+      const wait = rand(1200, 3400);
+      frameTimer = window.setTimeout(() => {
+        if (state !== 'idle') return;
+        setFrame('blink');
+        frameTimer = window.setTimeout(() => state === 'idle' && setFrame('stand'), 140);
+      }, wait * rand(0.3, 0.8));
+      timer = window.setTimeout(() => {
+        const roll = Math.random();
+        const [min, max] = bounds();
+        if (roll < 0.42) {
+          // Short strolls of a few seconds, turning back near the edges.
+          const dir = x - min < 80 ? 1 : max - x < 80 ? -1 : Math.random() < 0.5 ? -1 : 1;
+          walkTo(clamp(x + dir * rand(60, 240)));
+        }
+        else if (roll < 0.66) sit();
+        else if (roll < 0.8) jump();
+        else {
+          talk();
+          next();
+        }
+      }, wait);
+    };
+
+    sprite.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      lastPoke = performance.now();
+      if (state === 'sleep') {
+        setFrame(reduce ? 'sit' : 'stand');
+        state = 'idle';
+        say(pick(wakeLines));
+        if (!reduce) next();
+        return;
+      }
+      if (reduce) {
+        say(Math.random() < 0.5 ? pick(pokeLines) : lines[lineIndex++ % lines.length], 2600);
+        return;
+      }
+      if (state === 'jump') return;
+      stop();
+      say(Math.random() < 0.5 ? pick(pokeLines) : lines[lineIndex++ % lines.length], 2600);
+      jump();
+    });
+
+    const settle = () => {
+      cat.style.setProperty('--cat-floor', `${floor()}px`);
+      x = clamp(x < 0 ? rand(bounds()[0], bounds()[0] + 180) : x);
+      place();
+    };
+    settle();
+    cat.classList.add('is-on');
+    window.addEventListener('resize', settle, { passive: true });
+    wide.addEventListener('change', settle);
+    window.addEventListener('pagehide', save);
+
+    if (reduce) {
+      // No walking or hopping: it sits where it is, says hello, and dozes off later.
+      setFrame('sit');
+      window.setTimeout(() => say(lines[0], 5000), 900);
+      window.setInterval(() => {
+        if (state !== 'sleep' && performance.now() - lastPoke > SLEEP_AFTER) {
+          state = 'sleep';
+          setFrame('sleep');
+        }
+      }, 5000);
+    } else {
+      window.setTimeout(() => {
+        talk();
+        next();
+      }, 900);
+    }
+  }
+</script>
+
+<style>
+  .cat {
+    --cat-o: #1f252d;
+    --cat-f: #404b59;
+    --cat-s: #2e3641;
+    --cat-w: #f5f1e8;
+    --cat-p: #ff7a7a;
+    --cat-e: #ffd257;
+    position: fixed;
+    left: 0;
+    bottom: var(--cat-floor, 58px);
+    z-index: 16;
+    width: 48px;
+    height: 36px;
+    transform: translate3d(var(--cat-x, 280px), var(--cat-y, 0px), 0);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    view-transition-name: cat;
+  }
+
+  .cat:global(.is-on) {
+    opacity: 1;
+  }
+
+  :global(:root[data-theme='dark']) .cat {
+    --cat-o: #0b0b0b;
+    --cat-f: #c9c5bc;
+    --cat-s: #a9a49a;
+    --cat-w: #fffaf2;
+  }
+
+  .cat-sprite {
+    display: block;
+    width: 48px;
+    height: 36px;
+    transform: scaleX(var(--cat-face, 1));
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .cf {
+    display: none;
+  }
+
+  .cat[data-frame='stand'] .cf-stand,
+  .cat[data-frame='walk1'] .cf-walk1,
+  .cat[data-frame='walk2'] .cf-walk2,
+  .cat[data-frame='blink'] .cf-blink,
+  .cat[data-frame='sit'] .cf-sit,
+  .cat[data-frame='sit2'] .cf-sit2,
+  .cat[data-frame='jump'] .cf-jump,
+  .cat[data-frame='sleep'] .cf-sleep {
+    display: inline;
+  }
+
+  .cat :global(.c-o) {
+    fill: var(--cat-o);
+  }
+
+  .cat :global(.c-f) {
+    fill: var(--cat-f);
+  }
+
+  .cat :global(.c-s) {
+    fill: var(--cat-s);
+  }
+
+  .cat :global(.c-w) {
+    fill: var(--cat-w);
+  }
+
+  .cat :global(.c-p) {
+    fill: var(--cat-p);
+  }
+
+  .cat :global(.c-e) {
+    fill: var(--cat-e);
+  }
+
+  /* A speech bubble with a hard pixel shadow. It shifts sideways to stay on screen near the edges, and its tail
+     keeps pointing at the cat. */
+  .cat-say {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    width: max-content;
+    max-width: 210px;
+    margin: 0;
+    padding: 6px 10px 7px;
+    border: 2px solid var(--ink);
+    border-radius: 3px;
+    background: var(--surface);
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 22%, transparent);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-wrap: balance;
+    opacity: 0;
+    transform: translate(calc(-50% + var(--say-shift, 0px)), 6px);
+    transition: opacity 0.2s ease, transform 0.3s var(--ease);
+    pointer-events: none;
+  }
+
+  .cat-say::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: calc(50% - var(--say-shift, 0px) - 5px);
+    width: 8px;
+    height: 8px;
+    margin-top: -3px;
+    background: var(--surface);
+    border-right: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    transform: rotate(45deg);
+  }
+
+  .cat:global(.is-saying) .cat-say {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--say-shift, 0px)), 0);
+  }
+
+  .cat-zzz {
+    position: absolute;
+    left: calc(50% + var(--cat-face, 1) * 12px);
+    bottom: 22px;
+    display: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  .cat[data-frame='sleep'] .cat-zzz {
+    display: block;
+  }
+
+  .cat-zzz i {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    font-style: normal;
+    opacity: 0;
+    animation: cat-z 2.7s ease-in infinite;
+  }
+
+  .cat-zzz i:nth-child(2) {
+    animation-delay: 0.9s;
+  }
+
+  .cat-zzz i:nth-child(3) {
+    animation-delay: 1.8s;
+  }
+
+  @keyframes cat-z {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.7);
+    }
+
+    25% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(calc(var(--cat-face, 1) * 10px), -24px) scale(1.25);
+    }
+  }
+
+  @media (max-width: 899px) {
+    .cat {
+      bottom: var(--cat-floor, 10px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cat-zzz i {
+      animation: none;
+      opacity: 1;
+    }
+
+    .cat-zzz i:nth-child(2) {
+      transform: translate(calc(var(--cat-face, 1) * 6px), -10px);
+    }
+
+    .cat-zzz i:nth-child(3) {
+      transform: translate(calc(var(--cat-face, 1) * 12px), -20px);
+    }
+  }
+
+  @media print {
+    .cat {
+      display: none;
+    }
+  }
+</style>

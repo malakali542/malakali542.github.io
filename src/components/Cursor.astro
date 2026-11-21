@@ -16,6 +16,7 @@
     const modeFor = (target: Element | null): [string, string] => {
       if (!target || target.closest('iframe')) return ['hidden', ''];
       if (target.closest('input, textarea, [contenteditable="true"]')) return ['text', ''];
+      if (target.closest('[data-cat-sprite]')) return ['label', 'pet'];
       if (target.closest('[data-yt]')) return ['label', 'play'];
       if (target.closest('.tile')?.querySelector('.tile-cap a')) return ['label', 'read →'];
       if (target.closest('a, button, summary, label, select, [role="button"]')) return ['link', ''];

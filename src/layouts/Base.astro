@@ -11,6 +11,7 @@ import Footer from '../components/Footer.astro';
 import StatusBar from '../components/StatusBar.astro';
 import Ask from '../components/Ask.astro';
 import Cursor from '../components/Cursor.astro';
+import Cat from '../components/Cat.astro';
 import { site } from '../lib/site';
 
 interface Props {
@@ -54,6 +55,15 @@ const ogImage = new URL(image, Astro.site);
     <meta name="theme-color" content="#f1f1ef" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)" />
     <slot name="head" />
+    <style is:inline>
+      /* Chrome decides whether a new page joins the page transition as soon as the parser reaches the body, which
+         can come before the stylesheet has loaded. Inline, the opt-in is always there in time. */
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition {
+          navigation: auto;
+        }
+      }
+    </style>
     <script is:inline>
       (() => {
         // Tiles and metrics wait for the first time they scroll into view (see the motion section of global.css).
@@ -75,6 +85,7 @@ const ogImage = new URL(image, Astro.site);
     </div>
     <StatusBar />
     <Ask />
+    <Cat />
     <Cursor />
     <script>
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
